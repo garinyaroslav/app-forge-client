@@ -4,23 +4,25 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 
 function Hello() {
-  const [users, setUsers] = useState<
+  const [games, setGames] = useState<
     { id: number; name: string; email: string }[]
   >([]);
 
   useEffect(() => {
     window.api
-      .getUsers()
-      .then((fetchedUsers: { id: number; name: string; email: string }[]) =>
-        setUsers(fetchedUsers),
+      .getGames()
+      .then((fetchedGames: { id: number; name: string; email: string }[]) =>
+        setGames(fetchedGames),
       )
       .catch((e: Error) => console.log(e));
   }, []);
 
   return (
     <div>
-      {users.map((user) => (
-        <div key={user.id}>{JSON.stringify(user)}</div>
+      {games.map((game) => (
+        <div style={{ backgroundColor: '#fff', color: '#000' }} key={game.id}>
+          {JSON.stringify(game)}
+        </div>
       ))}
     </div>
   );

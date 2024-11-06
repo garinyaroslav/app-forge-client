@@ -13,8 +13,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int    @id @default(autoincrement())
-  name  String
-  email String
+model Consumer {
+  id           Int       @id @unique
+  username     String?
+  email        String?
+  passwordHash String?
+  firstName    String?
+  lastName     String?
+  regDate      DateTime?
+  Library      Library[]
+  Review       Review[]
+  Cart         Cart[]
+}
+
+model Game {
+  id            Int         @id @unique
+  genere        gameGenere? @relation(fields: [gameGenereId], references: [id])
+  title         String?
+  description   String?
+  developerName String?
+  rating        Int?
+  relDate       DateTime?
+  gameGenereId  Int?
+  Library       Library[]
+  Review        Review[]
+  CartItem      CartItem[]
+}
+
+model Library {
+  id         Int       @id @unique
+  game       Game?     @relation(fields: [gameId], references: [id])
+  consumer   Consumer? @relation(fields: [consumerId], references: [id])
+  addedDate  DateTime?
+  gameId     Int?
+  consumerId Int?
+}
+
+model Review {
+  id          Int       @id @unique
+  game        Game?     @relation(fields: [gameId], references: [id])
+  consumer    Consumer? @relation(fields: [consumerId], references: [id])
+  rating      Int?
+  textComment String?
+  gameId      Int?
+  consumerId  Int?
+}
+
+model Cart {
+  id         Int        @id @unique
+  consumer   Consumer?  @relation(fields: [consumerId], references: [id])
+  consumerId Int?
+  CartItem   CartItem[]
+}
+
+model CartItem {
+  id     Int   @id @unique
+  cart   Cart? @relation(fields: [cartId], references: [id])
+  game   Game? @relation(fields: [gameId], references: [id])
+  cartId Int?
+  gameId Int?
+}
+
+model gameGenere {
+  id         Int     @id @unique
+  genereName String?
+  Game       Game[]
 }

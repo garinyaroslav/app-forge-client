@@ -26,7 +26,7 @@ const electronHandler = {
 
 contextBridge.exposeInMainWorld('electron', electronHandler);
 contextBridge.exposeInMainWorld('api', {
-  getUsers: () => ipcRenderer.invoke('api:getUsers'),
+  getGames: () => ipcRenderer.invoke('api:getGames'),
   // addUser: (userData) => ipcRenderer.invoke("db:addUser", userData),
 });
 

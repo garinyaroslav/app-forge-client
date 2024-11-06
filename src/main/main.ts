@@ -61,6 +61,7 @@ const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
   }
+  await installExtensions();
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -137,9 +138,9 @@ app
   })
   .catch(console.log);
 
-ipcMain.handle('api:getUsers', async () => {
+ipcMain.handle('api:getGames', async () => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.game.findMany();
     return users;
   } catch (error) {
     console.error(error);
