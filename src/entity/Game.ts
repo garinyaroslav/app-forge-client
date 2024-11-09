@@ -18,7 +18,7 @@ export class Game {
   rating: string;
 
   @Column('integer')
-  gameGenereId: number;
+  gameGenreId: number;
 
   @Column('bigint')
   relDate: number;

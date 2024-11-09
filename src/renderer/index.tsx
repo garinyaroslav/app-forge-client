@@ -1,6 +1,13 @@
 import { createRoot } from 'react-dom/client';
-import App from './App';
+import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
+import { ThemeProvider } from 'next-themes';
+// import system from './theme';
+import { App } from './App';
 
-const container = document.getElementById('root') as HTMLElement;
-const root = createRoot(container);
-root.render(<App />);
+createRoot(document.getElementById('root') as HTMLElement).render(
+  <ChakraProvider value={defaultSystem}>
+    <ThemeProvider attribute="class" disableTransitionOnChange>
+      <App />
+    </ThemeProvider>
+  </ChakraProvider>,
+);

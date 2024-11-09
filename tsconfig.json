@@ -1,20 +1,50 @@
+// {
+//   "compilerOptions": {
+//     "incremental": true,
+//     "target": "es2022",
+//     "module": "commonjs",
+//     "lib": ["dom", "es2022"],
+//     "jsx": "react-jsx",
+//     "strict": true,
+//     "sourceMap": true,
+//     "moduleResolution": "node",
+//     "esModuleInterop": true,
+//     "allowSyntheticDefaultImports": true,
+//     "resolveJsonModule": true,
+//     "allowJs": true,
+//     "outDir": ".erb/dll",
+//     "experimentalDecorators": true,
+//     "strictPropertyInitialization": false,
+//     "skipLibCheck": true,
+//     "paths": {
+//       "@/*": ["./src/*"]
+//     }
+//   },
+//   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
+// }
+
+// experemental tsconfig
 {
   "compilerOptions": {
     "incremental": true,
     "target": "es2022",
-    "module": "commonjs",
+    "module": "ESNext",
     "lib": ["dom", "es2022"],
     "jsx": "react-jsx",
     "strict": true,
     "sourceMap": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "allowJs": true,
     "outDir": ".erb/dll",
     "experimentalDecorators": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }
