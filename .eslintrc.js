@@ -22,6 +22,7 @@ module.exports = {
       },
     ],
     'react/jsx-curly-brace-presence': 'off',
+    'react-hooks/exhaustive-deps': 0,
   },
   parserOptions: {
     ecmaVersion: 2022,

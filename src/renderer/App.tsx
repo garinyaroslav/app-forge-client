@@ -1,32 +1,48 @@
-import { useState } from 'react';
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Box } from '@chakra-ui/react';
+import { mainTabValues as v } from './types/mainTabValues';
 import { AppLayout } from './pages/AppLayout';
 
-// function Hello() {
-//   useEffect(() => {
-//     (async () => {
-//       const data = await window.api.getGames();
-//       setGames(data);
-//     })();
-//   }, []);
-//   return <div>{JSON.stringify(games)}</div>;
-// }
-
 export const App = () => {
-  const [appTabValue, setAppTabVale] = useState('GAMES');
+  const navigate = useNavigate();
+  const [appTabValue, setAppTabVale] = useState<v>(v.games);
+
+  useEffect(() => {
+    switch (appTabValue) {
+      case v.games:
+        navigate('games');
+        break;
+      case v.review:
+        navigate('review');
+        break;
+      case v.consumers:
+        break;
+      case v.carts:
+        break;
+      case v.cartItems:
+        break;
+      case v.library:
+        break;
+      case v.gemeGenres:
+        break;
+      default:
+        break;
+    }
+  }, [appTabValue]);
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={<AppLayout tabVal={appTabValue} setTabVal={setAppTabVale} />}
-        >
-          {/*
-          <Route path="" element={<Home />} />
-            */}
-        </Route>
-      </Routes>
-    </Router>
+    <Routes>
+      <Route
+        path="/"
+        element={<AppLayout tabVal={appTabValue} setTabVal={setAppTabVale} />}
+      >
+        <Route path="games" element={<Box>123</Box>} />
+        <Route path="review" element={<Box>456</Box>} />
+        <Route path="games" element={<Box>123</Box>} />
+        <Route path="games" element={<Box>123</Box>} />
+        <Route path="games" element={<Box>123</Box>} />
+      </Route>
+    </Routes>
   );
 };

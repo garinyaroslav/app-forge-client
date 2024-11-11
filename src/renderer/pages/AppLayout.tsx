@@ -1,9 +1,11 @@
 import { FC } from 'react';
-import { Box, Tabs } from '@chakra-ui/react';
+import { Box, TabsList, TabsTrigger, TabsRoot } from '@chakra-ui/react';
+import { Outlet } from 'react-router-dom';
+import { mainTabValues as v } from '../types/mainTabValues';
 
 interface AppLayoutProps {
   tabVal: string;
-  setTabVal: (v: string) => void;
+  setTabVal: (v: v) => void;
 }
 
 export const AppLayout: FC<AppLayoutProps> = ({ tabVal, setTabVal }) => {
@@ -26,23 +28,24 @@ export const AppLayout: FC<AppLayoutProps> = ({ tabVal, setTabVal }) => {
           boxShadow: '0px 0px 7px 0px rgba(0, 0, 0, 0.2)',
         }}
       >
-        <Tabs.Root
+        <TabsRoot
           justify={'center'}
           value={tabVal}
-          onValueChange={(e) => setTabVal(e.value)}
+          onValueChange={(e: any) => setTabVal(e.value as v)}
         >
-          <Tabs.List>
-            <Tabs.Trigger value="GAMES">Games</Tabs.Trigger>
-            <Tabs.Trigger value="REVIEW">Reviews</Tabs.Trigger>
-            <Tabs.Trigger disabled value="CONSUMERS">
+          <TabsList>
+            <TabsTrigger {...{ value: v.games }}>Games</TabsTrigger>
+            <TabsTrigger {...{ value: v.review }}>Reviews</TabsTrigger>
+            <TabsTrigger {...{ disabled: true, value: v.consumers }}>
               Consumers
-            </Tabs.Trigger>
-            <Tabs.Trigger value="CARTS">Carts</Tabs.Trigger>
-            <Tabs.Trigger value="CAERT_ITEMS">Cart items</Tabs.Trigger>
-            <Tabs.Trigger value="LIBRARY">Library</Tabs.Trigger>
-            <Tabs.Trigger value="GAME_GENRES">Game ganres</Tabs.Trigger>
-          </Tabs.List>
-        </Tabs.Root>
+            </TabsTrigger>
+            <TabsTrigger {...{ value: v.carts }}>Carts</TabsTrigger>
+            <TabsTrigger {...{ value: v.cartItems }}>Cart items</TabsTrigger>
+            <TabsTrigger {...{ value: v.library }}>Library</TabsTrigger>
+            <TabsTrigger {...{ value: v.gemeGenres }}>Game ganres</TabsTrigger>
+          </TabsList>
+        </TabsRoot>
+        <Outlet />
       </Box>
     </Box>
   );
