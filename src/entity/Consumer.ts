@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Review } from './Review';
+import { Library } from './Library';
 
 @Entity({ name: 'Consumer' })
 export class Consumer {
@@ -22,4 +24,10 @@ export class Consumer {
 
   @Column('bigint')
   relDate: string;
+
+  @OneToMany(() => Review, (review) => review.consumer)
+  reviews: Review[];
+
+  @OneToMany(() => Library, (library) => library.consumer)
+  librarys: Review[];
 }

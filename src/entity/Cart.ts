@@ -1,4 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
+import { Consumer } from './Consumer';
+import { CartItem } from './CartItem';
 
 @Entity({ name: 'Cart' })
 export class Cart {
@@ -7,4 +16,11 @@ export class Cart {
 
   @Column('integer')
   consumerId: number;
+
+  @OneToOne(() => Consumer)
+  @JoinColumn({ name: 'consumerId' })
+  consumer: Consumer;
+
+  @OneToMany(() => CartItem, (cartItem) => cartItem.cart)
+  cartItems: CartItem[];
 }

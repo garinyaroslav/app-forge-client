@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Game } from './Game';
+import { Consumer } from './Consumer';
 
 @Entity({ name: 'Library' })
 export class Library {
@@ -13,4 +21,12 @@ export class Library {
 
   @Column('bigint')
   addedDate: number;
+
+  @ManyToOne(() => Game, (game) => game.librarys)
+  @JoinColumn({ name: 'gameId' })
+  game: Game;
+
+  @ManyToOne(() => Consumer, (consumer) => consumer.librarys)
+  @JoinColumn({ name: 'consumerId' })
+  consumer: Consumer;
 }
