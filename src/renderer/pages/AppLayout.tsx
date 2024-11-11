@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Box, TabsList, TabsTrigger, TabsRoot } from '@chakra-ui/react';
+import { Box, TabsList, TabsTrigger, TabsRoot, Flex } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import { mainTabValues as v } from '../types/mainTabValues';
 
@@ -20,7 +20,7 @@ export const AppLayout: FC<AppLayoutProps> = ({ tabVal, setTabVal }) => {
         alignItems: 'center',
       }}
     >
-      <Box
+      <Flex
         css={{
           width: 1600,
           height: 900,
@@ -29,24 +29,25 @@ export const AppLayout: FC<AppLayoutProps> = ({ tabVal, setTabVal }) => {
         }}
       >
         <TabsRoot
-          justify={'center'}
+          css={{ borderRight: '1px solid #2f3b43', pl: 2, py: 2 }}
+          orientation={'vertical'}
           value={tabVal}
           onValueChange={(e: any) => setTabVal(e.value as v)}
         >
           <TabsList>
-            <TabsTrigger {...{ value: v.games }}>Games</TabsTrigger>
-            <TabsTrigger {...{ value: v.review }}>Reviews</TabsTrigger>
-            <TabsTrigger {...{ disabled: true, value: v.consumers }}>
-              Consumers
+            <TabsTrigger {...{ value: v.games }}>Игры</TabsTrigger>
+            <TabsTrigger {...{ value: v.review }}>Отзывы</TabsTrigger>
+            <TabsTrigger {...{ value: v.consumers }}>Покупатели</TabsTrigger>
+            <TabsTrigger {...{ value: v.carts }}>Корзины</TabsTrigger>
+            <TabsTrigger {...{ value: v.cartItems }}>
+              Элементы корзин
             </TabsTrigger>
-            <TabsTrigger {...{ value: v.carts }}>Carts</TabsTrigger>
-            <TabsTrigger {...{ value: v.cartItems }}>Cart items</TabsTrigger>
-            <TabsTrigger {...{ value: v.library }}>Library</TabsTrigger>
-            <TabsTrigger {...{ value: v.gemeGenres }}>Game ganres</TabsTrigger>
+            <TabsTrigger {...{ value: v.library }}>Библиотеки</TabsTrigger>
+            <TabsTrigger {...{ value: v.gemeGenres }}>Жанры игр</TabsTrigger>
           </TabsList>
         </TabsRoot>
         <Outlet />
-      </Box>
+      </Flex>
     </Box>
   );
 };
