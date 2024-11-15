@@ -8,7 +8,7 @@ export interface IGame {
   copiesSold: number;
   gameGenreId: number;
   relDate: number;
-  image: string;
+  image: Uint8Array;
   reviews: undefined;
   librarys: undefined;
   cartItems: undefined;

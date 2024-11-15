@@ -1,20 +1,25 @@
 import { useEffect, useState } from 'react';
 import {
   Box,
-  Center,
+  Text,
   Flex,
   Group,
   Heading,
   IconButton,
   Input,
-  InputAddon,
 } from '@chakra-ui/react';
+import { EmptyState } from '../components/EmpatyState';
+import { GameDitails } from '../components/GameDitails';
 import { IGame } from '../types/game';
+
 import PlusSvg from '../assets/plus.svg';
 import SearchSvg from '../assets/search.svg';
+import RemoveSvg from '../assets/remove.svg';
+import { scrollBarStyles } from '../utils/scrollBarStyles';
 
 export const Games = () => {
   const [games, setGames] = useState<IGame[]>([]);
+  const [selectedGameId, setSelectedGameId] = useState<null | number>(null);
 
   useEffect(() => {
     window.api
@@ -22,6 +27,31 @@ export const Games = () => {
       .then((g: IGame[]) => setGames(g))
       .catch(console.error);
   }, []);
+
+  const renderGames = (gamesElems: IGame[]) =>
+    gamesElems.map((gameElem) => (
+      <Flex
+        alignItems={'center'}
+        justifyContent={'space-between'}
+        onClick={() => setSelectedGameId(gameElem.id)}
+        key={gameElem.id}
+        css={{
+          pl: 6,
+          pr: 4.5,
+          borderBottom: '1px solid #2f3b43',
+          minHeight: 68,
+          '&:hover': {
+            background: '#222e35',
+          },
+          cursor: 'pointer',
+        }}
+      >
+        <Text>{`${gameElem.id}. ${gameElem.title}`}</Text>
+        <IconButton {...{ variant: 'ghost' }}>
+          <img style={{ height: 16 }} src={RemoveSvg} alt={'remove'} />
+        </IconButton>
+      </Flex>
+    ));
 
   return (
     <Flex css={{ flex: 1 }}>
@@ -45,57 +75,29 @@ export const Games = () => {
             mb={8}
           >
             <Heading>Список игр</Heading>
-            <IconButton variant={'outline'}>
-              <img style={{ height: 15 }} src={PlusSvg} alt={'plus'} />
+            <IconButton {...{ variant: 'surface' }}>
+              <img style={{ height: 12 }} src={PlusSvg} alt={'plus'} />
             </IconButton>
           </Flex>
           <Group {...{ attached: true, flex: 1 }}>
-            <Input placeholder="Поиск игр" />
-            <InputAddon {...{ attached: true }}>
+            <Input {...{ variant: 'outline', placeholder: 'Поиск игр' }} />
+            <IconButton {...{ variant: 'surface' }}>
               <img style={{ height: 15 }} src={SearchSvg} alt={'search'} />
-            </InputAddon>
+            </IconButton>
           </Group>
         </Flex>
-        <Box
-          css={{
-            overflowX: 'auto',
-            '&::-webkit-scrollbar': { width: 0.5 },
-            '&::-webkit-scrollbar-track': {
-              width: 0.5,
-              background: '#222e35',
-            },
-            '&::-webkit-scrollbar-thumb': {
-              width: 0.5,
-              backgroundColor: '#fff',
-            },
-          }}
-        >
-          {games.map((game) => (
-            <Center
-              key={game.id}
-              css={{
-                borderBottom: '1px solid #2f3b43',
-                minHeight: 68,
-                '&:hover': {
-                  background: '#222e35',
-                },
-                cursor: 'pointer',
-              }}
-            >
-              {game.title}
-            </Center>
-          ))}
-          {games.map((game) => (
-            <Center
-              key={game.id}
-              css={{ borderBottom: '1px solid #2f3b43', minHeight: 68 }}
-            >
-              {game.title}
-            </Center>
-          ))}
+        <Box css={scrollBarStyles}>
+          {renderGames(games)}
+          {renderGames(games)}
         </Box>
       </Flex>
-      <Box>123</Box>
+      <Box css={{ flex: 1 }}>
+        {selectedGameId ? (
+          <GameDitails gameId={selectedGameId} />
+        ) : (
+          <EmptyState />
+        )}
+      </Box>
     </Flex>
   );
 };
