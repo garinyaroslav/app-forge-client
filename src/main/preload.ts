@@ -5,6 +5,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 const apiHandler = {
   getGames: () => ipcRenderer.invoke('api:getGames'),
   getGame: (gameId: number) => ipcRenderer.invoke('api:getGame', gameId),
+  deleteGame: (gameId: number) => ipcRenderer.invoke('api:deleteGame', gameId),
 };
 
 contextBridge.exposeInMainWorld('api', apiHandler);

@@ -17,7 +17,6 @@ ipcMain.handle('api:getGames', async () => {
 
 ipcMain.handle('api:getGame', async (_, gameId: number) => {
   try {
-    console.log(gameId);
     const game = await ds
       .createQueryBuilder()
       .select('Game')
@@ -25,6 +24,20 @@ ipcMain.handle('api:getGame', async (_, gameId: number) => {
       .where('Game.id = :gameId', { gameId })
       .getMany();
     return game;
+  } catch (error) {
+    return error;
+  }
+});
+
+ipcMain.handle('api:deleteGame', async (_, gameId: number) => {
+  try {
+    await ds
+      .createQueryBuilder()
+      .delete()
+      .from(Game)
+      .where('id = :id', { id: gameId })
+      .execute();
+    return true;
   } catch (error) {
     return error;
   }
