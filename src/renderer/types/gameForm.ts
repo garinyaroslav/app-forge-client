@@ -8,6 +8,7 @@ export interface IGameForm {
   copiesSold: number;
   gameGenreId: number;
   relDate: string;
+  image: FileList;
 }
 
 export type TGameForm =

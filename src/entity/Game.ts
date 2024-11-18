@@ -41,7 +41,7 @@ export class Game {
   relDate: number;
 
   @Column('bytea')
-  image: string;
+  image: Uint8Array;
 
   @OneToMany(() => Review, (review) => review.game)
   reviews: Review[];

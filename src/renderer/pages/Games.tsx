@@ -8,6 +8,7 @@ import {
   IconButton,
   Input,
 } from '@chakra-ui/react';
+import { Toaster, toaster } from '../components/ui/toaster';
 import { EmptyState } from '../components/EmpatyState';
 import { GameDitails } from '../components/GameDitails';
 import { IGame } from '../types/game';
@@ -17,22 +18,30 @@ import SearchSvg from '../assets/search.svg';
 import RemoveSvg from '../assets/remove.svg';
 import { scrollBarStyles } from '../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
+import { AddGameForm } from '../components/AddGameForm';
 
 export const Games = () => {
   const [games, setGames] = useState<IGame[]>([]);
   const [selectedGameId, setSelectedGameId] = useState<null | number>(null);
   const [deletedGameId, setDeletedGameId] = useState<null | number>(null);
+  const [isGameAdded, setGameIsAdded] = useState(false);
+
+  const getGamesAndWriteToState = async () => {
+    const g = await window.api.getGames().catch(console.error);
+    setGames(g);
+  };
 
   useEffect(() => {
-    (async () => {
-      const g = await window.api.getGames().catch(console.error);
-      setGames(g);
-    })();
+    getGamesAndWriteToState();
   }, [deletedGameId]);
 
   const deleteGame = async () => {
     await window.api.deleteGame(selectedGameId);
     setDeletedGameId(null);
+    toaster.create({
+      description: 'Файл успешно удалён',
+      type: 'success',
+    });
   };
 
   const renderGames = (gamesElems: IGame[]) =>
@@ -65,6 +74,13 @@ export const Games = () => {
       </Flex>
     ));
 
+  const renderEntrails = () => {
+    if (selectedGameId) return <GameDitails gameId={selectedGameId} />;
+    if (isGameAdded)
+      return <AddGameForm getGamesAndWriteToState={getGamesAndWriteToState} />;
+    return <EmptyState />;
+  };
+
   return (
     <>
       {deletedGameId && (
@@ -74,7 +90,7 @@ export const Games = () => {
           onSubmit={deleteGame}
         />
       )}
-
+      <Toaster />
       <Flex css={{ flex: 1 }}>
         <Flex
           css={{
@@ -101,7 +117,15 @@ export const Games = () => {
               mb={8}
             >
               <Heading>Список игр</Heading>
-              <IconButton {...{ variant: 'surface' }}>
+              <IconButton
+                {...{
+                  onClick: () => {
+                    setSelectedGameId(null);
+                    setGameIsAdded(true);
+                  },
+                  variant: 'surface',
+                }}
+              >
                 <img style={{ height: 12 }} src={PlusSvg} alt={'plus'} />
               </IconButton>
             </Flex>
@@ -112,18 +136,9 @@ export const Games = () => {
               </IconButton>
             </Group>
           </Flex>
-          <Box css={scrollBarStyles}>
-            {renderGames(games)}
-            {renderGames(games)}
-          </Box>
+          <Box css={scrollBarStyles}>{renderGames(games)}</Box>
         </Flex>
-        <Box css={{ flex: 1 }}>
-          {selectedGameId ? (
-            <GameDitails gameId={selectedGameId} />
-          ) : (
-            <EmptyState />
-          )}
-        </Box>
+        <Box css={{ flex: 1 }}>{renderEntrails()}</Box>
       </Flex>
     </>
   );

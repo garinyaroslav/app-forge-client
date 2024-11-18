@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import { dataSource as ds } from './db';
 import { Game } from '../entity/Game';
+import { IGameReqObj } from '../renderer/types/gameReqObj';
 
 ipcMain.handle('api:getGames', async () => {
   try {
@@ -36,6 +37,20 @@ ipcMain.handle('api:deleteGame', async (_, gameId: number) => {
       .delete()
       .from(Game)
       .where('id = :id', { id: gameId })
+      .execute();
+    return true;
+  } catch (error) {
+    return error;
+  }
+});
+
+ipcMain.handle('api:addGame', async (_, newGame: IGameReqObj) => {
+  try {
+    await ds
+      .createQueryBuilder()
+      .insert()
+      .into(Game)
+      .values({ ...newGame })
       .execute();
     return true;
   } catch (error) {

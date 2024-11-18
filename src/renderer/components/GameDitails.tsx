@@ -28,24 +28,20 @@ export const GameDitails: FC<GameDitaildProps> = ({ gameId }) => {
     values: game as unknown as IGameForm,
   });
 
-  const getGameAndDefineImageSrc = async () => {
-    const data = await window.api.getGame(gameId).catch(console.error);
-    setGame(data[0]);
-    // TODO: delete it
-    setImageSrc(null);
-    // setImageSrc(
-    //   URL.createObjectURL(
-    //     new Blob([data[0].image.buffer], {
-    //       type: 'image/png',
-    //     }),
-    //   ),
-    // );
-  };
-
   const onSubmit: SubmitHandler<IGameForm> = (data) => console.log(data);
 
   useEffect(() => {
-    getGameAndDefineImageSrc();
+    (async () => {
+      const data = await window.api.getGame(gameId).catch(console.error);
+      const blob = new Blob([data[0].image], {
+        type: 'image/png',
+      });
+      setGame(data[0]);
+      setImageSrc(URL.createObjectURL(blob));
+    })();
+    return () => {
+      if (imageSrc) URL.revokeObjectURL(imageSrc);
+    };
   }, [gameId]);
 
   return game ? (
