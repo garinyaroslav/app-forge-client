@@ -113,7 +113,7 @@ export const AddGameForm: FC<AddGameFormProps> = ({
           onChange={handleChangeFiles}
           type="file"
           accept="image/*"
-          alt="alsdfjl"
+          alt="image"
         />
       );
     return (

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import {
   Flex,
@@ -28,7 +28,10 @@ export const GameDitails: FC<GameDitaildProps> = ({ gameId }) => {
     values: game as unknown as IGameForm,
   });
 
-  const onSubmit: SubmitHandler<IGameForm> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IGameForm> = (data) => {
+    console.log(data);
+    setIsEdited(false);
+  };
 
   useEffect(() => {
     (async () => {
@@ -44,64 +47,103 @@ export const GameDitails: FC<GameDitaildProps> = ({ gameId }) => {
     };
   }, [gameId]);
 
-  return game ? (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      style={{ padding: '20px', display: 'flex', gap: '80px' }}
-    >
-      <Flex direction={'column'} gap={5}>
-        <Heading css={{ mb: 5 }}>Свойства</Heading>
-        {Object.keys(game)
-          .filter((fieldName) => !excludedFields.includes(fieldName))
-          .map((field) => (
-            <Flex
-              key={field}
-              alignItems={'center'}
-              justifyContent={'space-between'}
-              css={{ width: 450 }}
-            >
-              <Text>{field}</Text>
-              {field === 'description' ? (
-                <Textarea
-                  {...register(field)}
-                  {...{
-                    disabled: !isEdited,
-                    variant: 'subtle',
-                    css: { width: 250, height: 300, ...scrollBarStyles },
-                  }}
-                />
-              ) : (
-                <Input
-                  {...register(field as TGameForm)}
-                  {...{
-                    variant: 'subtle',
-                    disabled: !isEdited,
-                    css: { width: 250 },
-                  }}
-                />
-              )}
-            </Flex>
-          ))}
-      </Flex>
-      <Flex
-        direction={'column'}
-        alignItems={'flex-end'}
-        justifyContent={'space-between'}
+  const handleChangeFiles = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0];
+
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImageSrc(imageUrl);
+    }
+  };
+
+  if (game)
+    return (
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        style={{ padding: '20px', display: 'flex', gap: '80px' }}
       >
-        <Box>
-          <Heading css={{ mb: 5 }}>Изображение игры</Heading>
-          {imageSrc ? (
-            <Image
-              css={{ height: 300, width: 350 }}
-              src={imageSrc}
-              alt="photo"
-            />
+        <Flex direction={'column'} gap={5}>
+          <Heading css={{ mb: 5 }}>Свойства</Heading>
+          {Object.keys(game)
+            .filter((fieldName) => !excludedFields.includes(fieldName))
+            .map((field) => (
+              <Flex
+                key={field}
+                alignItems={'center'}
+                justifyContent={'space-between'}
+                css={{ width: 450 }}
+              >
+                <Text>{field}</Text>
+                {field === 'description' ? (
+                  <Textarea
+                    {...register(field)}
+                    {...{
+                      disabled: !isEdited,
+                      variant: 'subtle',
+                      css: { width: 250, height: 300, ...scrollBarStyles },
+                    }}
+                  />
+                ) : (
+                  <Input
+                    {...register(field as TGameForm)}
+                    {...{
+                      variant: 'subtle',
+                      disabled: !isEdited || field === 'id',
+                      css: { width: 250 },
+                    }}
+                  />
+                )}
+              </Flex>
+            ))}
+        </Flex>
+        <Flex
+          direction={'column'}
+          alignItems={'flex-end'}
+          justifyContent={'space-between'}
+        >
+          <Box>
+            <Heading css={{ mb: 5 }}>Изображение игры</Heading>
+            {imageSrc ? (
+              <>
+                <Image
+                  css={{ height: 300, width: 350 }}
+                  src={imageSrc}
+                  alt="photo"
+                />
+                {isEdited ? (
+                  <input
+                    {...register('image', { required: true })}
+                    onChange={handleChangeFiles}
+                    type="file"
+                    accept="image/*"
+                    alt="image"
+                  />
+                ) : null}
+              </>
+            ) : (
+              <Skeleton css={{ height: 300, width: 350 }} />
+            )}
+          </Box>
+          {isEdited ? (
+            <Button type="submit" css={{ width: 200 }}>
+              Готово
+            </Button>
           ) : (
-            <Skeleton css={{ height: 300, width: 350 }} />
+            <>
+              <Button
+                type="button"
+                onClick={() => setIsEdited(true)}
+                css={{ width: 200 }}
+              >
+                Изменить
+              </Button>
+              <Button hidden type="submit">
+                1
+              </Button>
+            </>
           )}
-        </Box>
-        <Button css={{ width: 200 }}>{isEdited ? 'Готово' : 'Изменить'}</Button>
-      </Flex>
-    </form>
-  ) : null;
+        </Flex>
+      </form>
+    );
+  return null;
 };
