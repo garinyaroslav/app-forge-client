@@ -25,6 +25,7 @@ export const Games = () => {
   const [selectedGameId, setSelectedGameId] = useState<null | number>(null);
   const [deletedGameId, setDeletedGameId] = useState<null | number>(null);
   const [isGameAdded, setGameIsAdded] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   const getGamesAndWriteToState = async () => {
     const g = await window.api.getGames().catch(console.error);
@@ -75,7 +76,13 @@ export const Games = () => {
     ));
 
   const renderEntrails = () => {
-    if (selectedGameId) return <GameDitails gameId={selectedGameId} />;
+    if (selectedGameId)
+      return (
+        <GameDitails
+          gameId={selectedGameId}
+          getGamesAndWriteToState={getGamesAndWriteToState}
+        />
+      );
     if (isGameAdded)
       return <AddGameForm getGamesAndWriteToState={getGamesAndWriteToState} />;
     return <EmptyState />;
@@ -130,7 +137,14 @@ export const Games = () => {
               </IconButton>
             </Flex>
             <Group {...{ attached: true, flex: 1 }}>
-              <Input {...{ variant: 'outline', placeholder: 'Поиск игр' }} />
+              <Input
+                {...{
+                  value: searchValue,
+                  onChange: (e) => setSearchValue(e.target.value),
+                  variant: 'outline',
+                  placeholder: 'Поиск игр',
+                }}
+              />
               <IconButton {...{ variant: 'surface' }}>
                 <img style={{ height: 15 }} src={SearchSvg} alt={'search'} />
               </IconButton>

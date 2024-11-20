@@ -15,37 +15,91 @@ import { IGame } from '../types/game';
 import { excludedFields } from '../utils/excludedFields';
 import { IGameForm, TGameForm } from '../types/gameForm';
 import { scrollBarStyles } from '../utils/scrollBarStyles';
+import { toaster } from './ui/toaster';
+import { unixToUSATime } from '../utils/unixToUSADate';
+import { USADateToUnix } from '../utils/USADateToUnix';
 
 interface GameDitaildProps {
   gameId: number;
+  getGamesAndWriteToState: () => void;
 }
 
-export const GameDitails: FC<GameDitaildProps> = ({ gameId }) => {
+export const GameDitails: FC<GameDitaildProps> = ({
+  gameId,
+  getGamesAndWriteToState,
+}) => {
   const [game, setGame] = useState<null | IGame>(null);
   const [imageSrc, setImageSrc] = useState<null | string>(null);
   const [isEdited, setIsEdited] = useState(false);
-  const { register, handleSubmit } = useForm<IGameForm>({
-    values: game as unknown as IGameForm,
+  const [defaultImageFileList, setDefaultImageFileList] =
+    useState<null | FileList>(null);
+  const [defaultDate, setDefaultDate] = useState<null | string>(null);
+  const { register, handleSubmit, reset } = useForm<IGameForm>({
+    values: {
+      ...game,
+      image: defaultImageFileList,
+      relDate: defaultDate,
+    } as unknown as IGameForm,
   });
 
-  const onSubmit: SubmitHandler<IGameForm> = (data) => {
-    console.log(data);
+  // console.log(defaultDate);
+
+  const getGame = async () => {
+    const data = await window.api.getGame(gameId).catch(console.error);
+
+    const blob = new Blob([data[0].image], {
+      type: 'image/png',
+    });
+    setImageSrc(URL.createObjectURL(blob));
+
+    const file = new File([blob], 'oldimage.png', {
+      type: 'image/png',
+    });
+    const dt = new DataTransfer();
+    dt.items.add(file);
+
+    setDefaultImageFileList(dt.files);
+    setDefaultDate(unixToUSATime(data[0].relDate));
+    setGame(data[0]);
+  };
+
+  const onCancel = async () => {
+    await reset();
+    getGame();
+    getGamesAndWriteToState();
     setIsEdited(false);
   };
 
-  useEffect(() => {
-    (async () => {
-      const data = await window.api.getGame(gameId).catch(console.error);
-      const blob = new Blob([data[0].image], {
-        type: 'image/png',
+  const onSubmit: SubmitHandler<IGameForm> = async (data) => {
+    const arrayBuffer = await data.image.item(0)?.arrayBuffer();
+    const uInt8ArrayImage = new Uint8Array(arrayBuffer as ArrayBuffer);
+
+    const res = await window.api.updateGame({
+      id: Number(data.id),
+      title: data.title,
+      description: data.description,
+      developerName: data.developerName,
+      rating: Number(data.rating),
+      price: Number(data.price),
+      copiesSold: Number(data.copiesSold),
+      gameGenreId: Number(data.gameGenreId),
+      relDate: USADateToUnix(data.relDate),
+      image: uInt8ArrayImage,
+    });
+
+    if (res) {
+      toaster.create({
+        description: 'Игра успешно обновлена',
+        type: 'success',
       });
-      setGame(data[0]);
-      setImageSrc(URL.createObjectURL(blob));
-    })();
-    return () => {
-      if (imageSrc) URL.revokeObjectURL(imageSrc);
-    };
-  }, [gameId]);
+    } else {
+      toaster.create({
+        description: 'Игра не была обновлена',
+        type: 'error',
+      });
+    }
+    onCancel();
+  };
 
   const handleChangeFiles = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -55,6 +109,49 @@ export const GameDitails: FC<GameDitaildProps> = ({ gameId }) => {
       setImageSrc(imageUrl);
     }
   };
+
+  const renderFieldEntrail = (field: string) => {
+    if (field === 'description')
+      return (
+        <Textarea
+          {...register(field)}
+          {...{
+            disabled: !isEdited,
+            variant: 'subtle',
+            css: { width: 250, height: 300, ...scrollBarStyles },
+          }}
+        />
+      );
+    if (field === 'relDate')
+      return (
+        <Input
+          type="date"
+          {...register(field as TGameForm)}
+          {...{
+            variant: 'subtle',
+            disabled: !isEdited,
+            css: { width: 250 },
+          }}
+        />
+      );
+    return (
+      <Input
+        {...register(field as TGameForm)}
+        {...{
+          variant: 'subtle',
+          disabled: !isEdited || field === 'id',
+          css: { width: 250 },
+        }}
+      />
+    );
+  };
+
+  useEffect(() => {
+    getGame();
+    return () => {
+      if (imageSrc) URL.revokeObjectURL(imageSrc);
+    };
+  }, [gameId]);
 
   if (game)
     return (
@@ -74,25 +171,7 @@ export const GameDitails: FC<GameDitaildProps> = ({ gameId }) => {
                 css={{ width: 450 }}
               >
                 <Text>{field}</Text>
-                {field === 'description' ? (
-                  <Textarea
-                    {...register(field)}
-                    {...{
-                      disabled: !isEdited,
-                      variant: 'subtle',
-                      css: { width: 250, height: 300, ...scrollBarStyles },
-                    }}
-                  />
-                ) : (
-                  <Input
-                    {...register(field as TGameForm)}
-                    {...{
-                      variant: 'subtle',
-                      disabled: !isEdited || field === 'id',
-                      css: { width: 250 },
-                    }}
-                  />
-                )}
+                {renderFieldEntrail(field)}
               </Flex>
             ))}
         </Flex>
@@ -106,28 +185,32 @@ export const GameDitails: FC<GameDitaildProps> = ({ gameId }) => {
             {imageSrc ? (
               <>
                 <Image
-                  css={{ height: 300, width: 350 }}
+                  css={{ height: 300, width: 350, mb: 5 }}
                   src={imageSrc}
                   alt="photo"
                 />
-                {isEdited ? (
-                  <input
-                    {...register('image', { required: true })}
-                    onChange={handleChangeFiles}
-                    type="file"
-                    accept="image/*"
-                    alt="image"
-                  />
-                ) : null}
+                <input
+                  hidden={!isEdited}
+                  {...register('image')}
+                  onChange={handleChangeFiles}
+                  type="file"
+                  accept="image/*"
+                  alt="image"
+                />
               </>
             ) : (
               <Skeleton css={{ height: 300, width: 350 }} />
             )}
           </Box>
           {isEdited ? (
-            <Button type="submit" css={{ width: 200 }}>
-              Готово
-            </Button>
+            <Flex w={'100%'} justifyContent={'space-between'}>
+              <Button onClick={onCancel} css={{ width: 150 }}>
+                Отмена
+              </Button>
+              <Button type="submit" css={{ width: 150 }}>
+                Готово
+              </Button>
+            </Flex>
           ) : (
             <>
               <Button

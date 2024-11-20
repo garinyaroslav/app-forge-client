@@ -24,6 +24,15 @@ module.exports = {
     'react/jsx-curly-brace-presence': 'off',
     'react-hooks/exhaustive-deps': 0,
     'react/jsx-props-no-spreading': 'off',
+    'spaced-comment': [
+      'error',
+      'always',
+      {
+        line: {
+          markers: ['#region', '#endregion', 'region', 'endregion'],
+        },
+      },
+    ],
   },
   parserOptions: {
     ecmaVersion: 2022,

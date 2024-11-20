@@ -12,7 +12,8 @@ ipcMain.handle('api:getGames', async () => {
       .getMany();
     return games;
   } catch (error) {
-    return error;
+    console.error(error);
+    return false;
   }
 });
 
@@ -26,34 +27,63 @@ ipcMain.handle('api:getGame', async (_, gameId: number) => {
       .getMany();
     return game;
   } catch (error) {
-    return error;
+    console.error(error);
+    return false;
   }
 });
 
 ipcMain.handle('api:deleteGame', async (_, gameId: number) => {
   try {
-    await ds
+    return await ds
       .createQueryBuilder()
       .delete()
       .from(Game)
       .where('id = :id', { id: gameId })
       .execute();
-    return true;
   } catch (error) {
-    return error;
+    console.error(error);
+    return false;
   }
 });
 
 ipcMain.handle('api:addGame', async (_, newGame: IGameReqObj) => {
   try {
-    await ds
+    return await ds
       .createQueryBuilder()
       .insert()
       .into(Game)
       .values({ ...newGame })
       .execute();
-    return true;
   } catch (error) {
-    return error;
+    console.error(error);
+    return false;
   }
 });
+
+ipcMain.handle('api:updateGame', async (_, newGame: IGameReqObj) => {
+  try {
+    return await ds
+      .createQueryBuilder()
+      .update(Game)
+      .set(newGame)
+      .where('id = :id', { id: newGame.id })
+      .execute();
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+});
+
+// ipcMain.handle('api:getGamesBySearchValue', async (_, searchVal: string) => {
+//   try {
+//     return await ds
+//       .createQueryBuilder()
+//       .update(Game)
+//       .set(newGame)
+//       .where('id = :id', { id: newGame.id })
+//       .execute();
+//   } catch (error) {
+//     console.error(error);
+//     return false;
+//   }
+// });

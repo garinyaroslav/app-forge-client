@@ -15,6 +15,7 @@ import { IGameForm, TGameForm } from '../types/gameForm';
 import { scrollBarStyles } from '../utils/scrollBarStyles';
 import { IGame } from '../types/game';
 import { Toaster, toaster } from './ui/toaster';
+import { USADateToUnix } from '../utils/USADateToUnix';
 
 interface AddGameFormProps {
   getGamesAndWriteToState: () => void;
@@ -72,7 +73,7 @@ export const AddGameForm: FC<AddGameFormProps> = ({
       price: Number(data.price),
       copiesSold: Number(data.copiesSold),
       gameGenreId: Number(data.gameGenreId),
-      relDate: Number(data.relDate),
+      relDate: USADateToUnix(data.relDate),
       image: uInt8ArrayImage,
     });
 
@@ -82,6 +83,7 @@ export const AddGameForm: FC<AddGameFormProps> = ({
     });
 
     reset();
+    setImageSrc(null);
     getGames();
     getGamesAndWriteToState();
   };
@@ -114,6 +116,18 @@ export const AddGameForm: FC<AddGameFormProps> = ({
           type="file"
           accept="image/*"
           alt="image"
+        />
+      );
+
+    if (field === 'relDate')
+      return (
+        <Input
+          type="date"
+          {...register(field as TGameForm)}
+          {...{
+            variant: 'subtle',
+            css: { width: 250 },
+          }}
         />
       );
     return (

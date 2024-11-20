@@ -8,6 +8,9 @@ const apiHandler = {
   getGame: (gameId: number) => ipcRenderer.invoke('api:getGame', gameId),
   deleteGame: (gameId: number) => ipcRenderer.invoke('api:deleteGame', gameId),
   addGame: (game: IGameReqObj) => ipcRenderer.invoke('api:addGame', game),
+  updateGame: (game: IGameReqObj) => ipcRenderer.invoke('api:updateGame', game),
+  getGamesBySearchValue: (val: string) =>
+    ipcRenderer.invoke('api:getGamesBySearchValue', val),
 };
 
 contextBridge.exposeInMainWorld('api', apiHandler);

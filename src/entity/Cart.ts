@@ -14,10 +14,10 @@ export class Cart {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('integer')
+  @Column('integer', { unique: true })
   consumerId: number;
 
-  @OneToOne(() => Consumer)
+  @OneToOne(() => Consumer, (consumer) => consumer.cart)
   @JoinColumn({ name: 'consumerId' })
   consumer: Consumer;
 
