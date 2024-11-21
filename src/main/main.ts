@@ -16,7 +16,8 @@ import { dataSource } from './db';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import 'reflect-metadata';
-import './apiHandlers';
+import './apiHandlers/gameHandlers';
+import './apiHandlers/genreHandlers';
 
 class AppUpdater {
   constructor() {

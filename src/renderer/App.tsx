@@ -4,6 +4,7 @@ import { Box } from '@chakra-ui/react';
 import { mainTabValues as v } from './types/mainTabValues';
 import { AppLayout } from './pages/AppLayout';
 import { Games } from './pages/Games';
+import { GameGenres } from './pages/GameGenres';
 
 export const App = () => {
   const navigate = useNavigate();
@@ -15,17 +16,22 @@ export const App = () => {
         navigate('games');
         break;
       case v.review:
-        navigate('review');
+        navigate('reviews');
         break;
       case v.consumers:
+        navigate('consumers');
         break;
       case v.carts:
+        navigate('carts');
         break;
       case v.cartItems:
+        navigate('cartItems');
         break;
       case v.library:
+        navigate('librarys');
         break;
       case v.gemeGenres:
+        navigate('gameGenres');
         break;
       default:
         break;
@@ -39,10 +45,12 @@ export const App = () => {
         element={<AppLayout tabVal={appTabValue} setTabVal={setAppTabVale} />}
       >
         <Route path="games" element={<Games />} />
-        <Route path="gameGanre" element={<Box>456</Box>} />
-        <Route path="games" element={<Box>123</Box>} />
-        <Route path="games" element={<Box>123</Box>} />
-        <Route path="games" element={<Box>123</Box>} />
+        <Route path="reviews" element={<Box>2</Box>} />
+        <Route path="consumers" element={<Box>3</Box>} />
+        <Route path="carts" element={<Box>4</Box>} />
+        <Route path="cartItems" element={<Box>5</Box>} />
+        <Route path="librarys" element={<Box>6</Box>} />
+        <Route path="gameGenres" element={<GameGenres />} />
       </Route>
     </Routes>
   );

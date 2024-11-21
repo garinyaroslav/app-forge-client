@@ -10,61 +10,59 @@ import {
 } from '@chakra-ui/react';
 import { Toaster, toaster } from '../components/ui/toaster';
 import { EmptyState } from '../components/EmpatyState';
-import { GameDitails } from '../components/GameDitails';
-import { IGame } from '../types/game';
+import { IGenre } from '../types/genre';
 
 import PlusSvg from '../assets/plus.svg';
 import SearchSvg from '../assets/search.svg';
 import RemoveSvg from '../assets/remove.svg';
 import { scrollBarStyles } from '../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
-import { AddGameForm } from '../components/AddGameForm';
 
-export const Games = () => {
-  const [games, setGames] = useState<IGame[]>([]);
-  const [selectedGameId, setSelectedGameId] = useState<null | number>(null);
+export const GameGenres = () => {
+  const [genres, setGenres] = useState<IGenre[]>([]);
+  const [selectedGenreId, setSelectedGenreId] = useState<null | number>(null);
   const [deletedGameId, setDeletedGameId] = useState<null | number>(null);
   const [isGameAdded, setGameIsAdded] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
-  const getGamesAndWriteToState = async () => {
-    const g = await window.api.getGames().catch(console.error);
-    setGames(g);
+  const getGenresAndWriteToState = async () => {
+    const g = await window.api.getGenres().catch(console.error);
+    setGenres(g);
   };
 
   const search = async (searchVal: string) => {
-    const g = await window.api
-      .getGamesBySearchValue(searchVal)
-      .catch(console.error);
-    setGames(g);
+    //   const g = await window.api
+    //     .getGamesBySearchValue(searchVal)
+    //     .catch(console.error);
+    //   setGames(g);
   };
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    if (val.length === 0) getGamesAndWriteToState();
-    setSearchValue(val);
+    // const val = e.target.value;
+    // if (val.length === 0) getGamesAndWriteToState();
+    // setSearchValue(val);
   };
 
   useEffect(() => {
-    getGamesAndWriteToState();
+    getGenresAndWriteToState();
   }, [deletedGameId]);
 
   const deleteGame = async () => {
-    await window.api.deleteGame(selectedGameId);
-    setDeletedGameId(null);
-    toaster.create({
-      description: 'Файл успешно удалён',
-      type: 'success',
-    });
+    // await window.api.deleteGame(selectedGameId);
+    // setDeletedGameId(null);
+    // toaster.create({
+    //   description: 'Файл успешно удалён',
+    //   type: 'success',
+    // });
   };
 
-  const renderGames = (gamesElems: IGame[]) =>
-    gamesElems.map((gameElem) => (
+  const renderGenres = (genreElems: IGenre[]) =>
+    genreElems.map((genreElem) => (
       <Flex
         alignItems={'center'}
         justifyContent={'space-between'}
-        onClick={() => setSelectedGameId(gameElem.id)}
-        key={gameElem.id}
+        onClick={() => setSelectedGenreId(genreElem.id)}
+        key={genreElem.id}
         css={{
           pl: 6,
           pr: 4.5,
@@ -76,11 +74,11 @@ export const Games = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${gameElem.id}. ${gameElem.title}`}</Text>
+        <Text>{`${genreElem.id}. ${genreElem.genreName}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',
-            onClick: () => setDeletedGameId(gameElem.id),
+            onClick: () => setDeletedGameId(genreElem.id),
           }}
         >
           <img style={{ height: 16 }} src={RemoveSvg} alt={'remove'} />
@@ -89,15 +87,15 @@ export const Games = () => {
     ));
 
   const renderEntrails = () => {
-    if (selectedGameId)
+    if (selectedGenreId)
       return (
         <GameDitails
           gameId={selectedGameId}
           getGamesAndWriteToState={getGamesAndWriteToState}
         />
       );
-    if (isGameAdded)
-      return <AddGameForm getGamesAndWriteToState={getGamesAndWriteToState} />;
+    // if (isGameAdded)
+    //   return <AddGameForm getGamesAndWriteToState={getGamesAndWriteToState} />;
     return <EmptyState />;
   };
 
@@ -136,11 +134,11 @@ export const Games = () => {
               alignItems={'center'}
               mb={8}
             >
-              <Heading>Список игр</Heading>
+              <Heading>Список жанров игр</Heading>
               <IconButton
                 {...{
                   onClick: () => {
-                    setSelectedGameId(null);
+                    setSelectedGenreId(null);
                     setGameIsAdded(true);
                   },
                   variant: 'surface',
@@ -155,7 +153,7 @@ export const Games = () => {
                   value: searchValue,
                   onChange: onChangeSearchValue,
                   variant: 'outline',
-                  placeholder: 'Поиск игр',
+                  placeholder: 'Поиск жанров',
                   onKeyDown: (e) => {
                     if (e.key === 'Enter') search(searchValue);
                   },
@@ -168,7 +166,7 @@ export const Games = () => {
               </IconButton>
             </Group>
           </Flex>
-          <Box css={scrollBarStyles}>{renderGames(games)}</Box>
+          <Box css={scrollBarStyles}>{renderGenres(genres)}</Box>
         </Flex>
         <Box css={{ flex: 1 }}>{renderEntrails()}</Box>
       </Flex>

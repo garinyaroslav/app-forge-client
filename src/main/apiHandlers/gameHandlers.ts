@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
-import { dataSource as ds } from './db';
-import { Game } from '../entity/Game';
-import { IGameReqObj } from '../renderer/types/gameReqObj';
+import { dataSource as ds } from '../db';
+import { Game } from '../../entity/Game';
+import { IGameReqObj } from '../../renderer/types/gameReqObj';
 
 ipcMain.handle('api:getGames', async () => {
   try {
@@ -74,16 +74,20 @@ ipcMain.handle('api:updateGame', async (_, newGame: IGameReqObj) => {
   }
 });
 
-// ipcMain.handle('api:getGamesBySearchValue', async (_, searchVal: string) => {
-//   try {
-//     return await ds
-//       .createQueryBuilder()
-//       .update(Game)
-//       .set(newGame)
-//       .where('id = :id', { id: newGame.id })
-//       .execute();
-//   } catch (error) {
-//     console.error(error);
-//     return false;
-//   }
-// });
+ipcMain.handle('api:getGamesBySearchValue', async (_, searchVal: string) => {
+  try {
+    const games = await ds
+      .createQueryBuilder()
+      .select('Game')
+      .from(Game, 'Game')
+      .where('Game.title ILIKE :search', { search: `%${searchVal}%` })
+      .orWhere('CAST(Game.id AS TEXT) LIKE :search', {
+        search: `%${searchVal}%`,
+      })
+      .getMany();
+    return games;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+});

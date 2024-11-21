@@ -9,7 +9,7 @@ import {
 import { Review } from './Review';
 import { Library } from './Library';
 import { CartItem } from './CartItem';
-import { GameGenere } from './GameGenere';
+import { GameGenre } from './GameGenre';
 
 @Entity({ name: 'Game' })
 export class Game {
@@ -52,7 +52,7 @@ export class Game {
   @OneToMany(() => CartItem, (cartItem) => cartItem.game)
   cartItems: CartItem[];
 
-  @ManyToOne(() => GameGenere, (gameGenere) => gameGenere.games)
+  @ManyToOne(() => GameGenre, (gameGenre) => gameGenre.games)
   @JoinColumn({ name: 'gameGenreId' })
-  gameGeneres: GameGenere[];
+  gameGenres: GameGenre[];
 }

@@ -11,6 +11,7 @@ const apiHandler = {
   updateGame: (game: IGameReqObj) => ipcRenderer.invoke('api:updateGame', game),
   getGamesBySearchValue: (val: string) =>
     ipcRenderer.invoke('api:getGamesBySearchValue', val),
+  getGenres: () => ipcRenderer.invoke('api:getGenres'),
 };
 
 contextBridge.exposeInMainWorld('api', apiHandler);

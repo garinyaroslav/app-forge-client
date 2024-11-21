@@ -3,7 +3,7 @@ import { Game } from '../entity/Game';
 import { Cart } from '../entity/Cart';
 import { CartItem } from '../entity/CartItem';
 import { Consumer } from '../entity/Consumer';
-import { GameGenere } from '../entity/GameGenere';
+import { GameGenre } from '../entity/GameGenre';
 import { Library } from '../entity/Library';
 import { Review } from '../entity/Review';
 
@@ -16,6 +16,6 @@ export const dataSource = new DataSource({
   database: 'master',
   synchronize: false,
   logging: true,
-  entities: [Game, Cart, CartItem, Consumer, GameGenere, Library, Review],
+  entities: [Game, Cart, CartItem, Consumer, GameGenre, Library, Review],
   migrationsTableName: 'migrations',
 });
