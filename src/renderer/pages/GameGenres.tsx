@@ -17,12 +17,14 @@ import SearchSvg from '../assets/search.svg';
 import RemoveSvg from '../assets/remove.svg';
 import { scrollBarStyles } from '../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
+import { GenreDitails } from '../components/GenreDitails';
+import { AddGenreForm } from '../components/AddGenreForm';
 
 export const GameGenres = () => {
   const [genres, setGenres] = useState<IGenre[]>([]);
   const [selectedGenreId, setSelectedGenreId] = useState<null | number>(null);
-  const [deletedGameId, setDeletedGameId] = useState<null | number>(null);
-  const [isGameAdded, setGameIsAdded] = useState(false);
+  const [deletedGenreId, setDeletedGenreId] = useState<null | number>(null);
+  const [isGenreAdded, setGenreIsAdded] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
   const getGenresAndWriteToState = async () => {
@@ -45,15 +47,15 @@ export const GameGenres = () => {
 
   useEffect(() => {
     getGenresAndWriteToState();
-  }, [deletedGameId]);
+  }, [deletedGenreId]);
 
   const deleteGame = async () => {
-    // await window.api.deleteGame(selectedGameId);
-    // setDeletedGameId(null);
-    // toaster.create({
-    //   description: 'Файл успешно удалён',
-    //   type: 'success',
-    // });
+    await window.api.deleteGenre(deletedGenreId);
+    setDeletedGenreId(null);
+    toaster.create({
+      description: 'Жанр успешно удалён',
+      type: 'success',
+    });
   };
 
   const renderGenres = (genreElems: IGenre[]) =>
@@ -78,7 +80,7 @@ export const GameGenres = () => {
         <IconButton
           {...{
             variant: 'ghost',
-            onClick: () => setDeletedGameId(genreElem.id),
+            onClick: () => setDeletedGenreId(genreElem.id),
           }}
         >
           <img style={{ height: 16 }} src={RemoveSvg} alt={'remove'} />
@@ -89,22 +91,24 @@ export const GameGenres = () => {
   const renderEntrails = () => {
     if (selectedGenreId)
       return (
-        <GameDitails
-          gameId={selectedGameId}
-          getGamesAndWriteToState={getGamesAndWriteToState}
+        <GenreDitails
+          genreId={selectedGenreId}
+          getGenresAndWriteToState={getGenresAndWriteToState}
         />
       );
-    // if (isGameAdded)
-    //   return <AddGameForm getGamesAndWriteToState={getGamesAndWriteToState} />;
+    if (isGenreAdded)
+      return (
+        <AddGenreForm getGenresAndWriteToState={getGenresAndWriteToState} />
+      );
     return <EmptyState />;
   };
 
   return (
     <>
-      {deletedGameId && (
+      {deletedGenreId && (
         <DeleteConditionModal
-          open={Boolean(deletedGameId)}
-          onClose={() => setDeletedGameId(null)}
+          open={Boolean(deletedGenreId)}
+          onClose={() => setDeletedGenreId(null)}
           onSubmit={deleteGame}
         />
       )}
@@ -139,7 +143,7 @@ export const GameGenres = () => {
                 {...{
                   onClick: () => {
                     setSelectedGenreId(null);
-                    setGameIsAdded(true);
+                    setGenreIsAdded(true);
                   },
                   variant: 'surface',
                 }}

@@ -2,6 +2,7 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer } from 'electron';
 import { IGameReqObj } from '../renderer/types/gameReqObj';
+import { IGenre } from '../renderer/types/genre';
 
 const apiHandler = {
   getGames: () => ipcRenderer.invoke('api:getGames'),
@@ -12,6 +13,10 @@ const apiHandler = {
   getGamesBySearchValue: (val: string) =>
     ipcRenderer.invoke('api:getGamesBySearchValue', val),
   getGenres: () => ipcRenderer.invoke('api:getGenres'),
+  getGenre: (genreId: number) => ipcRenderer.invoke('api:getGenre', genreId),
+  addGenre: (genre: IGenre) => ipcRenderer.invoke('api:addGenre', genre),
+  deleteGenre: (genreId: number) =>
+    ipcRenderer.invoke('api:deleteGenre', genreId),
 };
 
 contextBridge.exposeInMainWorld('api', apiHandler);

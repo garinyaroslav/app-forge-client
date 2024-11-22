@@ -50,7 +50,7 @@ export const Games = () => {
   }, [deletedGameId]);
 
   const deleteGame = async () => {
-    await window.api.deleteGame(selectedGameId);
+    await window.api.deleteGame(deletedGameId);
     setDeletedGameId(null);
     toaster.create({
       description: 'Файл успешно удалён',

@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useEffect, useState } from 'react';
+import { ChangeEvent, FC, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import {
   Flex,
@@ -13,7 +13,6 @@ import {
 import { EmptyState } from './ui/empty-state';
 import { IGameForm, TGameForm } from '../types/gameForm';
 import { scrollBarStyles } from '../utils/scrollBarStyles';
-import { IGame } from '../types/game';
 import { Toaster, toaster } from './ui/toaster';
 import { USADateToUnix } from '../utils/USADateToUnix';
 
@@ -22,7 +21,6 @@ interface AddGameFormProps {
 }
 
 const fields = [
-  'id',
   'title',
   'description',
   'developerName',
@@ -37,35 +35,14 @@ const fields = [
 export const AddGameForm: FC<AddGameFormProps> = ({
   getGamesAndWriteToState,
 }) => {
-  const [games, setGames] = useState<IGame[]>([]);
   const [imageSrc, setImageSrc] = useState<null | string>(null);
-  const [maxId, setMaxId] = useState(0);
-  const { register, handleSubmit, reset } = useForm<IGameForm>({
-    values: { id: maxId + 1 } as IGameForm,
-  });
-
-  const defineMaxId = () =>
-    setMaxId(games.reduce((a, game) => (game.id > a ? game.id : a), 0));
-
-  useEffect(() => {
-    defineMaxId();
-  }, [games]);
-
-  const getGames = async () => {
-    const g = await window.api.getGames().catch(console.error);
-    setGames(g);
-  };
-
-  useEffect(() => {
-    getGames();
-  }, []);
+  const { register, handleSubmit, reset } = useForm<IGameForm>({});
 
   const onSubmit: SubmitHandler<IGameForm> = async (data) => {
     const arrayBuffer = await data.image.item(0)?.arrayBuffer();
     const uInt8ArrayImage = new Uint8Array(arrayBuffer as ArrayBuffer);
 
-    await window.api.addGame({
-      id: Number(data.id),
+    const res = await window.api.addGame({
       title: data.title,
       description: data.description,
       developerName: data.developerName,
@@ -77,14 +54,20 @@ export const AddGameForm: FC<AddGameFormProps> = ({
       image: uInt8ArrayImage,
     });
 
-    toaster.create({
-      description: 'Игра успешно добавлена',
-      type: 'success',
-    });
+    if (res) {
+      toaster.create({
+        description: 'Игра успешно добавлена',
+        type: 'success',
+      });
+    } else {
+      toaster.create({
+        description: 'Игра не добавлена',
+        type: 'error',
+      });
+    }
 
     reset();
     setImageSrc(null);
-    getGames();
     getGamesAndWriteToState();
   };
 
@@ -183,8 +166,8 @@ export const AddGameForm: FC<AddGameFormProps> = ({
               <EmptyState
                 {...{
                   css: { height: 300, width: 350 },
-                  title: 'Ничего не выбрано',
-                  description: 'Выберите игру из списка',
+                  title: 'Картинки нет',
+                  description: 'Выберите картинку для игры',
                 }}
               />
             )}

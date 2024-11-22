@@ -9,6 +9,7 @@ ipcMain.handle('api:getGames', async () => {
       .createQueryBuilder()
       .select('Game')
       .from(Game, 'Game')
+      .orderBy('Game.id', 'ASC')
       .getMany();
     return games;
   } catch (error) {
