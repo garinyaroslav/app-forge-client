@@ -6,9 +6,4 @@ export interface IReview {
   consumerId: number;
 }
 
-export type TConsumer =
-  | 'id'
-  | 'rating'
-  | 'textComment'
-  | 'gameId'
-  | 'consumerId';
+export type TReview = 'id' | 'rating' | 'textComment' | 'gameId' | 'consumerId';

@@ -19,6 +19,7 @@ import 'reflect-metadata';
 import './apiHandlers/gameHandlers';
 import './apiHandlers/genreHandlers';
 import './apiHandlers/consumerHandlers';
+import './apiHandlers/reviewHandlers';
 
 class AppUpdater {
   constructor() {
