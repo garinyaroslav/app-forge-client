@@ -5,13 +5,13 @@ import { IReview } from '../../renderer/types/review';
 
 ipcMain.handle('api:getReviews', async () => {
   try {
-    const consumers = await ds
+    const reviews = await ds
       .createQueryBuilder()
       .select('Review')
       .from(Review, 'Review')
       .orderBy('Review.id', 'ASC')
       .getMany();
-    return consumers;
+    return reviews;
   } catch (error) {
     console.error(error);
     return false;
@@ -20,13 +20,13 @@ ipcMain.handle('api:getReviews', async () => {
 
 ipcMain.handle('api:getReview', async (_, rewId: number) => {
   try {
-    const consumer = await ds
+    const review = await ds
       .createQueryBuilder()
       .select('Review')
       .from(Review, 'Review')
       .where('Review.id = :rewId', { rewId })
       .getMany();
-    return consumer;
+    return review;
   } catch (error) {
     console.error(error);
     return false;
@@ -77,7 +77,7 @@ ipcMain.handle('api:updateReview', async (_, newReview: IReview) => {
 
 ipcMain.handle('api:getReviewsBySearchValue', async (_, searchVal: string) => {
   try {
-    const consumers = await ds
+    const reviews = await ds
       .createQueryBuilder()
       .select('Review')
       .from(Review, 'Review')
@@ -88,7 +88,7 @@ ipcMain.handle('api:getReviewsBySearchValue', async (_, searchVal: string) => {
         search: `%${searchVal}%`,
       })
       .getMany();
-    return consumers;
+    return reviews;
   } catch (error) {
     console.error(error);
     return false;

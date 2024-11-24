@@ -5,6 +5,7 @@ import { IGameReqObj } from '../renderer/types/gameReqObj';
 import { IGenre } from '../renderer/types/genre';
 import { IConsumer } from '../renderer/types/consumer';
 import { IReview } from '../renderer/types/review';
+import { ILibrary } from '../renderer/types/library';
 
 const apiHandler = {
   getGames: () => ipcRenderer.invoke('api:getGames'),
@@ -43,6 +44,16 @@ const apiHandler = {
     ipcRenderer.invoke('api:updateReview', consumer),
   getReviewsBySearchValue: (val: string) =>
     ipcRenderer.invoke('api:getReviewsBySearchValue', val),
+
+  getLibrarys: () => ipcRenderer.invoke('api:getLibrarys'),
+  getLibrary: (libId: number) => ipcRenderer.invoke('api:getLibrary', libId),
+  deleteLibrary: (libId: number) =>
+    ipcRenderer.invoke('api:deleteLibrary', libId),
+  addLibrary: (lib: ILibrary) => ipcRenderer.invoke('api:addLibrary', lib),
+  updateLibrary: (consumer: ILibrary) =>
+    ipcRenderer.invoke('api:updateLibrary', consumer),
+  getLibrarysBySearchValue: (val: string) =>
+    ipcRenderer.invoke('api:getLibrarysBySearchValue', val),
 };
 
 contextBridge.exposeInMainWorld('api', apiHandler);
