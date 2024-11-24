@@ -47,7 +47,7 @@ export class Game {
   reviews: Review[];
 
   @OneToMany(() => Library, (library) => library.game)
-  librarys: Library[];
+  libraries: Library[];
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.game)
   cartItems: CartItem[];

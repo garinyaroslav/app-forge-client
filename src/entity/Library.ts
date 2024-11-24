@@ -22,11 +22,11 @@ export class Library {
   @Column('bigint')
   addedDate: number;
 
-  @ManyToOne(() => Game, (game) => game.librarys)
+  @ManyToOne(() => Game, (game) => game.libraries)
   @JoinColumn({ name: 'gameId' })
   game: Game;
 
-  @ManyToOne(() => Consumer, (consumer) => consumer.librarys)
+  @ManyToOne(() => Consumer, (consumer) => consumer.libraries)
   @JoinColumn({ name: 'consumerId' })
   consumer: Consumer;
 }

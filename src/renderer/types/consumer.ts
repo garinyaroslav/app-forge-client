@@ -5,7 +5,7 @@ export interface IConsumer {
   passwordHash: string;
   firstName: string;
   lastName: string;
-  regDate: string;
+  regDate: number;
 }
 
 export type TConsumer =

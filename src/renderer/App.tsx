@@ -7,6 +7,7 @@ import { Games } from './pages/Games';
 import { GameGenres } from './pages/GameGenres';
 import { Consumers } from './pages/Consumers';
 import { Reviews } from './pages/Reviews';
+import { Libraries } from './pages/Libraries';
 
 export const App = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export const App = () => {
         navigate('cartItems');
         break;
       case v.library:
-        navigate('librarys');
+        navigate('libraries');
         break;
       case v.gemeGenres:
         navigate('gameGenres');
@@ -51,7 +52,7 @@ export const App = () => {
         <Route path="consumers" element={<Consumers />} />
         <Route path="carts" element={<Box>4</Box>} />
         <Route path="cartItems" element={<Box>5</Box>} />
-        <Route path="librarys" element={<Box>6</Box>} />
+        <Route path="libraries" element={<Libraries />} />
         <Route path="gameGenres" element={<GameGenres />} />
       </Route>
     </Routes>

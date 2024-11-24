@@ -30,13 +30,13 @@ export class Consumer {
   lastName: string;
 
   @Column('bigint')
-  regDate: string;
+  regDate: number;
 
   @OneToMany(() => Review, (review) => review.consumer)
   reviews: Review[];
 
   @OneToMany(() => Library, (library) => library.consumer)
-  librarys: Review[];
+  libraries: Review[];
 
   @OneToOne(() => Cart, (cart) => cart.consumer)
   cart: Cart;

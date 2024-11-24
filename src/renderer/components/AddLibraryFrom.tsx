@@ -2,59 +2,49 @@ import { FC } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
 import { Toaster, toaster } from './ui/toaster';
-import { IConsumer, TConsumer } from '../types/consumer';
+import { ILibrary, TLibrary } from '../types/library';
 import { USADateToUnix } from '../utils/USADateToUnix';
 
-interface AddConsumerFormProps {
-  getConsumersAndWriteToState: () => void;
+interface AddLibraryFormProps {
+  getLibrariesAndWriteToState: () => void;
 }
 
-const fields = [
-  'username',
-  'email',
-  'passwordHash',
-  'firstName',
-  'lastName',
-  'regDate',
-];
+const fields = ['gameId', 'consumerId', 'addedDate'];
 
-export const AddConsumerForm: FC<AddConsumerFormProps> = ({
-  getConsumersAndWriteToState,
+export const AddLibraryForm: FC<AddLibraryFormProps> = ({
+  getLibrariesAndWriteToState,
 }) => {
-  const { register, handleSubmit, reset } = useForm<IConsumer>();
+  const { register, handleSubmit, reset } = useForm<ILibrary>();
 
-  const onSubmit: SubmitHandler<IConsumer> = async (data) => {
-    const res = await window.api.addConsumer({
-      username: data.username,
-      email: data.email,
-      passwordHash: data.passwordHash,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      regDate: USADateToUnix(String(data.regDate)),
+  const onSubmit: SubmitHandler<ILibrary> = async (data) => {
+    const res = await window.api.addLibrary({
+      gameId: Number(data.gameId),
+      consumerId: Number(data.consumerId),
+      addedDate: USADateToUnix(String(data.addedDate)),
     });
 
     if (res) {
       toaster.create({
-        description: 'Пользователь успешно добавлен',
+        description: 'Библиотека успешно добалена',
         type: 'success',
       });
     } else {
       toaster.create({
-        description: 'Пользователь не добавлен',
+        description: 'Библиотека не добавлена',
         type: 'error',
       });
     }
 
     reset();
-    getConsumersAndWriteToState();
+    getLibrariesAndWriteToState();
   };
 
   const renderFieldEntrail = (field: string) => {
-    if (field === 'regDate')
+    if (field === 'addedDate')
       return (
         <Input
           type="date"
-          {...register(field as TConsumer)}
+          {...register(field as TLibrary)}
           {...{
             variant: 'subtle',
             css: { width: 250 },
@@ -63,7 +53,7 @@ export const AddConsumerForm: FC<AddConsumerFormProps> = ({
       );
     return (
       <Input
-        {...register(field as TConsumer, { required: true })}
+        {...register(field as TLibrary, { required: true })}
         {...{
           variant: 'subtle',
           css: { width: 250 },

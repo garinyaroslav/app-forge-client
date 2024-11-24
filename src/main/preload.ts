@@ -45,15 +45,15 @@ const apiHandler = {
   getReviewsBySearchValue: (val: string) =>
     ipcRenderer.invoke('api:getReviewsBySearchValue', val),
 
-  getLibrarys: () => ipcRenderer.invoke('api:getLibrarys'),
+  getLibraries: () => ipcRenderer.invoke('api:getLibraries'),
   getLibrary: (libId: number) => ipcRenderer.invoke('api:getLibrary', libId),
   deleteLibrary: (libId: number) =>
     ipcRenderer.invoke('api:deleteLibrary', libId),
   addLibrary: (lib: ILibrary) => ipcRenderer.invoke('api:addLibrary', lib),
   updateLibrary: (consumer: ILibrary) =>
     ipcRenderer.invoke('api:updateLibrary', consumer),
-  getLibrarysBySearchValue: (val: string) =>
-    ipcRenderer.invoke('api:getLibrarysBySearchValue', val),
+  getLibrariesBySearchValue: (val: string) =>
+    ipcRenderer.invoke('api:getLibrariesBySearchValue', val),
 };
 
 contextBridge.exposeInMainWorld('api', apiHandler);

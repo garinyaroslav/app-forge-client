@@ -10,7 +10,7 @@ export interface IGame {
   relDate: number;
   image: Uint8Array;
   reviews: undefined;
-  librarys: undefined;
+  libraries: undefined;
   cartItems: undefined;
   gameGeneres: undefined;
 }

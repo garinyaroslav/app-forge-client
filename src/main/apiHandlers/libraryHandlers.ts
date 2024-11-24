@@ -3,15 +3,15 @@ import { dataSource as ds } from '../db';
 import { Library } from '../../entity/Library';
 import { ILibrary } from '../../renderer/types/library';
 
-ipcMain.handle('api:getLibrarys', async () => {
+ipcMain.handle('api:getLibraries', async () => {
   try {
-    const librarys = await ds
+    const libraries = await ds
       .createQueryBuilder()
       .select('Library')
       .from(Library, 'Library')
       .orderBy('Library.id', 'ASC')
       .getMany();
-    return librarys;
+    return libraries;
   } catch (error) {
     console.error(error);
     return false;
@@ -75,19 +75,22 @@ ipcMain.handle('api:updateLibrary', async (_, newLibrary: ILibrary) => {
   }
 });
 
-ipcMain.handle('api:getLibrarysBySearchValue', async (_, searchVal: string) => {
-  try {
-    const librarys = await ds
-      .createQueryBuilder()
-      .select('Library')
-      .from(Library, 'Library')
-      .where('CAST(Library.id AS TEXT) LIKE :search', {
-        search: `%${searchVal}%`,
-      })
-      .getMany();
-    return librarys;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-});
+ipcMain.handle(
+  'api:getLibrariesBySearchValue',
+  async (_, searchVal: string) => {
+    try {
+      const libraries = await ds
+        .createQueryBuilder()
+        .select('Library')
+        .from(Library, 'Library')
+        .where('CAST(Library.id AS TEXT) LIKE :search', {
+          search: `%${searchVal}%`,
+        })
+        .getMany();
+      return libraries;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+);

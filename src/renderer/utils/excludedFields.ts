@@ -1,5 +1,5 @@
 export const excludedFields = [
-  'librarys',
+  'libraries',
   'cartItems',
   'image',
   'reviews',

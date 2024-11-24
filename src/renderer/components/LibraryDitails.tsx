@@ -3,62 +3,59 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
 import { excludedFields } from '../utils/excludedFields';
 import { toaster } from './ui/toaster';
-import { IConsumer, TConsumer } from '../types/consumer';
+import { ILibrary, TLibrary } from '../types/library';
 import { unixToUSATime } from '../utils/unixToUSADate';
 import { USADateToUnix } from '../utils/USADateToUnix';
 
-interface ConsumerDitailsProps {
-  consumerId: number;
-  getConsumersAndWriteToState: () => void;
+interface LibraryDitailsProps {
+  libraryId: number;
+  getLibrariesAndWriteToState: () => void;
 }
 
-export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
-  consumerId,
-  getConsumersAndWriteToState,
+export const LibraryDitails: FC<LibraryDitailsProps> = ({
+  libraryId,
+  getLibrariesAndWriteToState,
 }) => {
-  const [consumer, setConsumer] = useState<null | IConsumer>(null);
+  const [library, setLibrary] = useState<null | ILibrary>(null);
   const [isEdited, setIsEdited] = useState(false);
   const [defaultDate, setDefaultDate] = useState<null | string>(null);
-  const { register, handleSubmit, reset } = useForm<IConsumer>({
+  const { register, handleSubmit, reset } = useForm<ILibrary>({
     values: {
-      ...consumer,
-      regDate: defaultDate as unknown as number,
-    } as IConsumer,
+      ...library,
+      addedDate: defaultDate as unknown as number,
+    } as ILibrary,
   });
 
-  const getConsumer = async () => {
-    const data = await window.api.getConsumer(consumerId).catch(console.error);
+  const getLibrary = async () => {
+    const data = await window.api.getLibrary(libraryId).catch(console.error);
 
-    setDefaultDate(unixToUSATime(data[0].regDate));
-    setConsumer(data[0]);
+    setDefaultDate(unixToUSATime(data[0].addedDate));
+    setLibrary(data[0]);
   };
 
   const onCancel = async () => {
     await reset();
-    getConsumer();
-    getConsumersAndWriteToState();
+    getLibrary();
+    getLibrariesAndWriteToState();
     setIsEdited(false);
   };
 
-  const onSubmit: SubmitHandler<IConsumer> = async (data) => {
-    const res = await window.api.updateConsumer({
+  const onSubmit: SubmitHandler<ILibrary> = async (data) => {
+    const res = await window.api.updateLibrary({
       id: Number(data.id),
-      username: data.username,
-      email: data.email,
-      passwordHash: data.passwordHash,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      regDate: USADateToUnix(String(data.regDate)),
+      gameId: Number(data.gameId),
+      consumerId: Number(data.consumerId),
+      addedDate: USADateToUnix(String(data.addedDate)),
     });
 
     if (res) {
       toaster.create({
-        description: 'Пользователь успешно обновлён',
+        description: 'Бибилотека успешно обновлена',
         type: 'success',
       });
     } else {
       toaster.create({
-        description: 'Пользователь не был обновлён',
+        description: 'Библиотека не обновлена',
         type: 'error',
       });
     }
@@ -66,11 +63,11 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
   };
 
   const renderFieldEntrail = (field: string) => {
-    if (field === 'regDate')
+    if (field === 'addedDate')
       return (
         <Input
           type="date"
-          {...register(field as TConsumer)}
+          {...register(field as TLibrary)}
           {...{
             variant: 'subtle',
             disabled: !isEdited,
@@ -80,7 +77,7 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
       );
     return (
       <Input
-        {...register(field as TConsumer)}
+        {...register(field as TLibrary)}
         {...{
           variant: 'subtle',
           disabled: !isEdited || field === 'id',
@@ -91,10 +88,10 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
   };
 
   useEffect(() => {
-    getConsumer();
-  }, [consumerId]);
+    getLibrary();
+  }, [libraryId]);
 
-  if (consumer)
+  if (library)
     return (
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -102,7 +99,7 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
       >
         <Flex direction={'column'} gap={5}>
           <Heading css={{ mb: 5 }}>Свойства</Heading>
-          {Object.keys(consumer)
+          {Object.keys(library)
             .filter((fieldName) => !excludedFields.includes(fieldName))
             .map((field) => (
               <Flex
