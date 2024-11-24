@@ -5,6 +5,7 @@ import { mainTabValues as v } from './types/mainTabValues';
 import { AppLayout } from './pages/AppLayout';
 import { Games } from './pages/Games';
 import { GameGenres } from './pages/GameGenres';
+import { Consumers } from './pages/Consumers';
 
 export const App = () => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ export const App = () => {
       >
         <Route path="games" element={<Games />} />
         <Route path="reviews" element={<Box>2</Box>} />
-        <Route path="consumers" element={<Box>3</Box>} />
+        <Route path="consumers" element={<Consumers />} />
         <Route path="carts" element={<Box>4</Box>} />
         <Route path="cartItems" element={<Box>5</Box>} />
         <Route path="librarys" element={<Box>6</Box>} />

@@ -18,6 +18,7 @@ import { resolveHtmlPath } from './util';
 import 'reflect-metadata';
 import './apiHandlers/gameHandlers';
 import './apiHandlers/genreHandlers';
+import './apiHandlers/consumerHandlers';
 
 class AppUpdater {
   constructor() {

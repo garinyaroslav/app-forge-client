@@ -42,8 +42,6 @@ export const GameDitails: FC<GameDitaildProps> = ({
     } as unknown as IGameForm,
   });
 
-  // console.log(defaultDate);
-
   const getGame = async () => {
     const data = await window.api.getGame(gameId).catch(console.error);
 

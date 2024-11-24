@@ -1,55 +1,64 @@
 import { FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
-import { IGame } from '../types/game';
 import { excludedFields } from '../utils/excludedFields';
 import { toaster } from './ui/toaster';
-import { IGenre, TGenre } from '../types/genre';
+import { IConsumer, TConsumer } from '../types/consumer';
+import { unixToUSATime } from '../utils/unixToUSADate';
+import { USADateToUnix } from '../utils/USADateToUnix';
 
-interface GenreDitailsProps {
-  genreId: number;
-  getGenresAndWriteToState: () => void;
+interface ConsumerDitailsProps {
+  consumerId: number;
+  getConsumersAndWriteToState: () => void;
 }
 
-export const GenreDitails: FC<GenreDitailsProps> = ({
-  genreId,
-  getGenresAndWriteToState,
+export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
+  consumerId,
+  getConsumersAndWriteToState,
 }) => {
-  const [genre, setGenre] = useState<null | IGame>(null);
+  const [consumer, setConsumer] = useState<null | IConsumer>(null);
   const [isEdited, setIsEdited] = useState(false);
-  const { register, handleSubmit, reset } = useForm<IGenre>({
+  const [defaultDate, setDefaultDate] = useState<null | string>(null);
+  const { register, handleSubmit, reset } = useForm<IConsumer>({
     values: {
-      ...genre,
-    } as IGenre,
+      ...consumer,
+      regDate: defaultDate,
+    } as IConsumer,
   });
 
-  const getGenre = async () => {
-    const data = await window.api.getGenre(genreId).catch(console.error);
+  const getConsumer = async () => {
+    const data = await window.api.getConsumer(consumerId).catch(console.error);
 
-    setGenre(data[0]);
+    setDefaultDate(unixToUSATime(data[0].regDate));
+    setConsumer(data[0]);
   };
 
   const onCancel = async () => {
     await reset();
-    getGenre();
-    getGenresAndWriteToState();
+    getConsumer();
+    getConsumersAndWriteToState();
     setIsEdited(false);
   };
 
-  const onSubmit: SubmitHandler<IGenre> = async (data) => {
-    const res = await window.api.updateGenre({
+  const onSubmit: SubmitHandler<IConsumer> = async (data) => {
+    const res = await window.api.updateConsumer({
       id: Number(data.id),
-      genreName: data.genreName,
+      username: data.username,
+      email: data.email,
+      passwordHash: data.passwordHash,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      regDate: USADateToUnix(data.regDate),
     });
 
     if (res) {
       toaster.create({
-        description: 'Жанр успешно обновлён',
+        description: 'Пользователь успешно обновлён',
         type: 'success',
       });
     } else {
       toaster.create({
-        description: 'Жанр не был обновлён',
+        description: 'Пользователь не был обновлён',
         type: 'error',
       });
     }
@@ -57,9 +66,21 @@ export const GenreDitails: FC<GenreDitailsProps> = ({
   };
 
   const renderFieldEntrail = (field: string) => {
+    if (field === 'regDate')
+      return (
+        <Input
+          type="date"
+          {...register(field as TConsumer)}
+          {...{
+            variant: 'subtle',
+            disabled: !isEdited,
+            css: { width: 250 },
+          }}
+        />
+      );
     return (
       <Input
-        {...register(field as TGenre)}
+        {...register(field as TConsumer)}
         {...{
           variant: 'subtle',
           disabled: !isEdited || field === 'id',
@@ -70,10 +91,10 @@ export const GenreDitails: FC<GenreDitailsProps> = ({
   };
 
   useEffect(() => {
-    getGenre();
-  }, [genreId]);
+    getConsumer();
+  }, [consumerId]);
 
-  if (genre)
+  if (consumer)
     return (
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -81,7 +102,7 @@ export const GenreDitails: FC<GenreDitailsProps> = ({
       >
         <Flex direction={'column'} gap={5}>
           <Heading css={{ mb: 5 }}>Свойства</Heading>
-          {Object.keys(genre)
+          {Object.keys(consumer)
             .filter((fieldName) => !excludedFields.includes(fieldName))
             .map((field) => (
               <Flex

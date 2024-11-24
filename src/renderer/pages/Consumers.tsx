@@ -10,61 +10,65 @@ import {
 } from '@chakra-ui/react';
 import { Toaster, toaster } from '../components/ui/toaster';
 import { EmptyState } from '../components/EmpatyState';
-import { IGenre } from '../types/genre';
 
 import PlusSvg from '../assets/plus.svg';
 import SearchSvg from '../assets/search.svg';
 import RemoveSvg from '../assets/remove.svg';
 import { scrollBarStyles } from '../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
-import { GenreDitails } from '../components/GenreDitails';
-import { AddGenreForm } from '../components/AddGenreForm';
+import { IConsumer } from '../types/consumer';
+import { ConsumerDitails } from '../components/ConsumerDitails';
+import { AddConsumerForm } from '../components/AddConsumerForm';
 
-export const GameGenres = () => {
-  const [genres, setGenres] = useState<IGenre[]>([]);
-  const [selectedGenreId, setSelectedGenreId] = useState<null | number>(null);
-  const [deletedGenreId, setDeletedGenreId] = useState<null | number>(null);
-  const [isGenreAdded, setGenreIsAdded] = useState(false);
+export const Consumers = () => {
+  const [consumers, setConsumers] = useState<IConsumer[]>([]);
+  const [selectedConsumerId, setSelectedConsumerId] = useState<null | number>(
+    null,
+  );
+  const [deletedConsumerId, setDeletedConsumerId] = useState<null | number>(
+    null,
+  );
+  const [isConsumerAdded, setConsumerIsAdded] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
-  const getGenresAndWriteToState = async () => {
-    const g = await window.api.getGenres().catch(console.error);
-    setGenres(g);
+  const getConsumersAndWriteToState = async () => {
+    const g = await window.api.getConsumers().catch(console.error);
+    setConsumers(g);
   };
 
   const search = async (searchVal: string) => {
     const g = await window.api
-      .getGenresBySearchValue(searchVal)
+      .getConsumersBySearchValue(searchVal)
       .catch(console.error);
-    setGenres(g);
+    setConsumers(g);
   };
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    if (val.length === 0) getGenresAndWriteToState();
+    if (val.length === 0) getConsumersAndWriteToState();
     setSearchValue(val);
   };
 
   useEffect(() => {
-    getGenresAndWriteToState();
-  }, [deletedGenreId]);
+    getConsumersAndWriteToState();
+  }, [deletedConsumerId]);
 
-  const deleteGame = async () => {
-    await window.api.deleteGenre(deletedGenreId);
-    setDeletedGenreId(null);
+  const deleteConsumer = async () => {
+    await window.api.deleteConsumer(deletedConsumerId);
+    setDeletedConsumerId(null);
     toaster.create({
-      description: 'Жанр успешно удалён',
+      description: 'Пользователь успешно удалён',
       type: 'success',
     });
   };
 
-  const renderGenres = (genreElems: IGenre[]) =>
-    genreElems.map((genreElem) => (
+  const renderConsumers = (consumerElems: IConsumer[]) =>
+    consumerElems.map((consumerElem) => (
       <Flex
         alignItems={'center'}
         justifyContent={'space-between'}
-        onClick={() => setSelectedGenreId(genreElem.id)}
-        key={genreElem.id}
+        onClick={() => setSelectedConsumerId(consumerElem.id)}
+        key={consumerElem.id}
         css={{
           pl: 6,
           pr: 4.5,
@@ -76,11 +80,11 @@ export const GameGenres = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${genreElem.id}. ${genreElem.genreName}`}</Text>
+        <Text>{`${consumerElem.id}. ${consumerElem.username}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',
-            onClick: () => setDeletedGenreId(genreElem.id),
+            onClick: () => setDeletedConsumerId(consumerElem.id),
           }}
         >
           <img style={{ height: 16 }} src={RemoveSvg} alt={'remove'} />
@@ -89,27 +93,29 @@ export const GameGenres = () => {
     ));
 
   const renderEntrails = () => {
-    if (selectedGenreId)
+    if (selectedConsumerId)
       return (
-        <GenreDitails
-          genreId={selectedGenreId}
-          getGenresAndWriteToState={getGenresAndWriteToState}
+        <ConsumerDitails
+          consumerId={selectedConsumerId}
+          getConsumersAndWriteToState={getConsumersAndWriteToState}
         />
       );
-    if (isGenreAdded)
+    if (isConsumerAdded)
       return (
-        <AddGenreForm getGenresAndWriteToState={getGenresAndWriteToState} />
+        <AddConsumerForm
+          getConsumersAndWriteToState={getConsumersAndWriteToState}
+        />
       );
     return <EmptyState />;
   };
 
   return (
     <>
-      {deletedGenreId && (
+      {deletedConsumerId && (
         <DeleteConditionModal
-          open={Boolean(deletedGenreId)}
-          onClose={() => setDeletedGenreId(null)}
-          onSubmit={deleteGame}
+          open={Boolean(deletedConsumerId)}
+          onClose={() => setDeletedConsumerId(null)}
+          onSubmit={deleteConsumer}
         />
       )}
       <Toaster />
@@ -138,12 +144,12 @@ export const GameGenres = () => {
               alignItems={'center'}
               mb={8}
             >
-              <Heading>Список жанров игр</Heading>
+              <Heading>Список пользователей</Heading>
               <IconButton
                 {...{
                   onClick: () => {
-                    setSelectedGenreId(null);
-                    setGenreIsAdded(true);
+                    setSelectedConsumerId(null);
+                    setConsumerIsAdded(true);
                   },
                   variant: 'surface',
                 }}
@@ -157,7 +163,7 @@ export const GameGenres = () => {
                   value: searchValue,
                   onChange: onChangeSearchValue,
                   variant: 'outline',
-                  placeholder: 'Поиск жанров',
+                  placeholder: 'Поиск пользователей',
                   onKeyDown: (e) => {
                     if (e.key === 'Enter') search(searchValue);
                   },
@@ -170,7 +176,7 @@ export const GameGenres = () => {
               </IconButton>
             </Group>
           </Flex>
-          <Box css={scrollBarStyles}>{renderGenres(genres)}</Box>
+          <Box css={scrollBarStyles}>{renderConsumers(consumers)}</Box>
         </Flex>
         <Box css={{ flex: 1 }}>{renderEntrails()}</Box>
       </Flex>

@@ -60,3 +60,35 @@ ipcMain.handle('api:deleteGenre', async (_, genreId: number) => {
     return false;
   }
 });
+
+ipcMain.handle('api:updateGenre', async (_, newGenre: IGenre) => {
+  try {
+    return await ds
+      .createQueryBuilder()
+      .update(GameGenre)
+      .set(newGenre)
+      .where('id = :id', { id: newGenre.id })
+      .execute();
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+});
+
+ipcMain.handle('api:getGenresBySearchValue', async (_, searchVal: string) => {
+  try {
+    const games = await ds
+      .createQueryBuilder()
+      .select('GameGenre')
+      .from(GameGenre, 'GameGenre')
+      .where('GameGenre.genreName ILIKE :search', { search: `%${searchVal}%` })
+      .orWhere('CAST(GameGenre.id AS TEXT) LIKE :search', {
+        search: `%${searchVal}%`,
+      })
+      .getMany();
+    return games;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+});

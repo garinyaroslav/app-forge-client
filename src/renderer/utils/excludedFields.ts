@@ -5,4 +5,5 @@ export const excludedFields = [
   'reviews',
   'games',
   'gameGenres',
+  'cart',
 ];

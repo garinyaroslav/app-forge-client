@@ -30,7 +30,7 @@ export class Consumer {
   lastName: string;
 
   @Column('bigint')
-  relDate: string;
+  regDate: string;
 
   @OneToMany(() => Review, (review) => review.consumer)
   reviews: Review[];
@@ -38,6 +38,6 @@ export class Consumer {
   @OneToMany(() => Library, (library) => library.consumer)
   librarys: Review[];
 
-  @OneToOne(() => Cart, (cart) => cart.consumer) // specify inverse side as a second parameter
+  @OneToOne(() => Cart, (cart) => cart.consumer)
   cart: Cart;
 }
