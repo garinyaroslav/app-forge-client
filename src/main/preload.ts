@@ -6,6 +6,8 @@ import { IGenre } from '../renderer/types/genre';
 import { IConsumer } from '../renderer/types/consumer';
 import { IReview } from '../renderer/types/review';
 import { ILibrary } from '../renderer/types/library';
+import { ICart } from '../renderer/types/cart';
+import { ICartItem } from '../renderer/types/cartItem';
 
 const apiHandler = {
   getGames: () => ipcRenderer.invoke('api:getGames'),
@@ -40,8 +42,8 @@ const apiHandler = {
   deleteReview: (rewId: number) =>
     ipcRenderer.invoke('api:deleteReview', rewId),
   addReview: (rew: IReview) => ipcRenderer.invoke('api:addReview', rew),
-  updateReview: (consumer: IReview) =>
-    ipcRenderer.invoke('api:updateReview', consumer),
+  updateReview: (review: IReview) =>
+    ipcRenderer.invoke('api:updateReview', review),
   getReviewsBySearchValue: (val: string) =>
     ipcRenderer.invoke('api:getReviewsBySearchValue', val),
 
@@ -50,10 +52,30 @@ const apiHandler = {
   deleteLibrary: (libId: number) =>
     ipcRenderer.invoke('api:deleteLibrary', libId),
   addLibrary: (lib: ILibrary) => ipcRenderer.invoke('api:addLibrary', lib),
-  updateLibrary: (consumer: ILibrary) =>
-    ipcRenderer.invoke('api:updateLibrary', consumer),
+  updateLibrary: (lib: ILibrary) =>
+    ipcRenderer.invoke('api:updateLibrary', lib),
   getLibrariesBySearchValue: (val: string) =>
     ipcRenderer.invoke('api:getLibrariesBySearchValue', val),
+
+  getCarts: () => ipcRenderer.invoke('api:getCarts'),
+  getCart: (cartId: number) => ipcRenderer.invoke('api:getCart', cartId),
+  deleteCart: (cartId: number) => ipcRenderer.invoke('api:deleteCart', cartId),
+  addCart: (cart: ICart) => ipcRenderer.invoke('api:addCart', cart),
+  updateCart: (cart: ICart) => ipcRenderer.invoke('api:updateCart', cart),
+  getCartsBySearchValue: (val: string) =>
+    ipcRenderer.invoke('api:getCartsBySearchValue', val),
+
+  getCartItems: () => ipcRenderer.invoke('api:getCartItems'),
+  getCartItem: (cartItemId: number) =>
+    ipcRenderer.invoke('api:getCartItem', cartItemId),
+  deleteCartItem: (cartItemId: number) =>
+    ipcRenderer.invoke('api:deleteCartItem', cartItemId),
+  addCartItem: (cartItem: ICartItem) =>
+    ipcRenderer.invoke('api:addCartItem', cartItem),
+  updateCartItem: (cartItem: ICartItem) =>
+    ipcRenderer.invoke('api:updateCartItem', cartItem),
+  getCartItemsBySearchValue: (val: string) =>
+    ipcRenderer.invoke('api:getCartItemsBySearchValue', val),
 };
 
 contextBridge.exposeInMainWorld('api', apiHandler);
