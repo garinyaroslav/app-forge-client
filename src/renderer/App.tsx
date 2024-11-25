@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import { Box } from '@chakra-ui/react';
 import { mainTabValues as v } from './types/mainTabValues';
 import { AppLayout } from './pages/AppLayout';
 import { Games } from './pages/Games';
@@ -8,6 +7,8 @@ import { GameGenres } from './pages/GameGenres';
 import { Consumers } from './pages/Consumers';
 import { Reviews } from './pages/Reviews';
 import { Libraries } from './pages/Libraries';
+import { Carts } from './pages/Carts';
+import { CartItems } from './pages/CartItems';
 
 export const App = () => {
   const navigate = useNavigate();
@@ -50,8 +51,8 @@ export const App = () => {
         <Route path="games" element={<Games />} />
         <Route path="reviews" element={<Reviews />} />
         <Route path="consumers" element={<Consumers />} />
-        <Route path="carts" element={<Box>4</Box>} />
-        <Route path="cartItems" element={<Box>5</Box>} />
+        <Route path="carts" element={<Carts />} />
+        <Route path="cartItems" element={<CartItems />} />
         <Route path="libraries" element={<Libraries />} />
         <Route path="gameGenres" element={<GameGenres />} />
       </Route>

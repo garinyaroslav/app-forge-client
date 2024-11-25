@@ -22,6 +22,7 @@ import './apiHandlers/consumerHandlers';
 import './apiHandlers/reviewHandlers';
 import './apiHandlers/libraryHandlers';
 import './apiHandlers/cartHandlers';
+import './apiHandlers/cartItemHandlers';
 
 class AppUpdater {
   constructor() {

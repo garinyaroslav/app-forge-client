@@ -4,4 +4,4 @@ export interface ICartItem {
   gameId: number;
 }
 
-export type TCart = 'id' | 'cartId' | 'gameId';
+export type TCartItem = 'id' | 'cartId' | 'gameId';
