@@ -6,6 +6,7 @@ export interface IConsumer {
   firstName: string;
   lastName: string;
   regDate: number;
+  isAdmin: boolean;
 }
 
 export type TConsumer =
@@ -15,4 +16,5 @@ export type TConsumer =
   | 'passwordHash'
   | 'firstName'
   | 'lastName'
-  | 'regDate';
+  | 'regDate'
+  | 'isAdmin';

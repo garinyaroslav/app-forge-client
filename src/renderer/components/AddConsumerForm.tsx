@@ -16,6 +16,7 @@ const fields = [
   'firstName',
   'lastName',
   'regDate',
+  'isAdmin',
 ];
 
 export const AddConsumerForm: FC<AddConsumerFormProps> = ({
@@ -31,6 +32,7 @@ export const AddConsumerForm: FC<AddConsumerFormProps> = ({
       firstName: data.firstName,
       lastName: data.lastName,
       regDate: USADateToUnix(String(data.regDate)),
+      isAdmin: Boolean(data.isAdmin),
     });
 
     if (res) {
@@ -50,12 +52,19 @@ export const AddConsumerForm: FC<AddConsumerFormProps> = ({
   };
 
   const renderFieldEntrail = (field: string) => {
+    if (field === 'isAdmin') {
+      return (
+        <Flex css={{ width: 250 }}>
+          <input type="checkbox" {...register(field as TConsumer)} />
+        </Flex>
+      );
+    }
     if (field === 'regDate')
       return (
         <Input
-          type="date"
           {...register(field as TConsumer)}
           {...{
+            type: 'date',
             variant: 'subtle',
             css: { width: 250 },
           }}

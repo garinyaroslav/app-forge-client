@@ -32,6 +32,9 @@ export class Consumer {
   @Column('bigint')
   regDate: number;
 
+  @Column('boolean')
+  isAdmin: boolean;
+
   @OneToMany(() => Review, (review) => review.consumer)
   reviews: Review[];
 

@@ -1,9 +1,9 @@
 export enum mainTabValues {
-  games = 'GAMES',
-  review = 'REVIEW',
-  consumers = 'CONSUMERS',
-  carts = 'CARTS',
-  cartItems = 'CART_ITEMS',
-  library = 'LIBRARY',
-  gemeGenres = 'GAME_GENRES',
+  games = 'games',
+  reviews = 'reviews',
+  consumers = 'consumers',
+  carts = 'carts',
+  cartItems = 'cartItems',
+  librarys = 'libraries',
+  gemeGenres = 'gameGenres',
 }

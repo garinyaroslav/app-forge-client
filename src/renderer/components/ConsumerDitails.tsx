@@ -48,6 +48,7 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
       passwordHash: data.passwordHash,
       firstName: data.firstName,
       lastName: data.lastName,
+      isAdmin: Boolean(data.isAdmin),
       regDate: USADateToUnix(String(data.regDate)),
     });
 
@@ -66,6 +67,17 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
   };
 
   const renderFieldEntrail = (field: string) => {
+    if (field === 'isAdmin') {
+      return (
+        <Flex css={{ width: 250 }}>
+          <input
+            disabled={!isEdited}
+            type="checkbox"
+            {...register(field as TConsumer)}
+          />
+        </Flex>
+      );
+    }
     if (field === 'regDate')
       return (
         <Input

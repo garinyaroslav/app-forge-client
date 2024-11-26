@@ -139,7 +139,7 @@ export const CartItems = () => {
               alignItems={'center'}
               mb={8}
             >
-              <Heading>Список элементов корзин пользователей</Heading>
+              <Heading>Список элементов корзин</Heading>
               <IconButton
                 {...{
                   onClick: () => {
