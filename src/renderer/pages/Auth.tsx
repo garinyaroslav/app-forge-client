@@ -1,6 +1,18 @@
-import { Box, Button, TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  TabsList,
+  TabsRoot,
+  TabsTrigger,
+} from '@chakra-ui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { Login } from '../components/Login';
+import { Register } from '../components/Register';
+
+import logo from '../assets/playforge.svg';
 
 export const Auth = () => {
   const [tabVal, setTabVal] = useState('login');
@@ -10,20 +22,26 @@ export const Auth = () => {
     <Box>
       <Button onClick={() => nav('admin/games')}>admin</Button>
       <Button onClick={() => nav('user')}>user</Button>
-      <Box css={{ w: '500px', m: '100px auto' }}>
+      <Flex
+        align={'center'}
+        direction={'column'}
+        css={{ w: '500px', m: '0 auto' }}
+      >
+        <img style={{ height: 150, marginBottom: 80 }} src={logo} alt="logo" />
         <TabsRoot
-          // css={{ border: '1px solid #2f3b43', pl: 2, py: 2 }}
-          variant={'outline'}
+          css={{ border: 'none' }}
           justify={'center'}
           value={tabVal}
           onValueChange={(e: any) => setTabVal(e.value)}
         >
-          <TabsList>
+          <TabsList {...{ borderBottom: 'none', css: { mb: '50px' } }}>
             <TabsTrigger {...{ value: 'login' }}>Войти</TabsTrigger>
             <TabsTrigger {...{ value: 'register' }}>Регистрация</TabsTrigger>
           </TabsList>
         </TabsRoot>
-      </Box>
+        {tabVal === 'login' && <Login />}
+        {tabVal === 'register' && <Register />}
+      </Flex>
     </Box>
   );
 };

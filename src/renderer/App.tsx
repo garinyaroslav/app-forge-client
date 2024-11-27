@@ -9,6 +9,7 @@ import { Carts } from './pages/Carts';
 import { CartItems } from './pages/CartItems';
 import { Auth } from './pages/Auth';
 import { RootLayout } from './pages/RootLayout';
+import { Store } from './pages/Store';
 
 export const App = () => {
   return (
@@ -24,7 +25,7 @@ export const App = () => {
           <Route path="libraries" element={<Libraries />} />
           <Route path="gameGenres" element={<GameGenres />} />
         </Route>
-        <Route path="/user" />
+        <Route path="/user" element={<Store />} />
       </Route>
     </Routes>
   );
