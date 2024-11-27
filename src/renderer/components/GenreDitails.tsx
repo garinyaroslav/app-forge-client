@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
 import { IGame } from '../types/game';
-import { excludedFields } from '../utils/excludedFields';
+import { excludedFields } from '../../utils/excludedFields';
 import { toaster } from './ui/toaster';
 import { IGenre, TGenre } from '../types/genre';
 

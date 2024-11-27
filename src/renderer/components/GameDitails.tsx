@@ -12,12 +12,12 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { IGame } from '../types/game';
-import { excludedFields } from '../utils/excludedFields';
+import { excludedFields } from '../../utils/excludedFields';
 import { IGameForm, TGameForm } from '../types/gameForm';
-import { scrollBarStyles } from '../utils/scrollBarStyles';
+import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { toaster } from './ui/toaster';
-import { unixToUSATime } from '../utils/unixToUSADate';
-import { USADateToUnix } from '../utils/USADateToUnix';
+import { unixToUSATime } from '../../utils/unixToUSADate';
+import { USADateToUnix } from '../../utils/USADateToUnix';
 
 interface GameDitaildProps {
   gameId: number;

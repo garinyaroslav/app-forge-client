@@ -1,11 +1,11 @@
 import { FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
-import { excludedFields } from '../utils/excludedFields';
+import { excludedFields } from '../../utils/excludedFields';
 import { toaster } from './ui/toaster';
 import { IConsumer, TConsumer } from '../types/consumer';
-import { unixToUSATime } from '../utils/unixToUSADate';
-import { USADateToUnix } from '../utils/USADateToUnix';
+import { unixToUSATime } from '../../utils/unixToUSADate';
+import { USADateToUnix } from '../../utils/USADateToUnix';
 
 interface ConsumerDitailsProps {
   consumerId: number;

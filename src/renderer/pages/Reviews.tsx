@@ -15,7 +15,7 @@ import { IReview } from '../types/review';
 import PlusSvg from '../assets/plus.svg';
 import SearchSvg from '../assets/search.svg';
 import RemoveSvg from '../assets/remove.svg';
-import { scrollBarStyles } from '../utils/scrollBarStyles';
+import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
 import { ReviewDitails } from '../components/ReviewsDitails';
 import { AddReviewForm } from '../components/AddReviewForm';

@@ -3,7 +3,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
 import { Toaster, toaster } from './ui/toaster';
 import { IConsumer, TConsumer } from '../types/consumer';
-import { USADateToUnix } from '../utils/USADateToUnix';
+import { USADateToUnix } from '../../utils/USADateToUnix';
 
 interface AddConsumerFormProps {
   getConsumersAndWriteToState: () => void;

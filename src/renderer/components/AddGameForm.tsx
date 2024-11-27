@@ -12,9 +12,9 @@ import {
 } from '@chakra-ui/react';
 import { EmptyState } from './ui/empty-state';
 import { IGameForm, TGameForm } from '../types/gameForm';
-import { scrollBarStyles } from '../utils/scrollBarStyles';
+import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { Toaster, toaster } from './ui/toaster';
-import { USADateToUnix } from '../utils/USADateToUnix';
+import { USADateToUnix } from '../../utils/USADateToUnix';
 
 interface AddGameFormProps {
   getGamesAndWriteToState: () => void;

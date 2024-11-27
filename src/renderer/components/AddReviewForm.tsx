@@ -3,7 +3,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button, Textarea } from '@chakra-ui/react';
 import { Toaster, toaster } from './ui/toaster';
 import { IReview, TReview } from '../types/review';
-import { scrollBarStyles } from '../utils/scrollBarStyles';
+import { scrollBarStyles } from '../../utils/scrollBarStyles';
 
 interface AddReviewFormProps {
   getReviewsAndWriteToState: () => void;

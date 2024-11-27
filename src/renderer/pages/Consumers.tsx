@@ -14,7 +14,7 @@ import { EmptyState } from '../components/EmpatyState';
 import PlusSvg from '../assets/plus.svg';
 import SearchSvg from '../assets/search.svg';
 import RemoveSvg from '../assets/remove.svg';
-import { scrollBarStyles } from '../utils/scrollBarStyles';
+import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
 import { IConsumer } from '../types/consumer';
 import { ConsumerDitails } from '../components/ConsumerDitails';

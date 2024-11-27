@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
-import { excludedFields } from '../utils/excludedFields';
+import { excludedFields } from '../../utils/excludedFields';
 import { ICartItem, TCartItem } from '../types/cartItem';
 
 interface CartItemDitailsProps {
