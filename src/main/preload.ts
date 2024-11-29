@@ -8,7 +8,7 @@ import { IReview } from '../renderer/types/review';
 import { ILibrary } from '../renderer/types/library';
 import { ICart } from '../renderer/types/cart';
 import { ICartItem } from '../renderer/types/cartItem';
-import { ILoginForm } from '../renderer/types/auth';
+import { ILoginForm, IRegisterForm } from '../renderer/types/auth';
 
 const apiHandler = {
   getGames: () => ipcRenderer.invoke('api:getGames'),
@@ -79,13 +79,8 @@ const apiHandler = {
     ipcRenderer.invoke('api:getCartItemsBySearchValue', val),
 
   login: (formData: ILoginForm) => ipcRenderer.invoke('api:login', formData),
+  register: (formData: IRegisterForm) =>
+    ipcRenderer.invoke('api:register', formData),
 };
 
-// const cryptoHandler = {
-//   hash: (password: string) => ipcRenderer.invoke('crypto:hash', password),
-//   verify: (password: string, hash: string) =>
-//     ipcRenderer.invoke('crypto:verify', hash, password),
-// };
-
 contextBridge.exposeInMainWorld('api', apiHandler);
-// contextBridge.exposeInMainWorld('crypto', cryptoHandler);

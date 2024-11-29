@@ -3,6 +3,14 @@ export interface ILoginForm {
   password: string;
 }
 
+export interface IRegisterForm {
+  login: string;
+  password: string;
+  email: string;
+  fname: string;
+  lname: string;
+}
+
 export enum LoginRes {
   admin = 'ADMIN',
   user = 'USER',

@@ -1,41 +1,65 @@
 import { Button, Input } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 import { PasswordInput } from './ui/password-input';
-import { ILoginForm } from '../types/auth';
+import { ILoginForm, LoginRes } from '../types/auth';
 import { Field } from './ui/field';
 
 export const Login = () => {
+  const nav = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
+    resetField,
   } = useForm<ILoginForm>();
+
   const onSubmit = async (data: ILoginForm) => {
-    console.log(data);
+    const res = (await window.api.login(data)) as LoginRes;
+
+    switch (res) {
+      case LoginRes.user:
+        nav('/user');
+        break;
+      case LoginRes.admin:
+        nav('/admin/games');
+        break;
+      case LoginRes.notFound:
+        setError('login', { type: 'value' });
+        resetField('password');
+        break;
+      default:
+        break;
+    }
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}
+      style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}
     >
       <Field
         invalid={Boolean(errors.login)}
-        errorText="Введите имя пользователя"
+        errorText={
+          errors.login?.type === 'required'
+            ? 'Поле обезательно к заполнению'
+            : 'Неправильное имя пользователя или пароль'
+        }
       >
         <Input
-          {...register('login', { required: true })}
+          {...register('login', { required: 'Введите имя пользователя' })}
           variant={'subtle'}
           w={300}
           className="peer"
-          placeholder="E-mail"
+          placeholder="Login"
         />
       </Field>
       <Field
         mb={6}
         invalid={Boolean(errors.password)}
-        errorText="Введите пользователя"
+        errorText={'Поле обезательно к заполнению'}
       >
         <PasswordInput
           {...register('password', { required: true })}
