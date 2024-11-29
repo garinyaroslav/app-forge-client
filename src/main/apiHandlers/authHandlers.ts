@@ -15,7 +15,9 @@ ipcMain.handle('api:login', async (_, formData: ILoginForm) => {
         search: `%${formData.login}%`,
       })
       .getOne();
-    if (!user) return LoginRes.notFound;
+
+    const failObj = { status: LoginRes.notFound, uid: null };
+    if (!user) return failObj;
 
     const res = await verifyPassword(
       formData.password,
@@ -24,15 +26,15 @@ ipcMain.handle('api:login', async (_, formData: ILoginForm) => {
       saltRounds,
     );
 
-    if (!res) return LoginRes.notFound;
+    if (!res) return failObj;
 
     switch (user.isAdmin) {
       case true:
-        return LoginRes.admin;
+        return { status: LoginRes.admin, uid: user.id };
       case false:
-        return LoginRes.user;
+        return { status: LoginRes.user, uid: user.id };
       default:
-        return LoginRes.notFound;
+        return failObj;
     }
   } catch (error) {
     console.error(error);
@@ -64,8 +66,7 @@ ipcMain.handle('api:register', async (_, formData: IRegisterForm) => {
       .into(Consumer)
       .values({ ...newUser })
       .execute();
-    console.log(res);
-    return res;
+    return res.identifiers[0].id;
   } catch (error) {
     console.error(error);
     return false;

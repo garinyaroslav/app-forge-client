@@ -17,13 +17,18 @@ export const Login = () => {
   } = useForm<ILoginForm>();
 
   const onSubmit = async (data: ILoginForm) => {
-    const res = (await window.api.login(data)) as LoginRes;
+    const res = (await window.api.login(data)) as {
+      status: LoginRes;
+      uid: number | null;
+    };
 
-    switch (res) {
+    switch (res.status) {
       case LoginRes.user:
+        localStorage.setItem('uid', String(res.uid));
         nav('/user');
         break;
       case LoginRes.admin:
+        localStorage.setItem('uid', String(res.uid));
         nav('/admin/games');
         break;
       case LoginRes.notFound:

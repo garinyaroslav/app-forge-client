@@ -1,4 +1,5 @@
 import { Button, Input } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
 import { PasswordInput } from './ui/password-input';
@@ -6,18 +7,17 @@ import { IRegisterForm } from '../types/auth';
 import { Field } from './ui/field';
 
 export const Register = () => {
-  // const nav = useNavigate();
+  const nav = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
-    // setError,
-    // resetField,
   } = useForm<IRegisterForm>();
 
   const onSubmit = async (data: IRegisterForm) => {
     const res = await window.api.register(data);
-    console.log(res);
+    await localStorage.setItem('uid', String(res));
+    nav('/user');
   };
 
   return (
