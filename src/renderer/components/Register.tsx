@@ -17,7 +17,7 @@ export const Register = () => {
   const onSubmit = async (data: IRegisterForm) => {
     const res = await window.api.register(data);
     await localStorage.setItem('uid', String(res));
-    nav('/user');
+    nav('/user/shop');
   };
 
   return (

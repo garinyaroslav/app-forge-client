@@ -92,3 +92,19 @@ ipcMain.handle('api:getGamesBySearchValue', async (_, searchVal: string) => {
     return false;
   }
 });
+
+// SELECT game.*, genre."genreName" FROM "Game" AS game JOIN "GameGenre" AS genre ON genre.id = game."gameGenreId";
+ipcMain.handle('api:getGamesList', async () => {
+  try {
+    const gamesWithGenres = await ds
+      .getRepository(Game)
+      .createQueryBuilder('game')
+      .innerJoinAndSelect('game.gameGenres', 'genre')
+      .select(['game', 'genre.genreName'])
+      .getMany();
+    return gamesWithGenres;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+});

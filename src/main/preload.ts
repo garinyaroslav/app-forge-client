@@ -18,6 +18,7 @@ const apiHandler = {
   updateGame: (game: IGameReqObj) => ipcRenderer.invoke('api:updateGame', game),
   getGamesBySearchValue: (val: string) =>
     ipcRenderer.invoke('api:getGamesBySearchValue', val),
+  getGamesList: () => ipcRenderer.invoke('api:getGamesList'),
 
   getGenres: () => ipcRenderer.invoke('api:getGenres'),
   getGenre: (genreId: number) => ipcRenderer.invoke('api:getGenre', genreId),

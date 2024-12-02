@@ -9,7 +9,7 @@ import {
 import { Outlet, useNavigate } from 'react-router-dom';
 import { mainTabValues as v } from '../types/mainTabValues';
 
-import ArraySvg from '../assets/arrowLeft.svg';
+import ArrawSvg from '../assets/arrowLeft.svg';
 
 export const AdminLayout = () => {
   const nav = useNavigate();
@@ -33,7 +33,7 @@ export const AdminLayout = () => {
               variant={'surface'}
               css={{ width: '120px' }}
             >
-              <img src={ArraySvg} style={{ height: '18px' }} alt="arrow" />
+              <img src={ArrawSvg} style={{ height: '18px' }} alt="arrow" />
               На главную
             </Button>
           </Flex>

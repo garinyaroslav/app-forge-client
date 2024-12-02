@@ -25,7 +25,7 @@ export const Login = () => {
     switch (res.status) {
       case LoginRes.user:
         localStorage.setItem('uid', String(res.uid));
-        nav('/user');
+        nav('/user/shop');
         break;
       case LoginRes.admin:
         localStorage.setItem('uid', String(res.uid));
@@ -58,7 +58,7 @@ export const Login = () => {
           variant={'subtle'}
           w={300}
           className="peer"
-          placeholder="Login"
+          placeholder="Имя пользователя"
         />
       </Field>
       <Field
@@ -71,7 +71,7 @@ export const Login = () => {
           variant={'subtle'}
           w={300}
           className="peer"
-          placeholder="Password"
+          placeholder="Пароль"
         />
       </Field>
       <Button type="submit">Войти</Button>
