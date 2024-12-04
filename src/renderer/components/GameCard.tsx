@@ -11,6 +11,7 @@ import {
   CardFooter,
   Button,
   Flex,
+  Skeleton,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { IGame } from '../types/game';
@@ -36,13 +37,20 @@ export const GameCard: FC<GameCardProps> = ({ gameObj }) => {
 
   return (
     <CardRoot flexDirection="row" mb={6}>
-      <Image
-        objectFit="cover"
-        maxW="350px"
-        minW="350px"
-        src={imageSrc ?? 'unset'}
-        alt="Caffe Latte"
-      />
+      {imageSrc ? (
+        <Image
+          objectFit="cover"
+          maxW="350px"
+          minW="350px"
+          src={imageSrc ?? 'unset'}
+          alt="Caffe Latte"
+          css={{
+            borderRadius: 4,
+          }}
+        />
+      ) : (
+        <Skeleton width={'350px'} height={'350px'} />
+      )}
       <Box w={'100%'}>
         <CardBody w={'100%'}>
           <Flex
@@ -55,12 +63,12 @@ export const GameCard: FC<GameCardProps> = ({ gameObj }) => {
             <CardTitle css={{ fontSize: 20, fontWeight: 600 }}>
               {gameObj.title}
             </CardTitle>
-            <CardTitle css={{ fontSize: 16, fontWeight: 500 }}>
+            <CardTitle css={{ fontSize: 20, fontWeight: 500 }}>
               {gameObj.price} руб.
             </CardTitle>
           </Flex>
-          <CardDescription>{gameObj.description}</CardDescription>
-          <HStack mt="4">
+          <CardDescription>{`${gameObj.description} Купили: ${gameObj.copiesSold} раз`}</CardDescription>
+          <HStack my="4">
             <Badge css={{ background: '#808080' }}>
               {gameObj.gameGenres.genreName}
             </Badge>
@@ -70,7 +78,7 @@ export const GameCard: FC<GameCardProps> = ({ gameObj }) => {
           <Button onClick={() => nav(`./${gameObj.id}`)} size={'xs'}>
             Подробнее
           </Button>
-          <Button onClick={() => {}} size={'xs'}>
+          <Button onClick={() => { }} size={'xs'}>
             Добавить в корзину
           </Button>
         </CardFooter>

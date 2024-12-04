@@ -82,7 +82,7 @@ ipcMain.handle('api:getGamesBySearchValue', async (_, searchVal: string) => {
       .select('Game')
       .from(Game, 'Game')
       .where('Game.title ILIKE :search', { search: `%${searchVal}%` })
-      .orWhere('CAST(Game.id AS TEXT) LIKE :search', {
+      .orWhere('CAST(Game.id AS TEXT) ILIKE :search', {
         search: `%${searchVal}%`,
       })
       .getMany();
@@ -94,15 +94,45 @@ ipcMain.handle('api:getGamesBySearchValue', async (_, searchVal: string) => {
 });
 
 // SELECT game.*, genre."genreName" FROM "Game" AS game JOIN "GameGenre" AS genre ON genre.id = game."gameGenreId";
-ipcMain.handle('api:getGamesList', async () => {
+ipcMain.handle('api:getGamesList', async (_, sort, search: string) => {
   try {
-    const gamesWithGenres = await ds
+    let gamesWithGenres;
+    if (search.length > 0)
+      gamesWithGenres = await ds
+        .getRepository(Game)
+        .createQueryBuilder('game')
+        .innerJoinAndSelect('game.gameGenres', 'genre')
+        .select(['game', 'genre.genreName'])
+        .where('game.title ILIKE :search', {
+          search: `%${search}%`,
+        })
+        .orderBy(`game.${sort}`, 'DESC')
+        .getMany();
+    else
+      gamesWithGenres = await ds
+        .getRepository(Game)
+        .createQueryBuilder('game')
+        .innerJoinAndSelect('game.gameGenres', 'genre')
+        .select(['game', 'genre.genreName'])
+        .orderBy(`game.${sort}`, 'DESC')
+        .getMany();
+    return gamesWithGenres;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+});
+
+ipcMain.handle('api:getGamesListElem', async (_, gameId: number) => {
+  try {
+    const gameWithGenres = await ds
       .getRepository(Game)
       .createQueryBuilder('game')
       .innerJoinAndSelect('game.gameGenres', 'genre')
       .select(['game', 'genre.genreName'])
+      .where('game.id = :gameId', { gameId })
       .getMany();
-    return gamesWithGenres;
+    return gameWithGenres;
   } catch (error) {
     console.error(error);
     return false;

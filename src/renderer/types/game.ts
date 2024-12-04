@@ -14,3 +14,8 @@ export interface IGame {
   cartItems: undefined;
   gameGeneres: undefined;
 }
+
+export enum GameSort {
+  byPopularity = 'copiesSold',
+  byNovelty = 'relDate',
+}

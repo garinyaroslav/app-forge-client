@@ -9,6 +9,7 @@ import { ILibrary } from '../renderer/types/library';
 import { ICart } from '../renderer/types/cart';
 import { ICartItem } from '../renderer/types/cartItem';
 import { ILoginForm, IRegisterForm } from '../renderer/types/auth';
+import { GameSort } from '../renderer/types/game';
 
 const apiHandler = {
   getGames: () => ipcRenderer.invoke('api:getGames'),
@@ -18,7 +19,10 @@ const apiHandler = {
   updateGame: (game: IGameReqObj) => ipcRenderer.invoke('api:updateGame', game),
   getGamesBySearchValue: (val: string) =>
     ipcRenderer.invoke('api:getGamesBySearchValue', val),
-  getGamesList: () => ipcRenderer.invoke('api:getGamesList'),
+  getGamesList: (sort: GameSort, search: string) =>
+    ipcRenderer.invoke('api:getGamesList', sort, search),
+  getGamesListElem: (gameId: number) =>
+    ipcRenderer.invoke('api:getGamesListElem', gameId),
 
   getGenres: () => ipcRenderer.invoke('api:getGenres'),
   getGenre: (genreId: number) => ipcRenderer.invoke('api:getGenre', genreId),
