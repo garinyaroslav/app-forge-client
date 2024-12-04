@@ -4,6 +4,7 @@ import { Consumer } from '../../entity/Consumer';
 import { ILoginForm, IRegisterForm, LoginRes } from '../../renderer/types/auth';
 import { hashPassword, verifyPassword } from '../util';
 import { salt, saltRounds } from '../../constants/crypto';
+import { Cart } from '../../entity/Cart';
 
 ipcMain.handle('api:login', async (_, formData: ILoginForm) => {
   try {
@@ -60,13 +61,23 @@ ipcMain.handle('api:register', async (_, formData: IRegisterForm) => {
       isAdmin: false,
     };
 
-    const res = await ds
+    const userRes = await ds
       .createQueryBuilder()
       .insert()
       .into(Consumer)
       .values({ ...newUser })
       .execute();
-    return res.identifiers[0].id;
+
+    const newUserId = userRes.identifiers[0].id;
+
+    await ds
+      .createQueryBuilder()
+      .insert()
+      .into(Cart)
+      .values({ consumerId: newUserId })
+      .execute();
+
+    return newUserId;
   } catch (error) {
     console.error(error);
     return false;

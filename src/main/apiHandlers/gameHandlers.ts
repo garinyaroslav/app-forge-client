@@ -138,3 +138,20 @@ ipcMain.handle('api:getGamesListElem', async (_, gameId: number) => {
     return false;
   }
 });
+
+// SELECT * FROM "Game" WHERE "id" IN (SELECT "gameId" FROM "CartItem" WHERE "cartId" = (SELECT id FROM "Cart" WHERE "consumerId" = 7));
+ipcMain.handle('api:getCartGamesByUserId', async (_, userId: number) => {
+  try {
+    const games = await ds
+      .createQueryRunner()
+      .query(
+        `SELECT * FROM "Game" WHERE "id" IN (SELECT "gameId" FROM "CartItem" WHERE "cartId" = (SELECT id FROM "Cart" WHERE "consumerId" = $1))`,
+        [userId],
+      );
+
+    return games;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+});
