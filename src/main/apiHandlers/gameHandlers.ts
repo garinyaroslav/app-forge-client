@@ -139,19 +139,103 @@ ipcMain.handle('api:getGamesListElem', async (_, gameId: number) => {
   }
 });
 
-// SELECT * FROM "Game" WHERE "id" IN (SELECT "gameId" FROM "CartItem" WHERE "cartId" = (SELECT id FROM "Cart" WHERE "consumerId" = 7));
+// SELECT "Game".*, "CartItem"."id" AS "cartItemId" FROM "Game" JOIN "CartItem" ON "Game"."id" = "CartItem"."gameId" WHERE "CartItem"."cartId" = (SELECT "id" FROM "Cart" WHERE "consumerId" = $1);
 ipcMain.handle('api:getCartGamesByUserId', async (_, userId: number) => {
-  try {
-    const games = await ds
-      .createQueryRunner()
-      .query(
-        `SELECT * FROM "Game" WHERE "id" IN (SELECT "gameId" FROM "CartItem" WHERE "cartId" = (SELECT id FROM "Cart" WHERE "consumerId" = $1))`,
-        [userId],
-      );
+  const qr = await ds.createQueryRunner();
+  await qr.connect();
+  await qr.startTransaction();
 
+  try {
+    const games = await qr.query(
+      `SELECT "Game".*, "CartItem"."id" AS "cartItemId" FROM "Game" JOIN "CartItem" ON "Game"."id" = "CartItem"."gameId" WHERE "CartItem"."cartId" = (SELECT "id" FROM "Cart" WHERE "consumerId" = $1);`,
+      [userId],
+    );
+
+    await qr.commitTransaction();
     return games;
   } catch (error) {
+    await qr.rollbackTransaction();
     console.error(error);
     return false;
+  } finally {
+    await qr.release();
   }
 });
+
+// SELECT * FROM "Library" WHERE "consumerId" = 7 AND "gameId" = 13;
+ipcMain.handle(
+  'api:getGameFromUserLib',
+  async (_, userId: number, gameId: number) => {
+    const qr = await ds.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
+
+    try {
+      const games = await qr.query(
+        `SELECT "id" FROM "Library" WHERE "consumerId" = $1 AND "gameId" = $2;`,
+        [userId, gameId],
+      );
+
+      await qr.commitTransaction();
+      return games;
+    } catch (error) {
+      await qr.rollbackTransaction();
+      console.error(error);
+      return false;
+    } finally {
+      await qr.release();
+    }
+  },
+);
+
+// SELECT * FROM "CartItem" WHERE "cartId" = (SELECT "id" FROM "Cart" WHERE "consumerId" = 7) AND "gameId" = 13
+ipcMain.handle(
+  'api:getGameFromUserCart',
+  async (_, userId: number, gameId: number) => {
+    const qr = await ds.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
+
+    try {
+      const games = await qr.query(
+        `SELECT "id" FROM "CartItem" WHERE "cartId" = (SELECT "id" FROM "Cart" WHERE "consumerId" = $1) AND "gameId" = $2`,
+        [userId, gameId],
+      );
+
+      await qr.commitTransaction();
+      return games;
+    } catch (error) {
+      await qr.rollbackTransaction();
+      console.error(error);
+      return false;
+    } finally {
+      await qr.release();
+    }
+  },
+);
+
+// INSERT INTO "CartItem"("cartId", "gameId") VALUES ((SELECT "id" FROM "Cart" WHERE "consumerId" = 7), 14);
+ipcMain.handle(
+  'api:addGameInUserCart',
+  async (_, userId: number, gameId: number) => {
+    const qr = await ds.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
+
+    try {
+      const res = await qr.query(
+        `INSERT INTO "CartItem"("cartId", "gameId") VALUES ((SELECT "id" FROM "Cart" WHERE "consumerId" = $1), $2);`,
+        [userId, gameId],
+      );
+
+      await qr.commitTransaction();
+      return res;
+    } catch (error) {
+      await qr.rollbackTransaction();
+      console.error(error);
+      return false;
+    } finally {
+      await qr.release();
+    }
+  },
+);

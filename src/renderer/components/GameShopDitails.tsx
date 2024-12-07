@@ -8,6 +8,7 @@ import { Rating } from './ui/rating';
 import { Blockquote } from './ui/blockquote';
 import { DataListItem, DataListRoot } from './ui/data-list';
 import { Button } from './ui/button';
+import { Toaster, toaster } from './ui/toaster';
 
 export const GameShopDitails = () => {
   const nav = useNavigate();
@@ -16,6 +17,8 @@ export const GameShopDitails = () => {
     null | (IGame & { gameGenres: { genreName: string } })
   >(null);
   const [imageSrc, setImageSrc] = useState<null | string>(null);
+  const [gameInCart, setGameInCart] = useState(false);
+  const [gameInLib, setGameInLib] = useState(false);
 
   const getGameAndWriteToState = async () => {
     const g = await window.api.getGamesListElem(gameId).catch(console.error);
@@ -27,9 +30,45 @@ export const GameShopDitails = () => {
     setImageSrc(URL.createObjectURL(blob));
   };
 
-  useEffect(() => {
-    getGameAndWriteToState();
+  const makeChecks = async () => {
+    const uid = await Number(localStorage.getItem('uid'));
 
+    const hasGameInCart = await window.api
+      .getGameFromUserCart(uid, gameId)
+      .catch(console.error);
+
+    if (hasGameInCart.length > 0) {
+      setGameInCart(true);
+      return;
+    }
+
+    const hasGameInLib = await window.api
+      .getGameFromUserLib(uid, gameId)
+      .catch(console.error);
+
+    if (hasGameInLib.length > 0) {
+      setGameInLib(true);
+    }
+  };
+
+  const addToCart = async () => {
+    const uid = await Number(localStorage.getItem('uid'));
+
+    const addRes = await window.api.addGameInUserCart(uid, gameId);
+    if (addRes) {
+      toaster.create({
+        description: 'Игра добавлена в корзину',
+        type: 'success',
+      });
+    }
+    makeChecks();
+  };
+
+  useEffect(() => {
+    setGameInLib(false);
+    setGameInCart(false);
+    makeChecks();
+    getGameAndWriteToState();
     return () => {
       if (imageSrc) URL.revokeObjectURL(imageSrc);
     };
@@ -42,6 +81,7 @@ export const GameShopDitails = () => {
         alignItems={'center'}
         css={{ height: 'calc(100% - 50px)' }}
       >
+        <Toaster />
         <Flex
           onClick={() => nav('/user/shop')}
           css={{
@@ -106,9 +146,21 @@ export const GameShopDitails = () => {
                   {`Уже купили ${game.copiesSold} раз`}
                 </Text>
               </Flex>
-              <Button onClick={() => {}} size={'xs'} css={{ mb: 8 }}>
-                Добавить в корзину
-              </Button>
+              {gameInCart && (
+                <Button disabled size={'xs'} css={{ mb: 8 }}>
+                  Игра уже в корзине
+                </Button>
+              )}
+              {gameInLib && (
+                <Button disabled size={'xs'} css={{ mb: 8 }}>
+                  Игра уже куплена
+                </Button>
+              )}
+              {!gameInCart && !gameInLib && (
+                <Button onClick={() => addToCart()} size={'xs'} css={{ mb: 8 }}>
+                  Добавить в корзину
+                </Button>
+              )}
               <DataListRoot css={{ mb: 4 }}>
                 <DataListItem
                   label={'Разработчик'}

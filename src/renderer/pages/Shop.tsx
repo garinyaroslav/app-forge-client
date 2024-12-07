@@ -45,6 +45,10 @@ export const Shop = () => {
     setGames(g);
   };
 
+  const closeCartModal = async () => {
+    await setIsCartOpen(false);
+    await getGamesAndWriteToState();
+  };
   useEffect(() => {
     getGamesAndWriteToState();
   }, [sort, searchValue]);
@@ -54,11 +58,15 @@ export const Shop = () => {
     setSearchValue(val);
   };
 
+  const renderGameCarts = (
+    items: (IGame & { gameGenres: { genreName: string } })[],
+  ) => {
+    return items.map((item) => <GameCard key={item.id} gameObj={item} />);
+  };
+
   return (
     <>
-      {isCartOpen && (
-        <CartModal open={isCartOpen} onClose={() => setIsCartOpen(false)} />
-      )}
+      {isCartOpen && <CartModal open={isCartOpen} onClose={closeCartModal} />}
       <Flex css={{ height: 'calc(100% - 100px)' }}>
         <Box
           css={{
@@ -125,9 +133,7 @@ export const Shop = () => {
             </Flex>
           </Flex>
           <Box css={{ height: '94%', ...scrollBarStyles }}>
-            {games.map((game) => (
-              <GameCard key={game.id} gameObj={game} />
-            ))}
+            {renderGameCarts(games)}
           </Box>
         </Box>
       </Flex>
