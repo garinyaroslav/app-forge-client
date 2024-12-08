@@ -16,6 +16,7 @@ import { Button } from './ui/button';
 import { CloseButton } from './ui/close-button';
 import { IGame } from '../types/game';
 import { CartModalItem } from './CartModalItem';
+import { toaster, Toaster } from './ui/toaster';
 
 interface CartModalProps {
   open: boolean;
@@ -40,8 +41,36 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
   }, [open]);
 
   const defineSum = (items: null | TGameObj[]) => {
-    if (items) return items.reduce((a, item) => a + Number(item.price), 0);
+    if (items)
+      return items.reduce((a, item) => a + Number(item.price), 0).toFixed(2);
     return 0;
+  };
+
+  const buy = async () => {
+    if (cartItems) {
+      for (let i = 0; i < cartItems.length; i++) {
+        const newLibElem = {
+          gameId: cartItems[i].id,
+          consumerId: uid,
+          addedDate: Math.floor(Date.now() / 1000),
+        };
+
+        window.api.addLibrary(newLibElem).catch(console.error);
+      }
+
+      await window.api.deleteCartGamesByUserId(uid).catch(console.error);
+
+      for (let i = 0; i < cartItems.length; i++) {
+        window.api.incGameCopiesSoldById(cartItems[i].id).catch(console.error);
+      }
+
+      await getItemsAndWriteToState();
+
+      toaster.create({
+        description: 'Игрa(ы) добавлены в вашу корзину',
+        type: 'success',
+      });
+    }
   };
 
   const renderItems = (items: TGameObj[]) => {
@@ -62,6 +91,7 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
       placement={'center'}
       motionPreset="slide-in-bottom"
     >
+      <Toaster />
       <Portal>
         <DialogBackdrop />
         <DialogPositioner>
@@ -98,7 +128,11 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
                   ? `Всего к оплате: ${defineSum(cartItems)} руб.`
                   : ''}
               </Text>
-              {cartItems && <Button colorPalette={'green'}>Купить</Button>}
+              {cartItems && (
+                <Button onClick={() => buy()} colorPalette={'green'}>
+                  Купить
+                </Button>
+              )}
             </DialogFooter>
             <DialogCloseTrigger />
           </DialogContent>

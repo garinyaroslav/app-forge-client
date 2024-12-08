@@ -25,12 +25,18 @@ const apiHandler = {
     ipcRenderer.invoke('api:getGamesListElem', gameId),
   getCartGamesByUserId: (userId: number) =>
     ipcRenderer.invoke('api:getCartGamesByUserId', userId),
+  deleteCartGamesByUserId: (userId: number) =>
+    ipcRenderer.invoke('api:deleteCartGamesByUserId', userId),
   getGameFromUserLib: (userId: number, gameId: number) =>
     ipcRenderer.invoke('api:getGameFromUserLib', userId, gameId),
+  getGamesFromUserLib: (userId: number) =>
+    ipcRenderer.invoke('api:getGamesFromUserLib', userId),
   getGameFromUserCart: (userId: number, gameId: number) =>
     ipcRenderer.invoke('api:getGameFromUserCart', userId, gameId),
   addGameInUserCart: (userId: number, gameId: number) =>
     ipcRenderer.invoke('api:addGameInUserCart', userId, gameId),
+  incGameCopiesSoldById: (gameId: number) =>
+    ipcRenderer.invoke('api:incGameCopiesSoldById', gameId),
 
   getGenres: () => ipcRenderer.invoke('api:getGenres'),
   getGenre: (genreId: number) => ipcRenderer.invoke('api:getGenre', genreId),

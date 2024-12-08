@@ -83,10 +83,10 @@ ipcMain.handle(
         .createQueryBuilder()
         .select('Consumer')
         .from(Consumer, 'Consumer')
-        .where('Consumer.genreName ILIKE :search', {
+        .where('Consumer.username ILIKE :search', {
           search: `%${searchVal}%`,
         })
-        .orWhere('CAST(Consumer.id AS TEXT) LIKE :search', {
+        .orWhere('Consumer.email ILIKE :search', {
           search: `%${searchVal}%`,
         })
         .getMany();

@@ -24,6 +24,7 @@ module.exports = {
     'react/jsx-curly-brace-presence': 'off',
     'react-hooks/exhaustive-deps': 0,
     'react/jsx-props-no-spreading': 'off',
+    'no-plusplus': 'off',
     'spaced-comment': [
       'error',
       'always',

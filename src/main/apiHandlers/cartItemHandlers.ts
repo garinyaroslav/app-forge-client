@@ -83,7 +83,7 @@ ipcMain.handle(
         .createQueryBuilder()
         .select('CartItem')
         .from(CartItem, 'CartItem')
-        .where('CAST(CartItem.id AS TEXT) LIKE :search', {
+        .where('CAST(CartItem.cartId AS TEXT) LIKE :search', {
           search: `%${searchVal}%`,
         })
         .getMany();

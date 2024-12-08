@@ -81,7 +81,7 @@ ipcMain.handle('api:getCartsBySearchValue', async (_, searchVal: string) => {
       .createQueryBuilder()
       .select('Cart')
       .from(Cart, 'Cart')
-      .where('CAST(Cart.id AS TEXT) LIKE :search', {
+      .where('CAST(Cart.consumerId AS TEXT) LIKE :search', {
         search: `%${searchVal}%`,
       })
       .getMany();

@@ -81,10 +81,10 @@ ipcMain.handle('api:getReviewsBySearchValue', async (_, searchVal: string) => {
       .createQueryBuilder()
       .select('Review')
       .from(Review, 'Review')
-      .where('Review.textComment ILIKE :search', {
+      .where('CAST(Review.gameId AS TEXT) ILIKE :search', {
         search: `%${searchVal}%`,
       })
-      .orWhere('CAST(Review.id AS TEXT) LIKE :search', {
+      .orWhere('CAST(Review.consumerId AS TEXT) ILIKE :search', {
         search: `%${searchVal}%`,
       })
       .getMany();
