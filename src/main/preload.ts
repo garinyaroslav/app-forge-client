@@ -3,7 +3,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { IGameReqObj } from '../renderer/types/gameReqObj';
 import { IGenre } from '../renderer/types/genre';
-import { IConsumer } from '../renderer/types/consumer';
+import { IConsumer, IProfileObj } from '../renderer/types/consumer';
 import { IReview } from '../renderer/types/review';
 import { ILibrary } from '../renderer/types/library';
 import { ICart } from '../renderer/types/cart';
@@ -60,6 +60,9 @@ const apiHandler = {
     ipcRenderer.invoke('api:updateConsumer', consumer),
   getConsumersBySearchValue: (val: string) =>
     ipcRenderer.invoke('api:getConsumersBySearchValue', val),
+  getProfile: (userId: number) => ipcRenderer.invoke('api:getProfile', userId),
+  updateProfile: (con: IProfileObj) =>
+    ipcRenderer.invoke('api:updateProfile', con),
 
   getReviews: () => ipcRenderer.invoke('api:getReviews'),
   getReview: (rewId: number) => ipcRenderer.invoke('api:getReview', rewId),

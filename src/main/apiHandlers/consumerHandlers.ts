@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { dataSource as ds } from '../db';
 import { Consumer } from '../../entity/Consumer';
-import { IConsumer } from '../../renderer/types/consumer';
+import { IConsumer, IProfileObj } from '../../renderer/types/consumer';
 
 ipcMain.handle('api:getConsumers', async () => {
   try {
@@ -97,3 +97,47 @@ ipcMain.handle(
     }
   },
 );
+
+ipcMain.handle('api:getProfile', async (_, userId: number) => {
+  const qr = await ds.createQueryRunner();
+  await qr.connect();
+  await qr.startTransaction();
+
+  try {
+    const profile = await qr.query(
+      `SELECT "firstName", "lastName", "regDate", "email" FROM "Consumer" WHERE "id" = $1;`,
+      [userId],
+    );
+
+    await qr.commitTransaction();
+    return profile;
+  } catch (error) {
+    await qr.rollbackTransaction();
+    console.error(error);
+    return false;
+  } finally {
+    await qr.release();
+  }
+});
+
+ipcMain.handle('api:updateProfile', async (_, obj: IProfileObj) => {
+  const qr = await ds.createQueryRunner();
+  await qr.connect();
+  await qr.startTransaction();
+
+  try {
+    const profile = await qr.query(
+      `UPDATE "Consumer" SET "email"=$1, "firstName"=$2, "lastName"=$3 WHERE "id" = $4;`,
+      [obj.email, obj.firstName, obj.lastName, obj.id],
+    );
+
+    await qr.commitTransaction();
+    return profile;
+  } catch (error) {
+    await qr.rollbackTransaction();
+    console.error(error);
+    return false;
+  } finally {
+    await qr.release();
+  }
+});

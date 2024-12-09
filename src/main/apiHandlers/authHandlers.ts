@@ -12,8 +12,8 @@ ipcMain.handle('api:login', async (_, formData: ILoginForm) => {
       .createQueryBuilder()
       .select('Consumer')
       .from(Consumer, 'Consumer')
-      .where('Consumer.username ILIKE :search', {
-        search: `%${formData.login}%`,
+      .where('Consumer.username = :search', {
+        search: formData.login,
       })
       .getOne();
 

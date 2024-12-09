@@ -9,6 +9,20 @@ export interface IConsumer {
   isAdmin: boolean;
 }
 
+export interface IProfile {
+  email: string;
+  firstName: string;
+  lastName: string;
+  regDate: number;
+}
+
+export interface IProfileObj {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
 export type TConsumer =
   | 'id'
   | 'username'
