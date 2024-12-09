@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Box, Flex, Text, Image, Badge, Skeleton } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Text,
+  Image,
+  Badge,
+  Skeleton,
+  Heading,
+  Separator,
+} from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IGame } from '../types/game';
 
@@ -9,6 +18,9 @@ import { Blockquote } from './ui/blockquote';
 import { DataListItem, DataListRoot } from './ui/data-list';
 import { Button } from './ui/button';
 import { Toaster, toaster } from './ui/toaster';
+import { IReviewObj } from '../types/review';
+import { scrollBarStyles } from '../../utils/scrollBarStyles';
+import { GameShopReview } from './GameShopReview';
 
 export const GameShopDitails = () => {
   const nav = useNavigate();
@@ -16,6 +28,7 @@ export const GameShopDitails = () => {
   const [game, setGame] = useState<
     null | (IGame & { gameGenres: { genreName: string } })
   >(null);
+  const [reviews, setReviews] = useState<null | IReviewObj[]>(null);
   const [imageSrc, setImageSrc] = useState<null | string>(null);
   const [gameInCart, setGameInCart] = useState(false);
   const [gameInLib, setGameInLib] = useState(false);
@@ -28,6 +41,12 @@ export const GameShopDitails = () => {
       type: 'image/png',
     });
     setImageSrc(URL.createObjectURL(blob));
+  };
+
+  const getReviewsAndWriteToState = async () => {
+    const r = await window.api.getReviewsByGameId(gameId).catch(console.error);
+    if (r.length === 0) setReviews(null);
+    else setReviews(r);
   };
 
   const makeChecks = async () => {
@@ -69,17 +88,24 @@ export const GameShopDitails = () => {
     setGameInCart(false);
     makeChecks();
     getGameAndWriteToState();
+    getReviewsAndWriteToState();
     return () => {
       if (imageSrc) URL.revokeObjectURL(imageSrc);
     };
   }, []);
+
+  const renderReviews = (reviewsObj: IReviewObj[]) => {
+    return reviewsObj.map((reviewObj) => (
+      <GameShopReview key={reviewObj.id} review={reviewObj} />
+    ));
+  };
 
   if (game)
     return (
       <Flex
         flexDirection={'column'}
         alignItems={'center'}
-        css={{ height: 'calc(100% - 50px)' }}
+        css={{ height: '850px', ...scrollBarStyles }}
       >
         <Toaster />
         <Flex
@@ -89,7 +115,7 @@ export const GameShopDitails = () => {
             alignItems: 'center',
             cursor: 'pointer',
             width: 1000,
-            mt: 3,
+            mt: 5,
           }}
         >
           <Image src={ArrowSvg} css={{ height: '18px' }} alt="arrow" />
@@ -98,8 +124,8 @@ export const GameShopDitails = () => {
         <Box
           css={{
             width: 1000,
-            height: 'calc(100% - 15px)',
-            m: '40px auto',
+            flex: 1,
+            m: '20px auto',
             background: '#111b21',
             borderRadius: 4,
             p: 5,
@@ -174,11 +200,20 @@ export const GameShopDitails = () => {
             </Flex>
           </Flex>
           <Blockquote
-            css={{ width: '100%', fontWeight: 500, fontSize: 18 }}
+            css={{ width: '100%', fontWeight: 500, fontSize: 18, mb: 8 }}
             showDash
           >
             {game.description}
           </Blockquote>
+          <Separator css={{ mb: 2 }} />
+          <Heading css={{ mb: 2 }}>Отзывы</Heading>
+          {reviews === null ? (
+            <Text css={{ fontSize: 14, fontWeight: 400, opacity: 0.5 }}>
+              Отзывов пока нет...
+            </Text>
+          ) : (
+            renderReviews(reviews)
+          )}
         </Box>
       </Flex>
     );

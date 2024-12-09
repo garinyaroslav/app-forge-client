@@ -37,6 +37,10 @@ const apiHandler = {
     ipcRenderer.invoke('api:addGameInUserCart', userId, gameId),
   incGameCopiesSoldById: (gameId: number) =>
     ipcRenderer.invoke('api:incGameCopiesSoldById', gameId),
+  getReviewsByGameId: (gameId: number) =>
+    ipcRenderer.invoke('api:getReviewsByGameId', gameId),
+  getReviewByGameAndUserId: (userId: number, gameId: number) =>
+    ipcRenderer.invoke('api:getReviewByGameAndUserId', userId, gameId),
 
   getGenres: () => ipcRenderer.invoke('api:getGenres'),
   getGenre: (genreId: number) => ipcRenderer.invoke('api:getGenre', genreId),

@@ -55,14 +55,15 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
           addedDate: Math.floor(Date.now() / 1000),
         };
 
-        window.api.addLibrary(newLibElem).catch(console.error);
+        (async () => {
+          await window.api.addLibrary(newLibElem).catch(console.error);
+          await window.api
+            .incGameCopiesSoldById(cartItems[i].id)
+            .catch(console.error);
+        })();
       }
 
       await window.api.deleteCartGamesByUserId(uid).catch(console.error);
-
-      for (let i = 0; i < cartItems.length; i++) {
-        window.api.incGameCopiesSoldById(cartItems[i].id).catch(console.error);
-      }
 
       await getItemsAndWriteToState();
 

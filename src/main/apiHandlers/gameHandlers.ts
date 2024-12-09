@@ -291,7 +291,7 @@ ipcMain.handle('api:incGameCopiesSoldById', async (_, gameId: number) => {
   await qr.startTransaction();
 
   try {
-    const res = await qr.query(`CALL IncGameCopiesSoldById($1)`, [gameId]);
+    const res = await qr.query(`CALL "IncGameCopiesSoldById"($1)`, [gameId]);
 
     await qr.commitTransaction();
     return res;
@@ -303,3 +303,51 @@ ipcMain.handle('api:incGameCopiesSoldById', async (_, gameId: number) => {
     await qr.release();
   }
 });
+
+// SELECT R.*, C."firstName", C."lastName" FROM "Review" AS R JOIN "Consumer" AS C ON R."consumerId" = C."id" WHERE R."gameId" = 13;
+ipcMain.handle('api:getReviewsByGameId', async (_, gameId: number) => {
+  const qr = await ds.createQueryRunner();
+  await qr.connect();
+  await qr.startTransaction();
+
+  try {
+    const res = await qr.query(
+      `SELECT R.*, C."firstName", C."lastName" FROM "Review" AS R JOIN "Consumer" AS C ON R."consumerId" = C."id" WHERE R."gameId" = $1;`,
+      [gameId],
+    );
+
+    await qr.commitTransaction();
+    return res;
+  } catch (error) {
+    await qr.rollbackTransaction();
+    console.error(error);
+    return false;
+  } finally {
+    await qr.release();
+  }
+});
+
+ipcMain.handle(
+  'api:getReviewByGameAndUserId',
+  async (_, userId: number, gameId: number) => {
+    const qr = await ds.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
+
+    try {
+      const games = await qr.query(
+        `SELECT R.*, C."firstName", C."lastName" FROM "Review" AS R JOIN "Consumer" AS C ON R."consumerId" = C."id" WHERE R."gameId" = $1 AND R."consumerId" = $2;`,
+        [gameId, userId],
+      );
+
+      await qr.commitTransaction();
+      return games;
+    } catch (error) {
+      await qr.rollbackTransaction();
+      console.error(error);
+      return false;
+    } finally {
+      await qr.release();
+    }
+  },
+);

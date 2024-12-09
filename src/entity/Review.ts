@@ -13,7 +13,7 @@ export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('integer')
+  @Column('numeric')
   rating: number;
 
   @Column('text')
