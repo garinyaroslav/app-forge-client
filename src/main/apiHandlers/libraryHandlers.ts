@@ -86,6 +86,9 @@ ipcMain.handle(
         .where('CAST(Library.consumerId AS TEXT) LIKE :search', {
           search: `%${searchVal}%`,
         })
+        .orWhere('CAST(Library.gameId AS TEXT) LIKE :search', {
+          search: `%${searchVal}%`,
+        })
         .getMany();
       return libraries;
     } catch (error) {

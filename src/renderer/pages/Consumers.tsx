@@ -54,12 +54,20 @@ export const Consumers = () => {
   }, [deletedConsumerId]);
 
   const deleteConsumer = async () => {
-    await window.api.deleteConsumer(deletedConsumerId);
+    const res = await window.api.deleteConsumer(deletedConsumerId);
+
+    if (res) {
+      toaster.create({
+        description: 'Пользователь успешно удалён',
+        type: 'success',
+      });
+    } else {
+      toaster.create({
+        description: 'Пользователь не удалён',
+        type: 'error',
+      });
+    }
     setDeletedConsumerId(null);
-    toaster.create({
-      description: 'Пользователь успешно удалён',
-      type: 'success',
-    });
   };
 
   const renderConsumers = (consumerElems: IConsumer[]) =>

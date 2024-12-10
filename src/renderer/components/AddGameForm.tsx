@@ -42,17 +42,27 @@ export const AddGameForm: FC<AddGameFormProps> = ({
     const arrayBuffer = await data.image.item(0)?.arrayBuffer();
     const uInt8ArrayImage = new Uint8Array(arrayBuffer as ArrayBuffer);
 
-    const res = await window.api.addGame({
-      title: data.title,
-      description: data.description,
-      developerName: data.developerName,
-      rating: Number(data.rating),
-      price: Number(data.price),
-      copiesSold: Number(data.copiesSold),
-      gameGenreId: Number(data.gameGenreId),
-      relDate: USADateToUnix(data.relDate),
-      image: uInt8ArrayImage,
-    });
+    let res;
+    if (
+      !Number.isNaN(Number(data.rating)) &&
+      !Number.isNaN(Number(data.price)) &&
+      !Number.isNaN(Number(data.copiesSold)) &&
+      !Number.isNaN(Number(data.gameGenreId))
+    ) {
+      res = await window.api.addGame({
+        title: data.title,
+        description: data.description,
+        developerName: data.developerName,
+        rating: Number(data.rating),
+        price: Number(data.price),
+        copiesSold: Number(data.copiesSold),
+        gameGenreId: Number(data.gameGenreId),
+        relDate: USADateToUnix(data.relDate),
+        image: uInt8ArrayImage,
+      });
+    } else {
+      res = null;
+    }
 
     if (res) {
       toaster.create({

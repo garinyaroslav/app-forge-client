@@ -17,7 +17,6 @@ export const AddGenreForm: FC<AddGenreFormProps> = ({
 
   const onSubmit: SubmitHandler<IGenre> = async (data) => {
     const res = await window.api.addGenre({
-      id: Number(data.id),
       genreName: data.genreName,
     });
 

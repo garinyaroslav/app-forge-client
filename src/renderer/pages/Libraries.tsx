@@ -52,12 +52,20 @@ export const Libraries = () => {
   }, [deletedLibraryId]);
 
   const deleteLibrary = async () => {
-    await window.api.deleteLibrary(deletedLibraryId);
+    const res = await window.api.deleteLibrary(deletedLibraryId);
+
+    if (res) {
+      toaster.create({
+        description: 'Библиотека успешно удалена',
+        type: 'success',
+      });
+    } else {
+      toaster.create({
+        description: 'Библиотека не удалена',
+        type: 'error',
+      });
+    }
     setDeletedLibraryId(null);
-    toaster.create({
-      description: 'Библиотека успешно удалена',
-      type: 'success',
-    });
   };
 
   const renderLibraries = (libraryElems: ILibrary[]) =>

@@ -17,11 +17,20 @@ export const AddLibraryForm: FC<AddLibraryFormProps> = ({
   const { register, handleSubmit, reset } = useForm<ILibrary>();
 
   const onSubmit: SubmitHandler<ILibrary> = async (data) => {
-    const res = await window.api.addLibrary({
-      gameId: Number(data.gameId),
-      consumerId: Number(data.consumerId),
-      addedDate: USADateToUnix(String(data.addedDate)),
-    });
+    let res;
+
+    if (
+      !Number.isNaN(Number(data.gameId)) &&
+      !Number.isNaN(Number(data.consumerId))
+    ) {
+      res = await window.api.addLibrary({
+        gameId: Number(data.gameId),
+        consumerId: Number(data.consumerId),
+        addedDate: USADateToUnix(String(data.addedDate)),
+      });
+    } else {
+      res = null;
+    }
 
     if (res) {
       toaster.create({

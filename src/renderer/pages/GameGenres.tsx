@@ -50,12 +50,19 @@ export const GameGenres = () => {
   }, [deletedGenreId]);
 
   const deleteGame = async () => {
-    await window.api.deleteGenre(deletedGenreId);
+    const res = await window.api.deleteGenre(deletedGenreId);
+    if (res) {
+      toaster.create({
+        description: 'Жанр успешно удалён',
+        type: 'success',
+      });
+    } else {
+      toaster.create({
+        description: 'Жанр не удалён',
+        type: 'error',
+      });
+    }
     setDeletedGenreId(null);
-    toaster.create({
-      description: 'Жанр успешно удалён',
-      type: 'success',
-    });
   };
 
   const renderGenres = (genreElems: IGenre[]) =>

@@ -50,12 +50,20 @@ export const Carts = () => {
   }, [deletedCartId]);
 
   const deleteCart = async () => {
-    await window.api.deleteCart(deletedCartId);
+    const res = await window.api.deleteCart(deletedCartId).catch(console.error);
+
+    if (res) {
+      toaster.create({
+        description: 'Корзина успешно удалена',
+        type: 'success',
+      });
+    } else {
+      toaster.create({
+        description: 'Корзина не удалена',
+        type: 'error',
+      });
+    }
     setDeletedCartId(null);
-    toaster.create({
-      description: 'Корзина успешно удалена',
-      type: 'success',
-    });
   };
 
   const renderCarts = (cartElems: ICart[]) =>

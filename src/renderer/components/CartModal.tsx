@@ -68,7 +68,7 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
       await getItemsAndWriteToState();
 
       toaster.create({
-        description: 'Игрa(ы) добавлены в вашу корзину',
+        description: 'Игрa(ы) добавлены в вашу библиотеку',
         type: 'success',
       });
     }

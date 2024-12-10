@@ -16,10 +16,18 @@ export const AddCartItemForm: FC<AddCartItemFormProps> = ({
   const { register, handleSubmit, reset } = useForm<ICartItem>();
 
   const onSubmit: SubmitHandler<ICartItem> = async (data) => {
-    const res = await window.api.addCartItem({
-      cartId: Number(data.cartId),
-      gameId: Number(data.gameId),
-    });
+    let res;
+    if (
+      !Number.isNaN(Number(data.cartId)) &&
+      !Number.isNaN(Number(data.gameId))
+    ) {
+      res = await window.api.addCartItem({
+        cartId: Number(data.cartId),
+        gameId: Number(data.gameId),
+      });
+    } else {
+      res = null;
+    }
 
     if (res) {
       toaster.create({

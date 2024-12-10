@@ -16,9 +16,14 @@ export const AddCartForm: FC<AddCartFormProps> = ({
   const { register, handleSubmit, reset } = useForm<ICart>();
 
   const onSubmit: SubmitHandler<ICart> = async (data) => {
-    const res = await window.api.addCart({
-      consumerId: Number(data.consumerId),
-    });
+    let res;
+    if (!Number.isNaN(Number(data.consumerId))) {
+      res = await window.api.addCart({
+        consumerId: Number(data.consumerId),
+      });
+    } else {
+      res = null;
+    }
 
     if (res) {
       toaster.create({

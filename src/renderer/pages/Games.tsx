@@ -50,12 +50,20 @@ export const Games = () => {
   }, [deletedGameId]);
 
   const deleteGame = async () => {
-    await window.api.deleteGame(deletedGameId);
+    const res = await window.api.deleteGame(deletedGameId).catch(console.error);
+
+    if (res) {
+      toaster.create({
+        description: 'Игра успешно удалена',
+        type: 'success',
+      });
+    } else {
+      toaster.create({
+        description: 'Игра не удалена',
+        type: 'error',
+      });
+    }
     setDeletedGameId(null);
-    toaster.create({
-      description: 'Файл успешно удалён',
-      type: 'success',
-    });
   };
 
   const renderGames = (gamesElems: IGame[]) =>

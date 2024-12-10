@@ -50,12 +50,20 @@ export const Reviews = () => {
   }, [deletedReviewId]);
 
   const deleteGame = async () => {
-    await window.api.deleteReview(deletedReviewId);
+    const res = await window.api.deleteReview(deletedReviewId);
+
+    if (res) {
+      toaster.create({
+        description: 'Отзыв успешно удалён',
+        type: 'success',
+      });
+    } else {
+      toaster.create({
+        description: 'Отзыв не удалён',
+        type: 'error',
+      });
+    }
     setDeletedReviewId(null);
-    toaster.create({
-      description: 'Отзыв успешно удалён',
-      type: 'success',
-    });
   };
 
   const renderReviews = (reviewElems: IReview[]) =>

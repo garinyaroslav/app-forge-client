@@ -17,12 +17,20 @@ export const AddReviewForm: FC<AddReviewFormProps> = ({
   const { register, handleSubmit, reset } = useForm<IReview>();
 
   const onSubmit: SubmitHandler<IReview> = async (data) => {
-    const res = await window.api.addReview({
-      rating: data.rating,
-      textComment: data.textComment,
-      gameId: Number(data.gameId),
-      consumerId: Number(data.consumerId),
-    });
+    let res;
+    if (
+      !Number.isNaN(Number(data.gameId)) &&
+      !Number.isNaN(Number(data.consumerId))
+    ) {
+      res = await window.api.addReview({
+        rating: data.rating,
+        textComment: data.textComment,
+        gameId: Number(data.gameId),
+        consumerId: Number(data.consumerId),
+      });
+    } else {
+      res = null;
+    }
 
     if (res) {
       toaster.create({

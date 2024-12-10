@@ -54,12 +54,19 @@ export const CartItems = () => {
   }, [deletedCartItemId]);
 
   const deleteCartItem = async () => {
-    await window.api.deleteCartItem(deletedCartItemId);
+    const res = await window.api.deleteCartItem(deletedCartItemId);
+    if (res) {
+      toaster.create({
+        description: 'Элемент корзины успешно удалён',
+        type: 'success',
+      });
+    } else {
+      toaster.create({
+        description: 'Элемент корзины не удалён',
+        type: 'error',
+      });
+    }
     setDeletedCartItemId(null);
-    toaster.create({
-      description: 'Элемент корзины успешно удалён',
-      type: 'success',
-    });
   };
 
   const renderCartItems = (cartItemElems: ICartItem[]) =>
@@ -80,7 +87,7 @@ export const CartItems = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${cartItemElem.id}. cartId: ${cartItemElem.cartId}`}</Text>
+        <Text>{`${cartItemElem.id}. cartId: ${cartItemElem.cartId} gameId: ${cartItemElem.gameId}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',
