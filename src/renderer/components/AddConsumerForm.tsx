@@ -10,13 +10,13 @@ interface AddConsumerFormProps {
 }
 
 const fields = [
-  'username',
-  'email',
-  'passwordHash',
-  'firstName',
-  'lastName',
-  'regDate',
-  'isAdmin',
+  { lab: 'Логин', val: 'username' },
+  { lab: 'Электронная почта', val: 'email' },
+  { lab: 'Пароль', val: 'passwordHash' },
+  { lab: 'Имя', val: 'firstName' },
+  { lab: 'Фамилия', val: 'lastName' },
+  { lab: 'Дата регистрации', val: 'regDate' },
+  { lab: 'Админ', val: 'isAdmin' },
 ];
 
 export const AddConsumerForm: FC<AddConsumerFormProps> = ({
@@ -25,10 +25,14 @@ export const AddConsumerForm: FC<AddConsumerFormProps> = ({
   const { register, handleSubmit, reset } = useForm<IConsumer>();
 
   const onSubmit: SubmitHandler<IConsumer> = async (data) => {
+    const passwordHash = await window.api
+      .heshPassword(data.passwordHash)
+      .catch(console.error);
+
     const res = await window.api.addConsumer({
       username: data.username,
       email: data.email,
-      passwordHash: data.passwordHash,
+      passwordHash,
       firstName: data.firstName,
       lastName: data.lastName,
       regDate: USADateToUnix(String(data.regDate)),
@@ -84,13 +88,13 @@ export const AddConsumerForm: FC<AddConsumerFormProps> = ({
   const renderFields = () => {
     return fields.map((field) => (
       <Flex
-        key={field}
+        key={field.val}
         alignItems={'center'}
         justifyContent={'space-between'}
-        css={{ width: 450 }}
+        css={{ width: 500 }}
       >
-        <Text>{field}</Text>
-        {renderFieldEntrail(field)}
+        <Text>{field.lab}</Text>
+        {renderFieldEntrail(field.val)}
       </Flex>
     ));
   };

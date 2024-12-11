@@ -1,12 +1,16 @@
 import { FC, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
-import { excludedFields } from '../../utils/excludedFields';
 import { ICart, TCart } from '../types/cart';
 
 interface CartDitailsProps {
   cartId: number;
 }
+
+const fields = [
+  { lab: 'Идентификатор корзины', val: 'id' },
+  { lab: 'Идентификатор пользователя', val: 'consumerId' },
+];
 
 export const CartDitails: FC<CartDitailsProps> = ({ cartId }) => {
   const [cart, setCart] = useState<null | ICart>(null);
@@ -51,19 +55,17 @@ export const CartDitails: FC<CartDitailsProps> = ({ cartId }) => {
       >
         <Flex direction={'column'} gap={5}>
           <Heading css={{ mb: 5 }}>Свойства</Heading>
-          {Object.keys(cart)
-            .filter((fieldName) => !excludedFields.includes(fieldName))
-            .map((field) => (
-              <Flex
-                key={field}
-                alignItems={'center'}
-                justifyContent={'space-between'}
-                css={{ width: 450 }}
-              >
-                <Text>{field}</Text>
-                {renderFieldEntrail(field)}
-              </Flex>
-            ))}
+          {fields.map((field) => (
+            <Flex
+              key={field.val}
+              alignItems={'center'}
+              justifyContent={'space-between'}
+              css={{ width: 500 }}
+            >
+              <Text>{field.lab}</Text>
+              {renderFieldEntrail(field.val)}
+            </Flex>
+          ))}
 
           <Button hidden type="submit">
             1

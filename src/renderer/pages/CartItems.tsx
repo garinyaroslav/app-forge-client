@@ -87,7 +87,7 @@ export const CartItems = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${cartItemElem.id}. cartId: ${cartItemElem.cartId} gameId: ${cartItemElem.gameId}`}</Text>
+        <Text>{`${cartItemElem.id}. Игра: ${cartItemElem.gameId} в корзине: ${cartItemElem.cartId}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',

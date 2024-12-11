@@ -107,6 +107,7 @@ const apiHandler = {
   login: (formData: ILoginForm) => ipcRenderer.invoke('api:login', formData),
   register: (formData: IRegisterForm) =>
     ipcRenderer.invoke('api:register', formData),
+  heshPassword: (pass: string) => ipcRenderer.invoke('api:heshPassword', pass),
 };
 
 contextBridge.exposeInMainWorld('api', apiHandler);

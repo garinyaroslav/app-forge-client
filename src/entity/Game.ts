@@ -16,7 +16,7 @@ export class Game {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('text')
+  @Column('text', { unique: true })
   title: string;
 
   @Column('text')

@@ -8,7 +8,10 @@ interface AddCartItemFormProps {
   getCartItemsAndWriteToState: () => void;
 }
 
-const fields = ['cartId', 'gameId'];
+const fields = [
+  { lab: 'Идентификатор корзины', val: 'cartId' },
+  { lab: 'Идентификатор игры', val: 'gameId' },
+];
 
 export const AddCartItemForm: FC<AddCartItemFormProps> = ({
   getCartItemsAndWriteToState,
@@ -60,12 +63,12 @@ export const AddCartItemForm: FC<AddCartItemFormProps> = ({
   const renderFields = () => {
     return fields.map((field) => (
       <Flex
-        key={field}
+        key={field.val}
         alignItems={'center'}
         justifyContent={'space-between'}
-        css={{ width: 450 }}
+        css={{ width: 500 }}
       >
-        <Text>{field}</Text> {renderFieldEntrail(field)}
+        <Text>{field.lab}</Text> {renderFieldEntrail(field.val)}
       </Flex>
     ));
   };

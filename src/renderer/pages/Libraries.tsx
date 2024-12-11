@@ -86,7 +86,7 @@ export const Libraries = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${libraryElem.id}. gameId: ${libraryElem.gameId} - consumerId: ${libraryElem.consumerId}`}</Text>
+        <Text>{`${libraryElem.id}. Игра: ${libraryElem.gameId} куплена у пользователя: ${libraryElem.consumerId}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',

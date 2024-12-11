@@ -83,3 +83,12 @@ ipcMain.handle('api:register', async (_, formData: IRegisterForm) => {
     return false;
   }
 });
+
+ipcMain.handle('api:heshPassword', async (_, pass: string) => {
+  try {
+    return await hashPassword(pass, salt, saltRounds);
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+});

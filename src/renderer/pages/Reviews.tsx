@@ -93,7 +93,7 @@ export const Reviews = () => {
               textOverflow: 'ellipsis',
             },
           }}
-        >{`${reviewElem.id}. consumerId: ${reviewElem.consumerId} gameId: ${reviewElem.gameId}`}</Text>
+        >{`${reviewElem.id}. Отзыв пользователя: ${reviewElem.consumerId} на игру: ${reviewElem.gameId}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',

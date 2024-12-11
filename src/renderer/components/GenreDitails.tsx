@@ -2,7 +2,6 @@ import { FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
 import { IGame } from '../types/game';
-import { excludedFields } from '../../utils/excludedFields';
 import { toaster } from './ui/toaster';
 import { IGenre, TGenre } from '../types/genre';
 
@@ -10,6 +9,11 @@ interface GenreDitailsProps {
   genreId: number;
   getGenresAndWriteToState: () => void;
 }
+
+const fields = [
+  { lab: 'Идентификатор жанра', val: 'id' },
+  { lab: 'Название жанра', val: 'genreName' },
+];
 
 export const GenreDitails: FC<GenreDitailsProps> = ({
   genreId,
@@ -81,19 +85,17 @@ export const GenreDitails: FC<GenreDitailsProps> = ({
       >
         <Flex direction={'column'} gap={5}>
           <Heading css={{ mb: 5 }}>Свойства</Heading>
-          {Object.keys(genre)
-            .filter((fieldName) => !excludedFields.includes(fieldName))
-            .map((field) => (
-              <Flex
-                key={field}
-                alignItems={'center'}
-                justifyContent={'space-between'}
-                css={{ width: 450 }}
-              >
-                <Text>{field}</Text>
-                {renderFieldEntrail(field)}
-              </Flex>
-            ))}
+          {fields.map((field) => (
+            <Flex
+              key={field.val}
+              alignItems={'center'}
+              justifyContent={'space-between'}
+              css={{ width: 500 }}
+            >
+              <Text>{field.lab}</Text>
+              {renderFieldEntrail(field.val)}
+            </Flex>
+          ))}
           <Flex
             mt={5}
             direction={'column'}

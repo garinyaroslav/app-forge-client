@@ -84,7 +84,7 @@ export const Carts = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${cartElem.id}. consumerId: ${cartElem.consumerId}`}</Text>
+        <Text>{`${cartElem.id}. Корзина пользователя: ${cartElem.consumerId}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',

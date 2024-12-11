@@ -14,7 +14,7 @@ export class Consumer {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('text')
+  @Column('text', { unique: true })
   username: string;
 
   @Column('text')

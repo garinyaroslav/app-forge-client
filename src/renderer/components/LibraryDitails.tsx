@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
-import { excludedFields } from '../../utils/excludedFields';
 import { toaster } from './ui/toaster';
 import { ILibrary, TLibrary } from '../types/library';
 import { unixToUSATime } from '../../utils/unixToUSADate';
@@ -11,6 +10,13 @@ interface LibraryDitailsProps {
   libraryId: number;
   getLibrariesAndWriteToState: () => void;
 }
+
+const fields = [
+  { lab: 'Идентификатор библиотеки', val: 'id' },
+  { lab: 'Идентификатор игры', val: 'gameId' },
+  { lab: 'Идентификатор пользователя', val: 'consumerId' },
+  { lab: 'Дата добавления', val: 'addedDate' },
+];
 
 export const LibraryDitails: FC<LibraryDitailsProps> = ({
   libraryId,
@@ -41,12 +47,21 @@ export const LibraryDitails: FC<LibraryDitailsProps> = ({
   };
 
   const onSubmit: SubmitHandler<ILibrary> = async (data) => {
-    const res = await window.api.updateLibrary({
-      id: Number(data.id),
-      gameId: Number(data.gameId),
-      consumerId: Number(data.consumerId),
-      addedDate: USADateToUnix(String(data.addedDate)),
-    });
+    let res;
+
+    if (
+      !Number.isNaN(Number(data.gameId)) &&
+      !Number.isNaN(Number(data.consumerId))
+    ) {
+      res = await window.api.updateLibrary({
+        id: Number(data.id),
+        gameId: Number(data.gameId),
+        consumerId: Number(data.consumerId),
+        addedDate: USADateToUnix(String(data.addedDate)),
+      });
+    } else {
+      res = null;
+    }
 
     if (res) {
       toaster.create({
@@ -99,19 +114,17 @@ export const LibraryDitails: FC<LibraryDitailsProps> = ({
       >
         <Flex direction={'column'} gap={5}>
           <Heading css={{ mb: 5 }}>Свойства</Heading>
-          {Object.keys(library)
-            .filter((fieldName) => !excludedFields.includes(fieldName))
-            .map((field) => (
-              <Flex
-                key={field}
-                alignItems={'center'}
-                justifyContent={'space-between'}
-                css={{ width: 450 }}
-              >
-                <Text>{field}</Text>
-                {renderFieldEntrail(field)}
-              </Flex>
-            ))}
+          {fields.map((field) => (
+            <Flex
+              key={field.val}
+              alignItems={'center'}
+              justifyContent={'space-between'}
+              css={{ width: 500 }}
+            >
+              <Text>{field.lab}</Text>
+              {renderFieldEntrail(field.val)}
+            </Flex>
+          ))}
           <Flex
             mt={5}
             direction={'column'}

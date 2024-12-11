@@ -9,7 +9,12 @@ interface AddReviewFormProps {
   getReviewsAndWriteToState: () => void;
 }
 
-const fields = ['rating', 'textComment', 'gameId', 'consumerId'];
+const fields = [
+  { lab: 'Рейтинг', val: 'rating' },
+  { lab: 'Текст комментария', val: 'textComment' },
+  { lab: 'Идентификатор игры', val: 'gameId' },
+  { lab: 'Идентификатор пользователя', val: 'consumerId' },
+];
 
 export const AddReviewForm: FC<AddReviewFormProps> = ({
   getReviewsAndWriteToState,
@@ -73,13 +78,13 @@ export const AddReviewForm: FC<AddReviewFormProps> = ({
   const renderFields = () => {
     return fields.map((field) => (
       <Flex
-        key={field}
+        key={field.val}
         alignItems={'center'}
         justifyContent={'space-between'}
-        css={{ width: 450 }}
+        css={{ width: 500 }}
       >
-        <Text>{field}</Text>
-        {renderFieldEntrail(field)}
+        <Text>{field.lab}</Text>
+        {renderFieldEntrail(field.val)}
       </Flex>
     ));
   };

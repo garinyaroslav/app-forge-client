@@ -12,17 +12,29 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { IGame } from '../types/game';
-import { excludedFields } from '../../utils/excludedFields';
 import { IGameForm, TGameForm } from '../types/gameForm';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { toaster } from './ui/toaster';
 import { unixToUSATime } from '../../utils/unixToUSADate';
 import { USADateToUnix } from '../../utils/USADateToUnix';
+import { IGenre } from '../types/genre';
 
 interface GameDitaildProps {
   gameId: number;
   getGamesAndWriteToState: () => void;
 }
+
+const fields = [
+  { lab: 'Идентификатор игры', val: 'id' },
+  { lab: 'Название игры', val: 'title' },
+  { lab: 'Описание игры', val: 'description' },
+  { lab: 'Разработчик', val: 'developerName' },
+  { lab: 'Рейтинг', val: 'rating' },
+  { lab: 'Цена', val: 'price' },
+  { lab: 'Продано копий', val: 'copiesSold' },
+  { lab: 'Идентификатор жанра игры', val: 'gameGenreId' },
+  { lab: 'Дата релиза', val: 'relDate' },
+];
 
 export const GameDitails: FC<GameDitaildProps> = ({
   gameId,
@@ -34,6 +46,9 @@ export const GameDitails: FC<GameDitaildProps> = ({
   const [defaultImageFileList, setDefaultImageFileList] =
     useState<null | FileList>(null);
   const [defaultDate, setDefaultDate] = useState<null | string>(null);
+  const [genreOptions, setGenreOptions] = useState<
+    { label: string; value: number }[]
+  >([]);
   const { register, handleSubmit, reset } = useForm<IGameForm>({
     values: {
       ...game,
@@ -61,6 +76,17 @@ export const GameDitails: FC<GameDitaildProps> = ({
     setGame(data[0]);
   };
 
+  const getGenresAndWriteToState = async () => {
+    const g = await window.api.getGenres().catch(console.error);
+
+    setGenreOptions(
+      g.map((genreObj: IGenre) => ({
+        value: genreObj.id,
+        label: genreObj.genreName,
+      })),
+    );
+  };
+
   const onCancel = async () => {
     await reset();
     getGame();
@@ -72,18 +98,28 @@ export const GameDitails: FC<GameDitaildProps> = ({
     const arrayBuffer = await data.image.item(0)?.arrayBuffer();
     const uInt8ArrayImage = new Uint8Array(arrayBuffer as ArrayBuffer);
 
-    const res = await window.api.updateGame({
-      id: Number(data.id),
-      title: data.title,
-      description: data.description,
-      developerName: data.developerName,
-      rating: Number(data.rating),
-      price: Number(data.price),
-      copiesSold: Number(data.copiesSold),
-      gameGenreId: Number(data.gameGenreId),
-      relDate: USADateToUnix(data.relDate),
-      image: uInt8ArrayImage,
-    });
+    let res;
+    if (
+      !Number.isNaN(Number(data.rating)) &&
+      !Number.isNaN(Number(data.price)) &&
+      !Number.isNaN(Number(data.copiesSold)) &&
+      !Number.isNaN(Number(data.gameGenreId))
+    ) {
+      res = await window.api.updateGame({
+        id: Number(data.id),
+        title: data.title,
+        description: data.description,
+        developerName: data.developerName,
+        rating: Number(data.rating),
+        price: Number(data.price),
+        copiesSold: Number(data.copiesSold),
+        gameGenreId: Number(data.gameGenreId),
+        relDate: USADateToUnix(data.relDate),
+        image: uInt8ArrayImage,
+      });
+    } else {
+      res = null;
+    }
 
     if (res) {
       toaster.create({
@@ -132,6 +168,25 @@ export const GameDitails: FC<GameDitaildProps> = ({
           }}
         />
       );
+    if (field === 'gameGenreId')
+      return (
+        <select
+          {...register(field as TGameForm, { required: true })}
+          disabled={!isEdited}
+          style={{
+            width: 250,
+            background: '#18181b',
+            borderRadius: '4px',
+            padding: 6,
+          }}
+        >
+          {genreOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      );
     return (
       <Input
         {...register(field as TGameForm)}
@@ -146,6 +201,7 @@ export const GameDitails: FC<GameDitaildProps> = ({
 
   useEffect(() => {
     getGame();
+    getGenresAndWriteToState();
     return () => {
       if (imageSrc) URL.revokeObjectURL(imageSrc);
     };
@@ -155,23 +211,21 @@ export const GameDitails: FC<GameDitaildProps> = ({
     return (
       <form
         onSubmit={handleSubmit(onSubmit)}
-        style={{ padding: '20px', display: 'flex', gap: '80px' }}
+        style={{ padding: '20px', display: 'flex', gap: '70px' }}
       >
         <Flex direction={'column'} gap={5}>
           <Heading css={{ mb: 5 }}>Свойства</Heading>
-          {Object.keys(game)
-            .filter((fieldName) => !excludedFields.includes(fieldName))
-            .map((field) => (
-              <Flex
-                key={field}
-                alignItems={'center'}
-                justifyContent={'space-between'}
-                css={{ width: 450 }}
-              >
-                <Text>{field}</Text>
-                {renderFieldEntrail(field)}
-              </Flex>
-            ))}
+          {fields.map((field) => (
+            <Flex
+              key={field.val}
+              alignItems={'center'}
+              justifyContent={'space-between'}
+              css={{ width: 500 }}
+            >
+              <Text>{field.lab}</Text>
+              {renderFieldEntrail(field.val)}
+            </Flex>
+          ))}
         </Flex>
         <Flex
           direction={'column'}

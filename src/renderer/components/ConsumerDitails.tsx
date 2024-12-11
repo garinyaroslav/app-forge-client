@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
-import { excludedFields } from '../../utils/excludedFields';
 import { toaster } from './ui/toaster';
 import { IConsumer, TConsumer } from '../types/consumer';
 import { unixToUSATime } from '../../utils/unixToUSADate';
@@ -11,6 +10,17 @@ interface ConsumerDitailsProps {
   consumerId: number;
   getConsumersAndWriteToState: () => void;
 }
+
+const fields = [
+  { lab: 'Идентификатор пользователя', val: 'id' },
+  { lab: 'Логин', val: 'username' },
+  { lab: 'Электронная почта', val: 'email' },
+  // { lab: 'Хеш пароля', val: 'passwordHash' },
+  { lab: 'Имя', val: 'firstName' },
+  { lab: 'Фамилия', val: 'lastName' },
+  { lab: 'Дата регистрации', val: 'regDate' },
+  { lab: 'Админ', val: 'isAdmin' },
+];
 
 export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
   consumerId,
@@ -45,7 +55,8 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
       id: Number(data.id),
       username: data.username,
       email: data.email,
-      passwordHash: data.passwordHash,
+      // passwordHash: data.passwordHash,
+      passwordHash: consumer?.passwordHash,
       firstName: data.firstName,
       lastName: data.lastName,
       isAdmin: Boolean(data.isAdmin),
@@ -114,19 +125,17 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
       >
         <Flex direction={'column'} gap={5}>
           <Heading css={{ mb: 5 }}>Свойства</Heading>
-          {Object.keys(consumer)
-            .filter((fieldName) => !excludedFields.includes(fieldName))
-            .map((field) => (
-              <Flex
-                key={field}
-                alignItems={'center'}
-                justifyContent={'space-between'}
-                css={{ width: 450 }}
-              >
-                <Text>{field}</Text>
-                {renderFieldEntrail(field)}
-              </Flex>
-            ))}
+          {fields.map((field) => (
+            <Flex
+              key={field.val}
+              alignItems={'center'}
+              justifyContent={'space-between'}
+              css={{ width: 500 }}
+            >
+              <Text>{field.lab}</Text>
+              {renderFieldEntrail(field.val)}
+            </Flex>
+          ))}
           <Flex
             mt={5}
             direction={'column'}

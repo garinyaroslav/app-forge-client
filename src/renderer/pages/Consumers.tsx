@@ -88,7 +88,7 @@ export const Consumers = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${consumerElem.id}. ${consumerElem.username}`}</Text>
+        <Text>{`${consumerElem.id}. Логин: ${consumerElem.username}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',

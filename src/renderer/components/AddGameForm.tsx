@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import {
   Flex,
@@ -15,28 +15,47 @@ import { IGameForm, TGameForm } from '../types/gameForm';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { Toaster, toaster } from './ui/toaster';
 import { USADateToUnix } from '../../utils/USADateToUnix';
+import { IGenre } from '../types/genre';
 
 interface AddGameFormProps {
   getGamesAndWriteToState: () => void;
 }
 
 const fields = [
-  'title',
-  'description',
-  'developerName',
-  'rating',
-  'image',
-  'price',
-  'copiesSold',
-  'gameGenreId',
-  'relDate',
+  { lab: 'Название игры', val: 'title' },
+  { lab: 'Описание игры', val: 'description' },
+  { lab: 'Разработчик', val: 'developerName' },
+  { lab: 'Рейтинг', val: 'rating' },
+  { lab: 'Изображение игры', val: 'image' },
+  { lab: 'Цена', val: 'price' },
+  { lab: 'Продано копий', val: 'copiesSold' },
+  { lab: 'Жанр', val: 'gameGenreId' },
+  { lab: 'Дата релиза', val: 'relDate' },
 ];
 
 export const AddGameForm: FC<AddGameFormProps> = ({
   getGamesAndWriteToState,
 }) => {
   const [imageSrc, setImageSrc] = useState<null | string>(null);
+  const [genreOptions, setGenreOptions] = useState<
+    { label: string; value: number }[]
+  >([]);
   const { register, handleSubmit, reset } = useForm<IGameForm>({});
+
+  const getGenresAndWriteToState = async () => {
+    const g = await window.api.getGenres().catch(console.error);
+
+    setGenreOptions(
+      g.map((genreObj: IGenre) => ({
+        value: genreObj.id,
+        label: genreObj.genreName,
+      })),
+    );
+  };
+
+  useEffect(() => {
+    getGenresAndWriteToState();
+  }, []);
 
   const onSubmit: SubmitHandler<IGameForm> = async (data) => {
     const arrayBuffer = await data.image.item(0)?.arrayBuffer();
@@ -116,12 +135,31 @@ export const AddGameForm: FC<AddGameFormProps> = ({
       return (
         <Input
           type="date"
-          {...register(field as TGameForm)}
+          {...register(field as TGameForm, { required: true })}
           {...{
             variant: 'subtle',
             css: { width: 250 },
           }}
         />
+      );
+
+    if (field === 'gameGenreId')
+      return (
+        <select
+          {...register(field as TGameForm, { required: true })}
+          style={{
+            width: 250,
+            background: '#18181b',
+            borderRadius: '4px',
+            padding: 6,
+          }}
+        >
+          {genreOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
       );
     return (
       <Input
@@ -137,13 +175,13 @@ export const AddGameForm: FC<AddGameFormProps> = ({
   const renderFields = () => {
     return fields.map((field) => (
       <Flex
-        key={field}
+        key={field.val}
         alignItems={'center'}
         justifyContent={'space-between'}
-        css={{ width: 450 }}
+        css={{ width: 500 }}
       >
-        <Text>{field}</Text>
-        {renderFieldEntrail(field)}
+        <Text>{field.lab}</Text>
+        {renderFieldEntrail(field.val)}
       </Flex>
     ));
   };
@@ -153,7 +191,7 @@ export const AddGameForm: FC<AddGameFormProps> = ({
       <Toaster />
       <form
         onSubmit={handleSubmit(onSubmit)}
-        style={{ padding: '20px', display: 'flex', gap: '80px' }}
+        style={{ padding: '20px', display: 'flex', gap: '70px' }}
       >
         <Flex direction={'column'} gap={5}>
           <Heading css={{ mb: 5 }}>Свойства</Heading>

@@ -2,7 +2,6 @@ import { FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button, Textarea } from '@chakra-ui/react';
 import { IGame } from '../types/game';
-import { excludedFields } from '../../utils/excludedFields';
 import { toaster } from './ui/toaster';
 import { IReview, TReview } from '../types/review';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
@@ -11,6 +10,14 @@ interface ReviewDitailsProps {
   reviewId: number;
   getReviewsAndWriteToState: () => void;
 }
+
+const fields = [
+  { lab: 'Идентификатор отзыва', val: 'id' },
+  { lab: 'Рейтинг', val: 'rating' },
+  { lab: 'Текст комментария', val: 'textComment' },
+  { lab: 'Идентификатор игры', val: 'gameId' },
+  { lab: 'Идентификатор пользователя', val: 'consumerId' },
+];
 
 export const ReviewDitails: FC<ReviewDitailsProps> = ({
   reviewId,
@@ -38,13 +45,21 @@ export const ReviewDitails: FC<ReviewDitailsProps> = ({
   };
 
   const onSubmit: SubmitHandler<IReview> = async (data) => {
-    const res = await window.api.updateReview({
-      id: Number(data.id),
-      rating: Number(data.rating),
-      textComment: data.textComment,
-      gameId: Number(data.gameId),
-      consumerId: Number(data.consumerId),
-    });
+    let res;
+    if (
+      !Number.isNaN(Number(data.gameId)) &&
+      !Number.isNaN(Number(data.consumerId))
+    ) {
+      res = await window.api.updateReview({
+        id: Number(data.id),
+        rating: data.rating,
+        textComment: data.textComment,
+        gameId: Number(data.gameId),
+        consumerId: Number(data.consumerId),
+      });
+    } else {
+      res = null;
+    }
 
     if (res) {
       toaster.create({
@@ -96,23 +111,21 @@ export const ReviewDitails: FC<ReviewDitailsProps> = ({
     return (
       <form
         onSubmit={handleSubmit(onSubmit)}
-        style={{ padding: '20px', display: 'flex', gap: '80px' }}
+        style={{ padding: '20px', display: 'flex', gap: '70px' }}
       >
         <Flex direction={'column'} gap={5}>
           <Heading css={{ mb: 5 }}>Свойства</Heading>
-          {Object.keys(review)
-            .filter((fieldName) => !excludedFields.includes(fieldName))
-            .map((field) => (
-              <Flex
-                key={field}
-                alignItems={'center'}
-                justifyContent={'space-between'}
-                css={{ width: 450 }}
-              >
-                <Text>{field}</Text>
-                {renderFieldEntrail(field)}
-              </Flex>
-            ))}
+          {fields.map((field) => (
+            <Flex
+              key={field.val}
+              alignItems={'center'}
+              justifyContent={'space-between'}
+              css={{ width: 500 }}
+            >
+              <Text>{field.lab}</Text>
+              {renderFieldEntrail(field.val)}
+            </Flex>
+          ))}
           <Flex
             mt={5}
             direction={'column'}
