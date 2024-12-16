@@ -52,7 +52,9 @@ export class Game {
   @OneToMany(() => CartItem, (cartItem) => cartItem.game)
   cartItems: CartItem[];
 
-  @ManyToOne(() => GameGenre, (gameGenre) => gameGenre.games)
+  @ManyToOne(() => GameGenre, (gameGenre) => gameGenre.games, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'gameGenreId' })
   gameGenres: GameGenre[];
 }

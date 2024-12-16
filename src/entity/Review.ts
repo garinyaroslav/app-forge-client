@@ -25,7 +25,9 @@ export class Review {
   @Column('integer')
   consumerId: number;
 
-  @ManyToOne(() => Consumer, (consumer) => consumer.reviews)
+  @ManyToOne(() => Consumer, (consumer) => consumer.reviews, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'consumerId' })
   consumer: Consumer;
 

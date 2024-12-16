@@ -26,7 +26,9 @@ export class Library {
   @JoinColumn({ name: 'gameId' })
   game: Game;
 
-  @ManyToOne(() => Consumer, (consumer) => consumer.libraries)
+  @ManyToOne(() => Consumer, (consumer) => consumer.libraries, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'consumerId' })
   consumer: Consumer;
 }
