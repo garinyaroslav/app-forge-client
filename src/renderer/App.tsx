@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
 import { AdminLayout } from './pages/AdminLayout';
-import { Games } from './pages/Games';
 import { GameGenres } from './pages/GameGenres';
 import { Consumers } from './pages/Consumers';
 import { Reviews } from './pages/Reviews';
@@ -8,6 +7,7 @@ import { Libraries } from './pages/Libraries';
 import { Carts } from './pages/Carts';
 import { CartItems } from './pages/CartItems';
 import { Auth } from './pages/Auth';
+import { Products } from './pages/Products';
 import { RootLayout } from './pages/RootLayout';
 import { Store } from './pages/Store';
 import { Shop } from './pages/Shop';
@@ -24,7 +24,7 @@ export const App = () => {
       <Route path="/" element={<RootLayout />}>
         <Route path="/" element={<Auth />} />
         <Route path="/admin" element={<AdminLayout />}>
-          <Route path={mt.games} element={<Games />} />
+          <Route path={mt.games} element={<Products />} />
           <Route path={mt.reviews} element={<Reviews />} />
           <Route path={mt.consumers} element={<Consumers />} />
           <Route path={mt.carts} element={<Carts />} />

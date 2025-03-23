@@ -3,8 +3,9 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { PasswordInput } from './ui/password-input';
-import { ILoginForm, LoginRes } from '../types/auth';
+import { ILoginForm, ILoginRes } from '../types/auth';
 import { Field } from './ui/field';
+import a from '../axios';
 
 export const Login = () => {
   const nav = useNavigate();
@@ -17,26 +18,24 @@ export const Login = () => {
   } = useForm<ILoginForm>();
 
   const onSubmit = async (data: ILoginForm) => {
-    const res = (await window.api.login(data)) as {
-      status: LoginRes;
-      uid: number | null;
-    };
+    try {
+      const res = await a.post<ILoginForm>('/token/', data);
+      const resData = res.data as unknown as ILoginRes;
 
-    switch (res.status) {
-      case LoginRes.user:
-        localStorage.setItem('uid', String(res.uid));
-        nav('/user/shop');
-        break;
-      case LoginRes.admin:
-        localStorage.setItem('uid', String(res.uid));
+      localStorage.setItem('accessToken', resData.access);
+      localStorage.setItem('refreshToken', resData.refresh);
+
+      if (resData.is_staff) {
+        localStorage.setItem('uid', String(resData.userId));
         nav('/admin/games');
-        break;
-      case LoginRes.notFound:
-        setError('login', { type: 'value' });
-        resetField('password');
-        break;
-      default:
-        break;
+      } else if (!resData.is_staff) {
+        localStorage.setItem('uid', String(resData.userId));
+        nav('/user/shop');
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('username', { type: 'value' });
+      resetField('password');
     }
   };
 
@@ -46,15 +45,15 @@ export const Login = () => {
       style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}
     >
       <Field
-        invalid={Boolean(errors.login)}
+        invalid={Boolean(errors.username)}
         errorText={
-          errors.login?.type === 'required'
+          errors.username?.type === 'required'
             ? 'Поле обезательно к заполнению'
             : 'Неправильное имя пользователя или пароль'
         }
       >
         <Input
-          {...register('login', { required: 'Введите имя пользователя' })}
+          {...register('username', { required: 'Введите имя пользователя' })}
           variant={'subtle'}
           w={300}
           className="peer"

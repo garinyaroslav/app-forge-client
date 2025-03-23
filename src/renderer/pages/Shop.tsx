@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { GameCard } from '../components/GameCard';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
-import { GameSort, IGame } from '../types/game';
+import { ProductSort, IProduct } from '../types/product';
 import { SelectRoot } from '../components/ui/select';
 
 import CartSvg from '../assets/cart.svg';
@@ -25,16 +25,16 @@ import { CartModal } from '../components/CartModal';
 
 const options = createListCollection({
   items: [
-    { label: 'По популярности', value: GameSort.byPopularity },
-    { label: 'По новизне', value: GameSort.byNovelty },
+    { label: 'По популярности', value: ProductSort.byPopularity },
+    { label: 'По новизне', value: ProductSort.byNovelty },
   ],
 });
 
 export const Shop = () => {
   const [games, setGames] = useState<
-    (IGame & { gameGenres: { genreName: string } })[]
+    (IProduct & { gameGenres: { genreName: string } })[]
   >([]);
-  const [sort, setSort] = useState<GameSort>(GameSort.byNovelty);
+  const [sort, setSort] = useState<ProductSort>(ProductSort.byNovelty);
   const [searchValue, setSearchValue] = useState('');
   const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -59,7 +59,7 @@ export const Shop = () => {
   };
 
   const renderGameCarts = (
-    items: (IGame & { gameGenres: { genreName: string } })[],
+    items: (IProduct & { gameGenres: { genreName: string } })[],
   ) => {
     return items.map((item) => <GameCard key={item.id} gameObj={item} />);
   };
@@ -98,8 +98,8 @@ export const Shop = () => {
               <Text css={{ mr: 3, fontWeight: 600 }}>Сортировка:</Text>
               <SelectRoot
                 value={[sort]}
-                onValueChange={(e: { value: GameSort[] }) => {
-                  setSort(e.value[0] as GameSort);
+                onValueChange={(e: { value: ProductSort[] }) => {
+                  setSort(e.value[0] as ProductSort);
                 }}
                 variant={'subtle'}
                 collection={options}

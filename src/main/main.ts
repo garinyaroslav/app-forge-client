@@ -12,18 +12,8 @@ import path from 'path';
 import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { dataSource } from './db';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import 'reflect-metadata';
-import './apiHandlers/gameHandlers';
-import './apiHandlers/genreHandlers';
-import './apiHandlers/consumerHandlers';
-import './apiHandlers/reviewHandlers';
-import './apiHandlers/libraryHandlers';
-import './apiHandlers/cartHandlers';
-import './apiHandlers/cartItemHandlers';
-import './apiHandlers/authHandlers';
 
 class AppUpdater {
   constructor() {
@@ -131,7 +121,6 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
-    dataSource.initialize();
     createWindow();
 
     app.on('activate', () => {

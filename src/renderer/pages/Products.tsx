@@ -10,69 +10,84 @@ import {
 } from '@chakra-ui/react';
 import { Toaster, toaster } from '../components/ui/toaster';
 import { EmptyState } from '../components/EmpatyState';
-import { GameDitails } from '../components/GameDitails';
-import { IGame } from '../types/game';
+import { IProduct } from '../types/product';
 
 import PlusSvg from '../assets/plus.svg';
 import SearchSvg from '../assets/search.svg';
 import RemoveSvg from '../assets/remove.svg';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
-import { AddGameForm } from '../components/AddGameForm';
+import a from '../../renderer/axios';
+import { ProductDitails } from '../components/ProductDitails';
+import { AddProductForm } from '../components/AddProductForm';
 
-export const Games = () => {
-  const [games, setGames] = useState<IGame[]>([]);
-  const [selectedGameId, setSelectedGameId] = useState<null | number>(null);
-  const [deletedGameId, setDeletedGameId] = useState<null | number>(null);
-  const [isGameAdded, setGameIsAdded] = useState(false);
+export const Products = () => {
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const [selectedProductId, setSelectedProductId] = useState<null | number>(
+    null,
+  );
+  const [deletedProductId, setDeletedProductId] = useState<null | number>(null);
+  const [isProductAdded, setProductIsAdded] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
-  const getGamesAndWriteToState = async () => {
-    const g = await window.api.getGames().catch(console.error);
-    setGames(g);
+  const getProductsAndWriteToState = async () => {
+    try {
+      const res = await a.get<IProduct[]>('/software/');
+      setProducts(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const search = async (searchVal: string) => {
-    const g = await window.api
-      .getGamesBySearchValue(searchVal)
-      .catch(console.error);
-    setGames(g);
+    try {
+      const res = await a.get<IProduct[]>(`/software/?search=${searchVal}`);
+      setProducts(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    if (val.length === 0) getGamesAndWriteToState();
+    if (val.length === 0) getProductsAndWriteToState();
     setSearchValue(val);
   };
 
   useEffect(() => {
-    getGamesAndWriteToState();
-  }, [deletedGameId]);
+    getProductsAndWriteToState();
+  }, [deletedProductId]);
 
-  const deleteGame = async () => {
-    const res = await window.api.deleteGame(deletedGameId).catch(console.error);
+  const deleteProduct = async () => {
+    let resData: IProduct | null = null;
+    try {
+      const res = await a.delete(`/software/?id=${deletedProductId}`);
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
 
-    if (res) {
+    if (resData !== null) {
       toaster.create({
-        description: 'Игра успешно удалена',
+        description: 'Прдукт успешно удалён',
         type: 'success',
       });
     } else {
       toaster.create({
-        description: 'Игра не удалена',
+        description: 'Продукт не удалён',
         type: 'error',
       });
     }
-    setDeletedGameId(null);
+    setDeletedProductId(null);
   };
 
-  const renderGames = (gamesElems: IGame[]) =>
-    gamesElems.map((gameElem) => (
+  const renderProducts = (productsElems: IProduct[]) =>
+    productsElems.map((productElem) => (
       <Flex
         alignItems={'center'}
         justifyContent={'space-between'}
-        onClick={() => setSelectedGameId(gameElem.id)}
-        key={gameElem.id}
+        onClick={() => setSelectedProductId(productElem.id)}
+        key={productElem.id}
         css={{
           pl: 6,
           pr: 4.5,
@@ -84,11 +99,11 @@ export const Games = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${gameElem.id}. ${gameElem.title}`}</Text>
+        <Text>{`${productElem.id}. ${productElem.title}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',
-            onClick: () => setDeletedGameId(gameElem.id),
+            onClick: () => setDeletedProductId(productElem.id),
           }}
         >
           <img style={{ height: 16 }} src={RemoveSvg} alt={'remove'} />
@@ -97,25 +112,29 @@ export const Games = () => {
     ));
 
   const renderEntrails = () => {
-    if (selectedGameId)
+    if (selectedProductId)
       return (
-        <GameDitails
-          gameId={selectedGameId}
-          getGamesAndWriteToState={getGamesAndWriteToState}
+        <ProductDitails
+          productId={selectedProductId}
+          getProductsAndWriteToState={getProductsAndWriteToState}
         />
       );
-    if (isGameAdded)
-      return <AddGameForm getGamesAndWriteToState={getGamesAndWriteToState} />;
+    if (isProductAdded)
+      return (
+        <AddProductForm
+          getProductsAndWriteToState={getProductsAndWriteToState}
+        />
+      );
     return <EmptyState />;
   };
 
   return (
     <>
-      {deletedGameId && (
+      {deletedProductId && (
         <DeleteConditionModal
-          open={Boolean(deletedGameId)}
-          onClose={() => setDeletedGameId(null)}
-          onSubmit={deleteGame}
+          open={Boolean(deletedProductId)}
+          onClose={() => setDeletedProductId(null)}
+          onSubmit={deleteProduct}
         />
       )}
       <Toaster />
@@ -144,12 +163,12 @@ export const Games = () => {
               alignItems={'center'}
               mb={8}
             >
-              <Heading>Список игр</Heading>
+              <Heading>Список продуктов</Heading>
               <IconButton
                 {...{
                   onClick: () => {
-                    setSelectedGameId(null);
-                    setGameIsAdded(true);
+                    setSelectedProductId(null);
+                    setProductIsAdded(true);
                   },
                   variant: 'surface',
                 }}
@@ -163,7 +182,7 @@ export const Games = () => {
                   value: searchValue,
                   onChange: onChangeSearchValue,
                   variant: 'outline',
-                  placeholder: 'Поиск игр',
+                  placeholder: 'Поиск продуктов',
                   onKeyDown: (e) => {
                     if (e.key === 'Enter') search(searchValue);
                   },
@@ -176,7 +195,7 @@ export const Games = () => {
               </IconButton>
             </Group>
           </Flex>
-          <Box css={scrollBarStyles}>{renderGames(games)}</Box>
+          <Box css={scrollBarStyles}>{renderProducts(products)}</Box>
         </Flex>
         <Box css={{ flex: 1 }}>{renderEntrails()}</Box>
       </Flex>

@@ -11,36 +11,39 @@ import {
   Button,
   Box,
 } from '@chakra-ui/react';
-import { IGame } from '../types/game';
-import { IGameForm, TGameForm } from '../types/gameForm';
+import { IProduct } from '../types/product';
+import { IProductForm, TProductForm } from '../types/productForm';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { toaster } from './ui/toaster';
 import { unixToUSATime } from '../../utils/unixToUSADate';
 import { USADateToUnix } from '../../utils/USADateToUnix';
 import { IGenre } from '../types/genre';
+import a from '../../renderer/axios';
+import { base64ToBlob } from '../../utils/base64ToBlob';
+import { fileToBase64 } from '../../utils/fileToBase64';
 
-interface GameDitaildProps {
-  gameId: number;
-  getGamesAndWriteToState: () => void;
+interface ProductDitaildProps {
+  productId: number;
+  getProductsAndWriteToState: () => void;
 }
 
 const fields = [
-  { lab: 'Идентификатор игры', val: 'id' },
-  { lab: 'Название игры', val: 'title' },
-  { lab: 'Описание игры', val: 'description' },
-  { lab: 'Разработчик', val: 'developerName' },
+  { lab: 'Идентификатор продукта', val: 'id' },
+  { lab: 'Название продукта', val: 'title' },
+  { lab: 'Описание продукта', val: 'description' },
+  { lab: 'Разработчик', val: 'developer_name' },
   { lab: 'Рейтинг', val: 'rating' },
   { lab: 'Цена', val: 'price' },
-  { lab: 'Продано копий', val: 'copiesSold' },
-  { lab: 'Идентификатор жанра игры', val: 'gameGenreId' },
-  { lab: 'Дата релиза', val: 'relDate' },
+  { lab: 'Продано копий', val: 'copies_sold' },
+  { lab: 'Идентификатор жанра продукта', val: 'genre' },
+  { lab: 'Дата релиза', val: 'rel_date' },
 ];
 
-export const GameDitails: FC<GameDitaildProps> = ({
-  gameId,
-  getGamesAndWriteToState,
+export const ProductDitails: FC<ProductDitaildProps> = ({
+  productId,
+  getProductsAndWriteToState,
 }) => {
-  const [game, setGame] = useState<null | IGame>(null);
+  const [product, setProduct] = useState<null | IProduct>(null);
   const [imageSrc, setImageSrc] = useState<null | string>(null);
   const [isEdited, setIsEdited] = useState(false);
   const [defaultImageFileList, setDefaultImageFileList] =
@@ -49,20 +52,28 @@ export const GameDitails: FC<GameDitaildProps> = ({
   const [genreOptions, setGenreOptions] = useState<
     { label: string; value: number }[]
   >([]);
-  const { register, handleSubmit, reset } = useForm<IGameForm>({
+  const { register, handleSubmit, reset } = useForm<IProductForm>({
     values: {
-      ...game,
+      ...product,
       image: defaultImageFileList,
-      relDate: defaultDate,
-    } as unknown as IGameForm,
+      rel_date: defaultDate,
+    } as unknown as IProductForm,
   });
 
-  const getGame = async () => {
-    const data = await window.api.getGame(gameId).catch(console.error);
+  const getProduct = async () => {
+    let resData: null | IProduct = null;
 
-    const blob = new Blob([data[0].image], {
-      type: 'image/png',
-    });
+    try {
+      const res = await a.get<IProduct>(`/software/?id=${productId}`);
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (!resData) return;
+
+    const blob = base64ToBlob(resData.image, 'image/png');
+
     setImageSrc(URL.createObjectURL(blob));
 
     const file = new File([blob], 'oldimage.png', {
@@ -72,66 +83,85 @@ export const GameDitails: FC<GameDitaildProps> = ({
     dt.items.add(file);
 
     setDefaultImageFileList(dt.files);
-    setDefaultDate(unixToUSATime(data[0].relDate));
-    setGame(data[0]);
+    setDefaultDate(unixToUSATime(resData.rel_date));
+    setProduct(resData);
   };
 
   const getGenresAndWriteToState = async () => {
-    const g = await window.api.getGenres().catch(console.error);
+    let resData: null | IGenre[] = null;
+
+    try {
+      const res = await a.get<IGenre[]>(`/genre/`);
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (!resData) return;
 
     setGenreOptions(
-      g.map((genreObj: IGenre) => ({
+      resData.map((genreObj: IGenre) => ({
         value: genreObj.id,
-        label: genreObj.genreName,
+        label: genreObj.name,
       })),
     );
   };
 
   const onCancel = async () => {
     await reset();
-    getGame();
-    getGamesAndWriteToState();
+    getProduct();
+    getProductsAndWriteToState();
     setIsEdited(false);
   };
 
-  const onSubmit: SubmitHandler<IGameForm> = async (data) => {
-    const arrayBuffer = await data.image.item(0)?.arrayBuffer();
-    const uInt8ArrayImage = new Uint8Array(arrayBuffer as ArrayBuffer);
+  const onSubmit: SubmitHandler<IProductForm> = async (data) => {
+    const imageBase64 = await fileToBase64(data.image.item(0) as File);
 
-    let res;
     if (
-      !Number.isNaN(Number(data.rating)) &&
-      !Number.isNaN(Number(data.price)) &&
-      !Number.isNaN(Number(data.copiesSold)) &&
-      !Number.isNaN(Number(data.gameGenreId))
+      Number.isNaN(Number(data.rating)) &&
+      Number.isNaN(Number(data.price)) &&
+      Number.isNaN(Number(data.copies_sold)) &&
+      Number.isNaN(Number(data.genre))
     ) {
-      res = await window.api.updateGame({
-        id: Number(data.id),
-        title: data.title,
-        description: data.description,
-        developerName: data.developerName,
-        rating: Number(data.rating),
-        price: Number(data.price),
-        copiesSold: Number(data.copiesSold),
-        gameGenreId: Number(data.gameGenreId),
-        relDate: USADateToUnix(data.relDate),
-        image: uInt8ArrayImage,
+      toaster.create({
+        description: 'Продукт не был обновлен',
+        type: 'error',
       });
-    } else {
-      res = null;
+      return;
     }
 
-    if (res) {
+    let resData: null | IProduct = null;
+
+    try {
+      let res = await a.put<IProduct>(`/software/?id=${data.id}`, {
+        title: data.title,
+        description: data.description,
+        developer_name: data.developer_name,
+        rating: Number(data.rating),
+        price: Number(data.price),
+        copies_sold: Number(data.copies_sold),
+        genre: Number(data.genre),
+        rel_date: USADateToUnix(data.rel_date),
+        image: imageBase64,
+      });
+
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData) {
       toaster.create({
-        description: 'Игра успешно обновлена',
+        description: 'Продукт успешно обновлён',
         type: 'success',
       });
     } else {
       toaster.create({
-        description: 'Игра не была обновлена',
+        description: 'Продукт не был обновлен',
         type: 'error',
       });
     }
+
     onCancel();
   };
 
@@ -156,11 +186,11 @@ export const GameDitails: FC<GameDitaildProps> = ({
           }}
         />
       );
-    if (field === 'relDate')
+    if (field === 'rel_date')
       return (
         <Input
           type="date"
-          {...register(field as TGameForm)}
+          {...register(field as TProductForm)}
           {...{
             variant: 'subtle',
             disabled: !isEdited,
@@ -168,10 +198,10 @@ export const GameDitails: FC<GameDitaildProps> = ({
           }}
         />
       );
-    if (field === 'gameGenreId')
+    if (field === 'genre')
       return (
         <select
-          {...register(field as TGameForm, { required: true })}
+          {...register(field as TProductForm, { required: true })}
           disabled={!isEdited}
           style={{
             width: 250,
@@ -189,7 +219,7 @@ export const GameDitails: FC<GameDitaildProps> = ({
       );
     return (
       <Input
-        {...register(field as TGameForm)}
+        {...register(field as TProductForm)}
         {...{
           variant: 'subtle',
           disabled: !isEdited || field === 'id',
@@ -200,14 +230,14 @@ export const GameDitails: FC<GameDitaildProps> = ({
   };
 
   useEffect(() => {
-    getGame();
+    getProduct();
     getGenresAndWriteToState();
     return () => {
       if (imageSrc) URL.revokeObjectURL(imageSrc);
     };
-  }, [gameId]);
+  }, [productId]);
 
-  if (game)
+  if (product)
     return (
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -233,7 +263,7 @@ export const GameDitails: FC<GameDitaildProps> = ({
           justifyContent={'space-between'}
         >
           <Box>
-            <Heading css={{ mb: 5 }}>Изображение игры</Heading>
+            <Heading css={{ mb: 5 }}>Изображение приложения</Heading>
             {imageSrc ? (
               <>
                 <Image
@@ -273,7 +303,7 @@ export const GameDitails: FC<GameDitaildProps> = ({
                 Изменить
               </Button>
               <Button hidden type="submit">
-                1
+                .
               </Button>
             </>
           )}

@@ -1,6 +1,13 @@
 export interface ILoginForm {
-  login: string;
+  username: string;
   password: string;
+}
+
+export interface ILoginRes {
+  refresh: string;
+  access: string;
+  userId: number;
+  is_staff: boolean;
 }
 
 export interface IRegisterForm {

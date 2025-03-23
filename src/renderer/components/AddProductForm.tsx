@@ -11,44 +11,56 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { EmptyState } from './ui/empty-state';
-import { IGameForm, TGameForm } from '../types/gameForm';
+import { IProductForm, TProductForm } from '../types/productForm';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { Toaster, toaster } from './ui/toaster';
 import { USADateToUnix } from '../../utils/USADateToUnix';
 import { IGenre } from '../types/genre';
+import a from '../../renderer/axios';
+import { fileToBase64 } from '../../utils/fileToBase64';
+import { IProduct } from '../types/product';
 
-interface AddGameFormProps {
-  getGamesAndWriteToState: () => void;
+interface AddProductFormProps {
+  getProductsAndWriteToState: () => void;
 }
 
 const fields = [
-  { lab: 'Название игры', val: 'title' },
-  { lab: 'Описание игры', val: 'description' },
-  { lab: 'Разработчик', val: 'developerName' },
+  { lab: 'Название продукта', val: 'title' },
+  { lab: 'Описание продукта', val: 'description' },
+  { lab: 'Разработчик', val: 'developer_name' },
   { lab: 'Рейтинг', val: 'rating' },
-  { lab: 'Изображение игры', val: 'image' },
+  { lab: 'Изображение продукта', val: 'image' },
   { lab: 'Цена', val: 'price' },
-  { lab: 'Продано копий', val: 'copiesSold' },
-  { lab: 'Жанр', val: 'gameGenreId' },
-  { lab: 'Дата релиза', val: 'relDate' },
+  { lab: 'Продано копий', val: 'copies_sold' },
+  { lab: 'Жанр', val: 'genre' },
+  { lab: 'Дата релиза', val: 'rel_date' },
 ];
 
-export const AddGameForm: FC<AddGameFormProps> = ({
-  getGamesAndWriteToState,
+export const AddProductForm: FC<AddProductFormProps> = ({
+  getProductsAndWriteToState,
 }) => {
   const [imageSrc, setImageSrc] = useState<null | string>(null);
   const [genreOptions, setGenreOptions] = useState<
     { label: string; value: number }[]
   >([]);
-  const { register, handleSubmit, reset } = useForm<IGameForm>({});
+  const { register, handleSubmit, reset } = useForm<IProductForm>({});
 
   const getGenresAndWriteToState = async () => {
-    const g = await window.api.getGenres().catch(console.error);
+    let resData: null | IGenre[] = null;
+
+    try {
+      const res = await a.get<IGenre[]>(`/genre/`);
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (!resData) return;
 
     setGenreOptions(
-      g.map((genreObj: IGenre) => ({
+      resData.map((genreObj: IGenre) => ({
         value: genreObj.id,
-        label: genreObj.genreName,
+        label: genreObj.name,
       })),
     );
   };
@@ -57,47 +69,57 @@ export const AddGameForm: FC<AddGameFormProps> = ({
     getGenresAndWriteToState();
   }, []);
 
-  const onSubmit: SubmitHandler<IGameForm> = async (data) => {
-    const arrayBuffer = await data.image.item(0)?.arrayBuffer();
-    const uInt8ArrayImage = new Uint8Array(arrayBuffer as ArrayBuffer);
+  const onSubmit: SubmitHandler<IProductForm> = async (data) => {
+    const imageBase64 = await fileToBase64(data.image.item(0) as File);
 
-    let res;
     if (
-      !Number.isNaN(Number(data.rating)) &&
-      !Number.isNaN(Number(data.price)) &&
-      !Number.isNaN(Number(data.copiesSold)) &&
-      !Number.isNaN(Number(data.gameGenreId))
+      Number.isNaN(Number(data.rating)) &&
+      Number.isNaN(Number(data.price)) &&
+      Number.isNaN(Number(data.copies_sold)) &&
+      Number.isNaN(Number(data.genre))
     ) {
-      res = await window.api.addGame({
-        title: data.title,
-        description: data.description,
-        developerName: data.developerName,
-        rating: Number(data.rating),
-        price: Number(data.price),
-        copiesSold: Number(data.copiesSold),
-        gameGenreId: Number(data.gameGenreId),
-        relDate: USADateToUnix(data.relDate),
-        image: uInt8ArrayImage,
+      toaster.create({
+        description: 'Продукт не был добавлен',
+        type: 'error',
       });
-    } else {
-      res = null;
+      return;
     }
 
-    if (res) {
+    let resData: null | IProduct = null;
+
+    try {
+      let res = await a.post<IProduct>(`/software/?id=${data.id}`, {
+        title: data.title,
+        description: data.description,
+        developer_name: data.developer_name,
+        rating: Number(data.rating),
+        price: Number(data.price),
+        copies_sold: Number(data.copies_sold),
+        genre: Number(data.genre),
+        rel_date: USADateToUnix(data.rel_date),
+        image: imageBase64,
+      });
+
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData) {
       toaster.create({
-        description: 'Игра успешно добавлена',
+        description: 'Продукт успешно добавлен',
         type: 'success',
       });
     } else {
       toaster.create({
-        description: 'Игра не добавлена',
+        description: 'Продукт не добавлен',
         type: 'error',
       });
     }
 
     reset();
     setImageSrc(null);
-    getGamesAndWriteToState();
+    getProductsAndWriteToState();
   };
 
   const handleChangeFiles = (event: ChangeEvent<HTMLInputElement>) => {
@@ -131,11 +153,11 @@ export const AddGameForm: FC<AddGameFormProps> = ({
         />
       );
 
-    if (field === 'relDate')
+    if (field === 'rel_date')
       return (
         <Input
           type="date"
-          {...register(field as TGameForm, { required: true })}
+          {...register(field as TProductForm, { required: true })}
           {...{
             variant: 'subtle',
             css: { width: 250 },
@@ -143,10 +165,10 @@ export const AddGameForm: FC<AddGameFormProps> = ({
         />
       );
 
-    if (field === 'gameGenreId')
+    if (field === 'genre')
       return (
         <select
-          {...register(field as TGameForm, { required: true })}
+          {...register(field as TProductForm, { required: true })}
           style={{
             width: 250,
             background: '#18181b',
@@ -163,7 +185,7 @@ export const AddGameForm: FC<AddGameFormProps> = ({
       );
     return (
       <Input
-        {...register(field as TGameForm, { required: true })}
+        {...register(field as TProductForm, { required: true })}
         {...{
           variant: 'subtle',
           css: { width: 250 },
@@ -203,7 +225,7 @@ export const AddGameForm: FC<AddGameFormProps> = ({
           justifyContent={'space-between'}
         >
           <Box>
-            <Heading css={{ mb: 5 }}>Изображение игры</Heading>
+            <Heading css={{ mb: 5 }}>Изображение продукта</Heading>
             {imageSrc ? (
               <Image
                 css={{ height: 300, width: 350 }}
@@ -215,7 +237,7 @@ export const AddGameForm: FC<AddGameFormProps> = ({
                 {...{
                   css: { height: 300, width: 350 },
                   title: 'Картинки нет',
-                  description: 'Выберите картинку для игры',
+                  description: 'Выберите картинку для продукта',
                 }}
               />
             )}

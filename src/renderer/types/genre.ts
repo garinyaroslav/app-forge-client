@@ -1,6 +1,6 @@
 export interface IGenre {
   id: number;
-  genreName: string;
+  name: string;
 }
 
-export type TGenre = 'id' | 'genreName';
+export type TGenre = 'id' | 'name';
