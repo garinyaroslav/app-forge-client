@@ -88,7 +88,7 @@ export const AddProductForm: FC<AddProductFormProps> = ({
     let resData: null | IProduct = null;
 
     try {
-      let res = await a.post<IProduct>(`/software/?id=${data.id}`, {
+      let res = await a.post<IProduct>(`/software/`, {
         title: data.title,
         description: data.description,
         developer_name: data.developer_name,

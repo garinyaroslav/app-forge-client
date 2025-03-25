@@ -5,6 +5,7 @@ import { toaster } from './ui/toaster';
 import { IConsumer, TConsumer } from '../types/consumer';
 import { unixToUSATime } from '../../utils/unixToUSADate';
 import { USADateToUnix } from '../../utils/USADateToUnix';
+import a from '../../renderer/axios';
 
 interface ConsumerDitailsProps {
   consumerId: number;
@@ -15,11 +16,10 @@ const fields = [
   { lab: 'Идентификатор пользователя', val: 'id' },
   { lab: 'Логин', val: 'username' },
   { lab: 'Электронная почта', val: 'email' },
-  // { lab: 'Хеш пароля', val: 'passwordHash' },
-  { lab: 'Имя', val: 'firstName' },
-  { lab: 'Фамилия', val: 'lastName' },
-  { lab: 'Дата регистрации', val: 'regDate' },
-  { lab: 'Админ', val: 'isAdmin' },
+  { lab: 'Имя', val: 'first_name' },
+  { lab: 'Фамилия', val: 'last_name' },
+  { lab: 'Дата регистрации', val: 'date_joined' },
+  { lab: 'Админ', val: 'is_staff' },
 ];
 
 export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
@@ -32,15 +32,19 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
   const { register, handleSubmit, reset } = useForm<IConsumer>({
     values: {
       ...consumer,
-      regDate: defaultDate as unknown as number,
+      date_joined: defaultDate,
     } as IConsumer,
   });
 
   const getConsumer = async () => {
-    const data = await window.api.getConsumer(consumerId).catch(console.error);
-
-    setDefaultDate(unixToUSATime(data[0].regDate));
-    setConsumer(data[0]);
+    try {
+      const res = await a.get<IConsumer>(`/consumer/?id=${consumerId}`);
+      const resData = res.data;
+      setDefaultDate(unixToUSATime(resData.date_joined));
+      setConsumer(resData);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onCancel = async () => {
@@ -51,19 +55,24 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
   };
 
   const onSubmit: SubmitHandler<IConsumer> = async (data) => {
-    const res = await window.api.updateConsumer({
-      id: Number(data.id),
-      username: data.username,
-      email: data.email,
-      // passwordHash: data.passwordHash,
-      passwordHash: consumer?.passwordHash,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      isAdmin: Boolean(data.isAdmin),
-      regDate: USADateToUnix(String(data.regDate)),
-    });
+    let resData: null | IConsumer = null;
 
-    if (res) {
+    try {
+      let res = await a.put<IConsumer>(`/consumer/?id=${data.id}`, {
+        username: data.username,
+        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        is_staff: Boolean(data.is_staff),
+        date_joined: USADateToUnix(String(data.date_joined)),
+      });
+
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData) {
       toaster.create({
         description: 'Пользователь успешно обновлён',
         type: 'success',
@@ -78,7 +87,7 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
   };
 
   const renderFieldEntrail = (field: string) => {
-    if (field === 'isAdmin') {
+    if (field === 'is_staff') {
       return (
         <Flex css={{ width: 250 }}>
           <input
@@ -89,7 +98,7 @@ export const ConsumerDitails: FC<ConsumerDitailsProps> = ({
         </Flex>
       );
     }
-    if (field === 'regDate')
+    if (field === 'date_joined')
       return (
         <Input
           type="date"

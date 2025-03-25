@@ -1,5 +1,5 @@
 import { Box, Flex, TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Login } from '../components/Login';
 import { Register } from '../components/Register';
@@ -8,6 +8,12 @@ import logo from '../assets/playforge.svg';
 
 export const Auth = () => {
   const [tabVal, setTabVal] = useState('login');
+
+  useEffect(() => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('uid');
+  }, []);
 
   return (
     <Box>

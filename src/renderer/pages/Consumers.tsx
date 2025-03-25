@@ -19,6 +19,7 @@ import { DeleteConditionModal } from '../components/DeleteConditionModal';
 import { IConsumer } from '../types/consumer';
 import { ConsumerDitails } from '../components/ConsumerDitails';
 import { AddConsumerForm } from '../components/AddConsumerForm';
+import a from '../../renderer/axios';
 
 export const Consumers = () => {
   const [consumers, setConsumers] = useState<IConsumer[]>([]);
@@ -32,15 +33,21 @@ export const Consumers = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const getConsumersAndWriteToState = async () => {
-    const g = await window.api.getConsumers().catch(console.error);
-    setConsumers(g);
+    try {
+      const res = await a.get<IConsumer[]>('/consumer/');
+      setConsumers(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const search = async (searchVal: string) => {
-    const g = await window.api
-      .getConsumersBySearchValue(searchVal)
-      .catch(console.error);
-    setConsumers(g);
+    try {
+      const res = await a.get<IConsumer[]>(`/consumer/?search=${searchVal}`);
+      setConsumers(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -54,9 +61,16 @@ export const Consumers = () => {
   }, [deletedConsumerId]);
 
   const deleteConsumer = async () => {
-    const res = await window.api.deleteConsumer(deletedConsumerId);
+    let resData: IConsumer | null = null;
 
-    if (res) {
+    try {
+      const res = await a.delete(`/consumer/?id=${deletedConsumerId}`);
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData !== null) {
       toaster.create({
         description: 'Пользователь успешно удалён',
         type: 'success',
@@ -67,6 +81,7 @@ export const Consumers = () => {
         type: 'error',
       });
     }
+
     setDeletedConsumerId(null);
   };
 
