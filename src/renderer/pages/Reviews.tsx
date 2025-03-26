@@ -19,6 +19,7 @@ import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
 import { ReviewDitails } from '../components/ReviewsDitails';
 import { AddReviewForm } from '../components/AddReviewForm';
+import a from '../../renderer/axios';
 
 export const Reviews = () => {
   const [reviews, setReviews] = useState<IReview[]>([]);
@@ -28,15 +29,21 @@ export const Reviews = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const getReviewsAndWriteToState = async () => {
-    const g = await window.api.getReviews().catch(console.error);
-    setReviews(g);
+    try {
+      const res = await a.get<IReview[]>('/review/');
+      setReviews(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const search = async (searchVal: string) => {
-    const g = await window.api
-      .getReviewsBySearchValue(searchVal)
-      .catch(console.error);
-    setReviews(g);
+    try {
+      const res = await a.get<IReview[]>(`/review/?search=${searchVal}`);
+      setReviews(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -49,10 +56,17 @@ export const Reviews = () => {
     getReviewsAndWriteToState();
   }, [deletedReviewId]);
 
-  const deleteGame = async () => {
-    const res = await window.api.deleteReview(deletedReviewId);
+  const deleteReview = async () => {
+    let resData: IReview | null = null;
 
-    if (res) {
+    try {
+      const res = await a.delete(`/review/?id=${deletedReviewId}`);
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData !== null) {
       toaster.create({
         description: 'Отзыв успешно удалён',
         type: 'success',
@@ -93,7 +107,7 @@ export const Reviews = () => {
               textOverflow: 'ellipsis',
             },
           }}
-        >{`${reviewElem.id}. Отзыв пользователя: ${reviewElem.consumerId} на игру: ${reviewElem.gameId}`}</Text>
+        >{`${reviewElem.id}. Отзыв пользователя: ${reviewElem.consumer} на игру: ${reviewElem.product}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',
@@ -126,7 +140,7 @@ export const Reviews = () => {
         <DeleteConditionModal
           open={Boolean(deletedReviewId)}
           onClose={() => setDeletedReviewId(null)}
-          onSubmit={deleteGame}
+          onSubmit={deleteReview}
         />
       )}
       <Toaster />

@@ -37,7 +37,7 @@ export const AdminLayout = () => {
               На главную
             </Button>
           </Flex>
-          <TabsTrigger {...{ value: v.games }}>Игры</TabsTrigger>
+          <TabsTrigger {...{ value: v.games }}>Продукты</TabsTrigger>
           <TabsTrigger {...{ value: v.reviews }}>Отзывы</TabsTrigger>
           <TabsTrigger {...{ value: v.consumers }}>Покупатели</TabsTrigger>
           <TabsTrigger {...{ value: v.carts }}>Корзины</TabsTrigger>

@@ -4,6 +4,7 @@ import { Flex, Input, Text, Heading, Button, Textarea } from '@chakra-ui/react';
 import { Toaster, toaster } from './ui/toaster';
 import { IReview, TReview } from '../types/review';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
+import a from '../../renderer/axios';
 
 interface AddReviewFormProps {
   getReviewsAndWriteToState: () => void;
@@ -11,9 +12,9 @@ interface AddReviewFormProps {
 
 const fields = [
   { lab: 'Рейтинг', val: 'rating' },
-  { lab: 'Текст комментария', val: 'textComment' },
-  { lab: 'Идентификатор игры', val: 'gameId' },
-  { lab: 'Идентификатор пользователя', val: 'consumerId' },
+  { lab: 'Текст комментария', val: 'text_comment' },
+  { lab: 'Идентификатор продукта', val: 'product' },
+  { lab: 'Идентификатор пользователя', val: 'consumer' },
 ];
 
 export const AddReviewForm: FC<AddReviewFormProps> = ({
@@ -22,22 +23,33 @@ export const AddReviewForm: FC<AddReviewFormProps> = ({
   const { register, handleSubmit, reset } = useForm<IReview>();
 
   const onSubmit: SubmitHandler<IReview> = async (data) => {
-    let res;
+    let resData: null | IReview = null;
+
     if (
-      !Number.isNaN(Number(data.gameId)) &&
-      !Number.isNaN(Number(data.consumerId))
+      Number.isNaN(Number(data.product)) &&
+      Number.isNaN(Number(data.consumer))
     ) {
-      res = await window.api.addReview({
-        rating: data.rating,
-        textComment: data.textComment,
-        gameId: Number(data.gameId),
-        consumerId: Number(data.consumerId),
+      toaster.create({
+        description: 'Отзыв не добавлен',
+        type: 'error',
       });
-    } else {
-      res = null;
+      return;
     }
 
-    if (res) {
+    try {
+      let res = await a.post<IReview>(`/review/`, {
+        rating: data.rating,
+        text_comment: data.text_comment,
+        product: Number(data.product),
+        consumer: Number(data.consumer),
+      });
+
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData) {
       toaster.create({
         description: 'Отзыв успешно добавлен',
         type: 'success',
@@ -54,7 +66,7 @@ export const AddReviewForm: FC<AddReviewFormProps> = ({
   };
 
   const renderFieldEntrail = (field: string) => {
-    if (field === 'textComment')
+    if (field === 'text_comment')
       return (
         <Textarea
           {...register(field, { required: true })}
