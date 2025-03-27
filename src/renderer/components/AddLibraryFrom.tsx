@@ -4,15 +4,16 @@ import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
 import { Toaster, toaster } from './ui/toaster';
 import { ILibrary, TLibrary } from '../types/library';
 import { USADateToUnix } from '../../utils/USADateToUnix';
+import a from '../../renderer/axios';
 
 interface AddLibraryFormProps {
   getLibrariesAndWriteToState: () => void;
 }
 
 const fields = [
-  { lab: 'Идентификатор игры', val: 'gameId' },
-  { lab: 'Идентификатор пользователя', val: 'consumerId' },
-  { lab: 'Дата добавления', val: 'addedDate' },
+  { lab: 'Идентификатор продукта', val: 'product' },
+  { lab: 'Идентификатор пользователя', val: 'consumer' },
+  { lab: 'Дата добавления', val: 'added_date' },
 ];
 
 export const AddLibraryForm: FC<AddLibraryFormProps> = ({
@@ -21,22 +22,34 @@ export const AddLibraryForm: FC<AddLibraryFormProps> = ({
   const { register, handleSubmit, reset } = useForm<ILibrary>();
 
   const onSubmit: SubmitHandler<ILibrary> = async (data) => {
-    let res;
+    let resData: null | ILibrary = null;
+
+    console.log(data);
 
     if (
-      !Number.isNaN(Number(data.gameId)) &&
-      !Number.isNaN(Number(data.consumerId))
+      Number.isNaN(Number(data.product)) &&
+      Number.isNaN(Number(data.consumer))
     ) {
-      res = await window.api.addLibrary({
-        gameId: Number(data.gameId),
-        consumerId: Number(data.consumerId),
-        addedDate: USADateToUnix(String(data.addedDate)),
+      toaster.create({
+        description: 'Отзыв не добавлен',
+        type: 'error',
       });
-    } else {
-      res = null;
+      return;
     }
 
-    if (res) {
+    try {
+      let res = await a.post<ILibrary>(`/library/`, {
+        product: Number(data.product),
+        consumer: Number(data.consumer),
+        added_date: USADateToUnix(String(data.added_date)),
+      });
+
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData) {
       toaster.create({
         description: 'Библиотека успешно добалена',
         type: 'success',
@@ -53,7 +66,7 @@ export const AddLibraryForm: FC<AddLibraryFormProps> = ({
   };
 
   const renderFieldEntrail = (field: string) => {
-    if (field === 'addedDate')
+    if (field === 'added_date')
       return (
         <Input
           type="date"

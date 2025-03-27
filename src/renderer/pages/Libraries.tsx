@@ -19,6 +19,7 @@ import { DeleteConditionModal } from '../components/DeleteConditionModal';
 import { ILibrary } from '../types/library';
 import { LibraryDitails } from '../components/LibraryDitails';
 import { AddLibraryForm } from '../components/AddLibraryFrom';
+import a from '../../renderer/axios';
 
 export const Libraries = () => {
   const [libraries, setLibraries] = useState<ILibrary[]>([]);
@@ -30,15 +31,21 @@ export const Libraries = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const getLibrariesAndWriteToState = async () => {
-    const g = await window.api.getLibraries().catch(console.error);
-    setLibraries(g);
+    try {
+      const res = await a.get<ILibrary[]>('/library/');
+      setLibraries(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const search = async (searchVal: string) => {
-    const g = await window.api
-      .getLibrariesBySearchValue(searchVal)
-      .catch(console.error);
-    setLibraries(g);
+    try {
+      const res = await a.get<ILibrary[]>(`/library/?search=${searchVal}`);
+      setLibraries(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,9 +59,16 @@ export const Libraries = () => {
   }, [deletedLibraryId]);
 
   const deleteLibrary = async () => {
-    const res = await window.api.deleteLibrary(deletedLibraryId);
+    let resData: ILibrary | null = null;
 
-    if (res) {
+    try {
+      const res = await a.delete(`/library/?id=${deletedLibraryId}`);
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData !== null) {
       toaster.create({
         description: 'Библиотека успешно удалена',
         type: 'success',
@@ -86,7 +100,7 @@ export const Libraries = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${libraryElem.id}. Игра: ${libraryElem.gameId} куплена у пользователя: ${libraryElem.consumerId}`}</Text>
+        <Text>{`${libraryElem.id}. Игра: ${libraryElem.product} куплена у пользователя: ${libraryElem.consumer}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',

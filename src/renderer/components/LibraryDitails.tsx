@@ -5,6 +5,7 @@ import { toaster } from './ui/toaster';
 import { ILibrary, TLibrary } from '../types/library';
 import { unixToUSATime } from '../../utils/unixToUSADate';
 import { USADateToUnix } from '../../utils/USADateToUnix';
+import a from '../../renderer/axios';
 
 interface LibraryDitailsProps {
   libraryId: number;
@@ -13,9 +14,9 @@ interface LibraryDitailsProps {
 
 const fields = [
   { lab: 'Идентификатор библиотеки', val: 'id' },
-  { lab: 'Идентификатор игры', val: 'gameId' },
-  { lab: 'Идентификатор пользователя', val: 'consumerId' },
-  { lab: 'Дата добавления', val: 'addedDate' },
+  { lab: 'Идентификатор продукта', val: 'product' },
+  { lab: 'Идентификатор пользователя', val: 'consumer' },
+  { lab: 'Дата добавления', val: 'added_date' },
 ];
 
 export const LibraryDitails: FC<LibraryDitailsProps> = ({
@@ -28,15 +29,19 @@ export const LibraryDitails: FC<LibraryDitailsProps> = ({
   const { register, handleSubmit, reset } = useForm<ILibrary>({
     values: {
       ...library,
-      addedDate: defaultDate as unknown as number,
+      added_date: defaultDate,
     } as ILibrary,
   });
 
   const getLibrary = async () => {
-    const data = await window.api.getLibrary(libraryId).catch(console.error);
-
-    setDefaultDate(unixToUSATime(data[0].addedDate));
-    setLibrary(data[0]);
+    try {
+      const res = await a.get<ILibrary>(`/library/?id=${libraryId}`);
+      const resData = res.data;
+      setDefaultDate(unixToUSATime(resData.added_date));
+      setLibrary(resData);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onCancel = async () => {
@@ -47,23 +52,32 @@ export const LibraryDitails: FC<LibraryDitailsProps> = ({
   };
 
   const onSubmit: SubmitHandler<ILibrary> = async (data) => {
-    let res;
+    let resData: null | ILibrary = null;
 
     if (
-      !Number.isNaN(Number(data.gameId)) &&
-      !Number.isNaN(Number(data.consumerId))
+      Number.isNaN(Number(data.product)) &&
+      Number.isNaN(Number(data.consumer))
     ) {
-      res = await window.api.updateLibrary({
-        id: Number(data.id),
-        gameId: Number(data.gameId),
-        consumerId: Number(data.consumerId),
-        addedDate: USADateToUnix(String(data.addedDate)),
+      toaster.create({
+        description: 'Библиотека не обновлена',
+        type: 'error',
       });
-    } else {
-      res = null;
+      return;
     }
 
-    if (res) {
+    try {
+      let res = await a.put<ILibrary>(`/library/?id=${data.id}`, {
+        product: Number(data.product),
+        consumer: Number(data.consumer),
+        added_date: USADateToUnix(String(data.added_date)),
+      });
+
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData) {
       toaster.create({
         description: 'Бибилотека успешно обновлена',
         type: 'success',
@@ -78,7 +92,7 @@ export const LibraryDitails: FC<LibraryDitailsProps> = ({
   };
 
   const renderFieldEntrail = (field: string) => {
-    if (field === 'addedDate')
+    if (field === 'added_date')
       return (
         <Input
           type="date"

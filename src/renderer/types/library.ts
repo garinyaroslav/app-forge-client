@@ -1,8 +1,8 @@
 export interface ILibrary {
   id: number;
-  gameId: number;
-  consumerId: number;
-  addedDate: number;
+  product: number;
+  consumer: number;
+  added_date: string;
 }
 
-export type TLibrary = 'id' | 'gameId' | 'consumerId' | 'addedDate';
+export type TLibrary = 'id' | 'product' | 'consumer' | 'added_date';
