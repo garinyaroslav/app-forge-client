@@ -4,11 +4,13 @@ import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
 import { Toaster, toaster } from './ui/toaster';
 import { ICart, TCart } from '../types/cart';
 
+import a from '../../renderer/axios';
+
 interface AddCartFormProps {
   getCartsAndWriteToState: () => void;
 }
 
-const fields = [{ lab: 'Идентификатор пользователя', val: 'consumerId' }];
+const fields = [{ lab: 'Идентификатор пользователя', val: 'consumer' }];
 
 export const AddCartForm: FC<AddCartFormProps> = ({
   getCartsAndWriteToState,
@@ -16,16 +18,27 @@ export const AddCartForm: FC<AddCartFormProps> = ({
   const { register, handleSubmit, reset } = useForm<ICart>();
 
   const onSubmit: SubmitHandler<ICart> = async (data) => {
-    let res;
-    if (!Number.isNaN(Number(data.consumerId))) {
-      res = await window.api.addCart({
-        consumerId: Number(data.consumerId),
+    if (Number.isNaN(Number(data.consumer))) {
+      toaster.create({
+        description: 'Корзина успешно добавлена',
+        type: 'success',
       });
-    } else {
-      res = null;
+      return;
     }
 
-    if (res) {
+    let resData: null | ICart = null;
+
+    try {
+      let res = await a.post<ICart>(`/cart/`, {
+        consumer: Number(data.consumer),
+      });
+
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData) {
       toaster.create({
         description: 'Корзина успешно добавлена',
         type: 'success',

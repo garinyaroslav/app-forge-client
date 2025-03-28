@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
 import { ICart, TCart } from '../types/cart';
+import a from '../../renderer/axios';
 
 interface CartDitailsProps {
   cartId: number;
@@ -9,7 +10,7 @@ interface CartDitailsProps {
 
 const fields = [
   { lab: 'Идентификатор корзины', val: 'id' },
-  { lab: 'Идентификатор пользователя', val: 'consumerId' },
+  { lab: 'Идентификатор пользователя', val: 'consumer' },
 ];
 
 export const CartDitails: FC<CartDitailsProps> = ({ cartId }) => {
@@ -21,9 +22,13 @@ export const CartDitails: FC<CartDitailsProps> = ({ cartId }) => {
   });
 
   const getCart = async () => {
-    const data = await window.api.getCart(cartId).catch(console.error);
-
-    setCart(data[0]);
+    try {
+      const res = await a.get<ICart>(`/cart/?id=${cartId}`);
+      const resData = res.data;
+      setCart(resData);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onSubmit: SubmitHandler<ICart> = (data) => {

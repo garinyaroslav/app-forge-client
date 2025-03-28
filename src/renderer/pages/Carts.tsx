@@ -19,6 +19,7 @@ import { DeleteConditionModal } from '../components/DeleteConditionModal';
 import { ICart } from '../types/cart';
 import { CartDitails } from '../components/CartDitails';
 import { AddCartForm } from '../components/AddCartForm';
+import a from '../../renderer/axios';
 
 export const Carts = () => {
   const [carts, setCarts] = useState<ICart[]>([]);
@@ -28,15 +29,21 @@ export const Carts = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const getCartsAndWriteToState = async () => {
-    const g = await window.api.getCarts().catch(console.error);
-    setCarts(g);
+    try {
+      const res = await a.get<ICart[]>('/cart/');
+      setCarts(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const search = async (searchVal: string) => {
-    const g = await window.api
-      .getCartsBySearchValue(searchVal)
-      .catch(console.error);
-    setCarts(g);
+    try {
+      const res = await a.get<ICart[]>(`/cart/?serrch=${searchVal}`);
+      setCarts(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -50,9 +57,16 @@ export const Carts = () => {
   }, [deletedCartId]);
 
   const deleteCart = async () => {
-    const res = await window.api.deleteCart(deletedCartId).catch(console.error);
+    let resData: ICart | null = null;
 
-    if (res) {
+    try {
+      const res = await a.delete(`/cart/?id=${deletedCartId}`);
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData !== null) {
       toaster.create({
         description: 'Корзина успешно удалена',
         type: 'success',
@@ -84,7 +98,7 @@ export const Carts = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${cartElem.id}. Корзина пользователя: ${cartElem.consumerId}`}</Text>
+        <Text>{`${cartElem.id}. Корзина пользователя: ${cartElem.consumer}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',

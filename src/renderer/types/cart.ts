@@ -1,6 +1,6 @@
 export interface ICart {
   id: number;
-  consumerId: number;
+  consumer: number;
 }
 
-export type TCart = 'id' | 'consumerId';
+export type TCart = 'id' | 'consumer';
