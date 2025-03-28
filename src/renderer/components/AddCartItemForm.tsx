@@ -4,13 +4,15 @@ import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
 import { Toaster, toaster } from './ui/toaster';
 import { ICartItem, TCartItem } from '../types/cartItem';
 
+import a from '../../renderer/axios';
+
 interface AddCartItemFormProps {
   getCartItemsAndWriteToState: () => void;
 }
 
 const fields = [
-  { lab: 'Идентификатор корзины', val: 'cartId' },
-  { lab: 'Идентификатор игры', val: 'gameId' },
+  { lab: 'Идентификатор корзины', val: 'cart' },
+  { lab: 'Идентификатор продукта', val: 'product' },
 ];
 
 export const AddCartItemForm: FC<AddCartItemFormProps> = ({
@@ -19,20 +21,28 @@ export const AddCartItemForm: FC<AddCartItemFormProps> = ({
   const { register, handleSubmit, reset } = useForm<ICartItem>();
 
   const onSubmit: SubmitHandler<ICartItem> = async (data) => {
-    let res;
-    if (
-      !Number.isNaN(Number(data.cartId)) &&
-      !Number.isNaN(Number(data.gameId))
-    ) {
-      res = await window.api.addCartItem({
-        cartId: Number(data.cartId),
-        gameId: Number(data.gameId),
+    if (Number.isNaN(Number(data.cart)) && Number.isNaN(Number(data.product))) {
+      toaster.create({
+        description: 'Элемент корзины не добавлен',
+        type: 'error',
       });
-    } else {
-      res = null;
+      return;
     }
 
-    if (res) {
+    let resData: null | ICartItem = null;
+
+    try {
+      let res = await a.post<ICartItem>(`/cart_item/`, {
+        cart: Number(data.cart),
+        product: Number(data.product),
+      });
+
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData) {
       toaster.create({
         description: 'Элемент корзины добавлен',
         type: 'success',

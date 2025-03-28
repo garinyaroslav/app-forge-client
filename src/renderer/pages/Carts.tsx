@@ -39,7 +39,7 @@ export const Carts = () => {
 
   const search = async (searchVal: string) => {
     try {
-      const res = await a.get<ICart[]>(`/cart/?serrch=${searchVal}`);
+      const res = await a.get<ICart[]>(`/cart/?search=${searchVal}`);
       setCarts(res.data);
     } catch (e) {
       console.error(e);

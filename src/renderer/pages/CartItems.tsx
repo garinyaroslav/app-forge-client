@@ -20,6 +20,8 @@ import { ICartItem } from '../types/cartItem';
 import { CartItemDitails } from '../components/CartItemDitails';
 import { AddCartItemForm } from '../components/AddCartItemForm';
 
+import a from '../../renderer/axios';
+
 export const CartItems = () => {
   const [cartItems, setCartItems] = useState<ICartItem[]>([]);
   const [selectedCartItemId, setSelectedCartItemId] = useState<null | number>(
@@ -32,15 +34,21 @@ export const CartItems = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const getCartItemsAndWriteToState = async () => {
-    const g = await window.api.getCartItems().catch(console.error);
-    setCartItems(g);
+    try {
+      const res = await a.get<ICartItem[]>('/cart_item/');
+      setCartItems(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const search = async (searchVal: string) => {
-    const g = await window.api
-      .getCartItemsBySearchValue(searchVal)
-      .catch(console.error);
-    setCartItems(g);
+    try {
+      const res = await a.get<ICartItem[]>(`/cart_item/?search=${searchVal}`);
+      setCartItems(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -54,8 +62,16 @@ export const CartItems = () => {
   }, [deletedCartItemId]);
 
   const deleteCartItem = async () => {
-    const res = await window.api.deleteCartItem(deletedCartItemId);
-    if (res) {
+    let resData: ICartItem | null = null;
+
+    try {
+      const res = await a.delete(`/cart_item/?id=${deletedCartItemId}`);
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData !== null) {
       toaster.create({
         description: 'Элемент корзины успешно удалён',
         type: 'success',
@@ -87,7 +103,7 @@ export const CartItems = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${cartItemElem.id}. Игра: ${cartItemElem.gameId} в корзине: ${cartItemElem.cartId}`}</Text>
+        <Text>{`${cartItemElem.id}. Продукт: ${cartItemElem.product} в корзине: ${cartItemElem.cart}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',

@@ -1,7 +1,7 @@
 export interface ICartItem {
   id: number;
-  cartId: number;
-  gameId: number;
+  cart: number;
+  product: number;
 }
 
-export type TCartItem = 'id' | 'cartId' | 'gameId';
+export type TCartItem = 'id' | 'cart' | 'product';
