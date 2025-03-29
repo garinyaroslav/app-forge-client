@@ -19,7 +19,6 @@ import { DeleteConditionModal } from '../components/DeleteConditionModal';
 import { ICartItem } from '../types/cartItem';
 import { CartItemDitails } from '../components/CartItemDitails';
 import { AddCartItemForm } from '../components/AddCartItemForm';
-
 import a from '../../renderer/axios';
 
 export const CartItems = () => {

@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Flex, Input, Text, Heading, Button } from '@chakra-ui/react';
-import { IGame } from '../types/game';
 import { toaster } from './ui/toaster';
 import { IGenre, TGenre } from '../types/genre';
+import a from '../../renderer/axios';
 
 interface GenreDitailsProps {
   genreId: number;
@@ -12,14 +12,14 @@ interface GenreDitailsProps {
 
 const fields = [
   { lab: 'Идентификатор жанра', val: 'id' },
-  { lab: 'Название жанра', val: 'genreName' },
+  { lab: 'Название жанра', val: 'name' },
 ];
 
 export const GenreDitails: FC<GenreDitailsProps> = ({
   genreId,
   getGenresAndWriteToState,
 }) => {
-  const [genre, setGenre] = useState<null | IGame>(null);
+  const [genre, setGenre] = useState<null | IGenre>(null);
   const [isEdited, setIsEdited] = useState(false);
   const { register, handleSubmit, reset } = useForm<IGenre>({
     values: {
@@ -28,9 +28,13 @@ export const GenreDitails: FC<GenreDitailsProps> = ({
   });
 
   const getGenre = async () => {
-    const data = await window.api.getGenre(genreId).catch(console.error);
-
-    setGenre(data[0]);
+    try {
+      const res = await a.get<IGenre>(`/genre/?id=${genreId}`);
+      const resData = res.data;
+      setGenre(resData);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onCancel = async () => {
@@ -41,12 +45,19 @@ export const GenreDitails: FC<GenreDitailsProps> = ({
   };
 
   const onSubmit: SubmitHandler<IGenre> = async (data) => {
-    const res = await window.api.updateGenre({
-      id: Number(data.id),
-      genreName: data.genreName,
-    });
+    let resData: null | IGenre = null;
 
-    if (res) {
+    try {
+      let res = await a.put<IGenre>(`/genre/?id=${data.id}`, {
+        name: data.name,
+      });
+
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData) {
       toaster.create({
         description: 'Жанр успешно обновлён',
         type: 'success',

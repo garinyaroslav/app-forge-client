@@ -27,7 +27,7 @@ export const Login = () => {
 
       if (resData.is_staff) {
         localStorage.setItem('uid', String(resData.userId));
-        nav('/admin/games');
+        nav('/admin/products');
       } else if (!resData.is_staff) {
         localStorage.setItem('uid', String(resData.userId));
         nav('/user/shop');

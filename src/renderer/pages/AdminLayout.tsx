@@ -13,7 +13,7 @@ import ArrawSvg from '../assets/arrowLeft.svg';
 
 export const AdminLayout = () => {
   const nav = useNavigate();
-  const [tabVal, setTabVal] = useState<v>(v.games);
+  const [tabVal, setTabVal] = useState<v>(v.products);
 
   return (
     <Flex css={{ h: '100%', w: '100%' }}>
@@ -37,13 +37,13 @@ export const AdminLayout = () => {
               На главную
             </Button>
           </Flex>
-          <TabsTrigger {...{ value: v.games }}>Продукты</TabsTrigger>
+          <TabsTrigger {...{ value: v.products }}>Продукты</TabsTrigger>
           <TabsTrigger {...{ value: v.reviews }}>Отзывы</TabsTrigger>
           <TabsTrigger {...{ value: v.consumers }}>Покупатели</TabsTrigger>
           <TabsTrigger {...{ value: v.carts }}>Корзины</TabsTrigger>
           <TabsTrigger {...{ value: v.cartItems }}>Элементы корзин</TabsTrigger>
           <TabsTrigger {...{ value: v.librarys }}>Библиотеки</TabsTrigger>
-          <TabsTrigger {...{ value: v.gemeGenres }}>Жанры игр</TabsTrigger>
+          <TabsTrigger {...{ value: v.genres }}>Жанры игр</TabsTrigger>
         </TabsList>
       </TabsRoot>
       <Outlet />

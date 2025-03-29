@@ -19,8 +19,9 @@ import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
 import { GenreDitails } from '../components/GenreDitails';
 import { AddGenreForm } from '../components/AddGenreForm';
+import a from '../../renderer/axios';
 
-export const GameGenres = () => {
+export const Genres = () => {
   const [genres, setGenres] = useState<IGenre[]>([]);
   const [selectedGenreId, setSelectedGenreId] = useState<null | number>(null);
   const [deletedGenreId, setDeletedGenreId] = useState<null | number>(null);
@@ -28,15 +29,21 @@ export const GameGenres = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const getGenresAndWriteToState = async () => {
-    const g = await window.api.getGenres().catch(console.error);
-    setGenres(g);
+    try {
+      const res = await a.get<IGenre[]>('/genre/');
+      setGenres(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const search = async (searchVal: string) => {
-    const g = await window.api
-      .getGenresBySearchValue(searchVal)
-      .catch(console.error);
-    setGenres(g);
+    try {
+      const res = await a.get<IGenre[]>(`/genre/?search=${searchVal}`);
+      setGenres(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -50,8 +57,16 @@ export const GameGenres = () => {
   }, [deletedGenreId]);
 
   const deleteGame = async () => {
-    const res = await window.api.deleteGenre(deletedGenreId);
-    if (res) {
+    let resData: IGenre | null = null;
+
+    try {
+      const res = await a.delete(`/genre/?id=${deletedGenreId}`);
+      resData = res.data;
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (resData !== null) {
       toaster.create({
         description: 'Жанр успешно удалён',
         type: 'success',
@@ -83,7 +98,7 @@ export const GameGenres = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{`${genreElem.id}. ${genreElem.genreName}`}</Text>
+        <Text>{`${genreElem.id}. ${genreElem.name}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',
