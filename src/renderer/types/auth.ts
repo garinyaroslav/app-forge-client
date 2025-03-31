@@ -11,11 +11,11 @@ export interface ILoginRes {
 }
 
 export interface IRegisterForm {
-  login: string;
+  username: string;
   password: string;
   email: string;
-  fname: string;
-  lname: string;
+  first_name: string;
+  last_name: string;
 }
 
 export enum LoginRes {

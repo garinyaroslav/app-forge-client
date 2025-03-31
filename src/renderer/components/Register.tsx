@@ -3,20 +3,45 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
 import { PasswordInput } from './ui/password-input';
-import { IRegisterForm } from '../types/auth';
+import { ILoginRes, IRegisterForm } from '../types/auth';
 import { Field } from './ui/field';
+import a from '../axios';
 
 export const Register = () => {
   const nav = useNavigate();
   const {
     register,
     handleSubmit,
+    setError,
+    reset,
     formState: { errors },
   } = useForm<IRegisterForm>();
 
   const onSubmit = async (data: IRegisterForm) => {
-    const res = await window.api.register(data);
-    await localStorage.setItem('uid', String(res));
+    let resData: null | ILoginRes = null;
+
+    try {
+      let res = await a.post<ILoginRes>(`/register/`, {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+        first_name: data.first_name,
+        last_name: data.last_name,
+      });
+
+      console.log(res);
+      resData = res.data;
+    } catch (e) {
+      console.error('Registration error:', e);
+      reset();
+      setError('username', { type: 'exist' });
+    }
+
+    if (!resData) return;
+
+    localStorage.setItem('uid', String(resData.userId));
+    localStorage.setItem('accessToken', resData.access);
+    localStorage.setItem('refreshToken', resData.refresh);
     nav('/user/shop');
   };
 
@@ -26,33 +51,39 @@ export const Register = () => {
       style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}
     >
       <Field
-        invalid={Boolean(errors.fname)}
+        invalid={Boolean(errors.first_name)}
         errorText={'Поле обезательно к заполнению'}
       >
         <Input
-          {...register('fname', { required: true })}
+          {...register('first_name', { required: true })}
           variant={'subtle'}
           w={300}
           placeholder="Имя"
         />
       </Field>
       <Field
-        invalid={Boolean(errors.lname)}
+        invalid={Boolean(errors.last_name)}
         errorText={'Поле обезательно к заполнению'}
       >
         <Input
-          {...register('lname', { required: true })}
+          {...register('last_name', { required: true })}
           variant={'subtle'}
           w={300}
           placeholder="Фамилия"
         />
       </Field>
       <Field
-        invalid={Boolean(errors.login)}
-        errorText={'Поле обезательно к заполнению'}
+        invalid={Boolean(errors.username)}
+        errorText={
+          errors.username?.type === 'required'
+            ? 'Поле обезательно к заполнению'
+            : errors.username?.type === 'exist'
+              ? 'Пользователь с таким логином уже существует'
+              : ''
+        }
       >
         <Input
-          {...register('login', { required: true })}
+          {...register('username', { required: true })}
           variant={'subtle'}
           w={300}
           placeholder="Имя пользователя"
