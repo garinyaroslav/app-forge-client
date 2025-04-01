@@ -8,6 +8,7 @@ export interface ILoginRes {
   access: string;
   userId: number;
   is_staff: boolean;
+  username: string;
 }
 
 export interface IRegisterForm {

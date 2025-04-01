@@ -42,6 +42,7 @@ export const Register = () => {
     localStorage.setItem('uid', String(resData.userId));
     localStorage.setItem('accessToken', resData.access);
     localStorage.setItem('refreshToken', resData.refresh);
+    localStorage.setItem('username', resData.username);
     nav('/user/shop');
   };
 

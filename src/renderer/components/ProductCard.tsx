@@ -14,14 +14,15 @@ import {
   Skeleton,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { IGame } from '../types/game';
 import { toaster, Toaster } from './ui/toaster';
+import { IProduct } from '../types/product';
+import a from '../axios';
 
-interface GameCardProps {
-  gameObj: IGame & { gameGenres: { genreName: string } };
+interface ProductCardProps {
+  productObj: IProduct & { genre_name: string };
 }
 
-export const GameCard: FC<GameCardProps> = ({ gameObj }) => {
+export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
   const nav = useNavigate();
   const imageRef = useRef(null);
   const [imageSrc, setImageSrc] = useState<null | string>(null);
@@ -29,41 +30,50 @@ export const GameCard: FC<GameCardProps> = ({ gameObj }) => {
   const [gameInLib, setGameInLib] = useState(false);
 
   const makeImg = async () => {
-    const blob = await new Blob([gameObj.image], {
+    const blob = await new Blob([productObj.image], {
       type: 'image/png',
     });
     await setImageSrc(URL.createObjectURL(blob));
   };
 
   const makeChecks = async () => {
-    const uid = await Number(localStorage.getItem('uid'));
+    const uid = await localStorage.getItem('uid');
 
-    const hasGameInCart = await window.api
-      .getGameFromUserCart(uid, gameObj.id)
-      .catch(console.error);
+    try {
+      const res = await a.get<IProduct[]>(
+        `/software/user/cart/?product_id=${productObj.id}`,
+      );
+      let resData = res.data;
 
-    if (hasGameInCart.length > 0) {
-      setGameInCart(true);
-      return;
+      if (resData.length > 0) {
+        setGameInCart(true);
+      }
+    } catch (e) {
+      console.error(e);
     }
 
-    const hasGameInLib = await window.api
-      .getGameFromUserLib(uid, gameObj.id)
-      .catch(console.error);
+    try {
+      const res = await a.get<IProduct[]>(
+        `/software/library_item/?product_id=${productObj.id}`,
+      );
+      let resData = res.data;
 
-    if (hasGameInLib.length > 0) {
-      setGameInLib(true);
+      if (resData.length > 0) {
+        setGameInCart(true);
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
   const addToCart = async () => {
     const uid = await Number(localStorage.getItem('uid'));
 
-    const addRes = await window.api.addGameInUserCart(uid, gameObj.id);
+    const addRes = await window.api.addGameInUserCart(uid, productObj.id);
     if (addRes) {
       await makeChecks();
       toaster.create({
-        description: `Игра: ${gameObj.title} добавлена в корзину`,
+        description: `Игра: ${productObj.title} добавлена в корзину`,
         type: 'success',
       });
     }
@@ -78,7 +88,7 @@ export const GameCard: FC<GameCardProps> = ({ gameObj }) => {
     return () => {
       if (imageSrc) URL.revokeObjectURL(imageSrc);
     };
-  }, [gameObj]);
+  }, [productObj]);
 
   return (
     <>
@@ -109,21 +119,21 @@ export const GameCard: FC<GameCardProps> = ({ gameObj }) => {
               }}
             >
               <CardTitle css={{ fontSize: 20, fontWeight: 600 }}>
-                {gameObj.title}
+                {productObj.title}
               </CardTitle>
               <CardTitle css={{ fontSize: 20, fontWeight: 500 }}>
-                {gameObj.price} руб.
+                {productObj.price} руб.
               </CardTitle>
             </Flex>
-            <CardDescription>{`${gameObj.description} Купили: ${gameObj.copiesSold} раз`}</CardDescription>
+            <CardDescription>{`${productObj.description} Купили: ${productObj.copies_sold} раз`}</CardDescription>
             <HStack my="4">
               <Badge css={{ background: '#808080' }}>
-                {gameObj.gameGenres.genreName}
+                {productObj.genre_name}
               </Badge>
             </HStack>
           </CardBody>
           <CardFooter>
-            <Button onClick={() => nav(`./${gameObj.id}`)} size={'xs'}>
+            <Button onClick={() => nav(`./${productObj.id}`)} size={'xs'}>
               Подробнее
             </Button>
             {gameInCart && (

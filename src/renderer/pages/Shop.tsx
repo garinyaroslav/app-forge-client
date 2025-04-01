@@ -13,7 +13,6 @@ import {
   SelectValueText,
   Text,
 } from '@chakra-ui/react';
-import { GameCard } from '../components/GameCard';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { ProductSort, IProduct } from '../types/product';
 import { SelectRoot } from '../components/ui/select';
@@ -22,6 +21,8 @@ import CartSvg from '../assets/cart.svg';
 import SearchSvg from '../assets/search.svg';
 import { InputGroup } from '../components/ui/input-group';
 import { CartModal } from '../components/CartModal';
+import { ProductCard } from '../components/ProductCard';
+import a from '../axios';
 
 const options = createListCollection({
   items: [
@@ -31,26 +32,30 @@ const options = createListCollection({
 });
 
 export const Shop = () => {
-  const [games, setGames] = useState<
-    (IProduct & { gameGenres: { genreName: string } })[]
+  const [products, setProducts] = useState<
+    (IProduct & { genre_name: string })[]
   >([]);
   const [sort, setSort] = useState<ProductSort>(ProductSort.byNovelty);
   const [searchValue, setSearchValue] = useState('');
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const getGamesAndWriteToState = async () => {
-    const g = await window.api
-      .getGamesList(sort, searchValue)
-      .catch(console.error);
-    setGames(g);
+  const getProductsAndWriteToState = async () => {
+    //TODO: sort and search
+    try {
+      const res =
+        await a.get<(IProduct & { genre_name: string })[]>('/software/list/');
+      setProducts(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const closeCartModal = async () => {
     await setIsCartOpen(false);
-    await getGamesAndWriteToState();
+    await getProductsAndWriteToState();
   };
   useEffect(() => {
-    getGamesAndWriteToState();
+    getProductsAndWriteToState();
   }, [sort, searchValue]);
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -58,10 +63,8 @@ export const Shop = () => {
     setSearchValue(val);
   };
 
-  const renderGameCarts = (
-    items: (IProduct & { gameGenres: { genreName: string } })[],
-  ) => {
-    return items.map((item) => <GameCard key={item.id} gameObj={item} />);
+  const renderProductCarts = (items: (IProduct & { genre_name: string })[]) => {
+    return items.map((item) => <ProductCard key={item.id} productObj={item} />);
   };
 
   return (
@@ -76,7 +79,7 @@ export const Shop = () => {
           }}
         >
           <Flex justifyContent={'space-between'} mb={4}>
-            <Text css={{ fontSize: 24, fontWeight: 600 }}>Все игры</Text>
+            <Text css={{ fontSize: 24, fontWeight: 600 }}>Приложения</Text>
             <InputGroup
               width={400}
               height={'36px'}
@@ -90,7 +93,7 @@ export const Shop = () => {
                   value: searchValue,
                   onChange: onChangeSearchValue,
                   variant: 'subtle',
-                  placeholder: 'Поиск игр',
+                  placeholder: 'Поиск',
                 }}
               />
             </InputGroup>
@@ -133,7 +136,7 @@ export const Shop = () => {
             </Flex>
           </Flex>
           <Box css={{ height: '94%', ...scrollBarStyles }}>
-            {renderGameCarts(games)}
+            {renderProductCarts(products)}
           </Box>
         </Box>
       </Flex>

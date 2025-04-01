@@ -15,18 +15,13 @@ import ArrowSvg from '../assets/arrowLeft.svg';
 export const Store = () => {
   const nav = useNavigate();
   const [tabVal, setTabVal] = useState<StoreTabValues>(StoreTabValues.shop);
-  const [userName, setUserName] = useState(null);
-
-  const getAndWriteUserName = async () => {
-    const userObj = await window.api
-      .getConsumer(localStorage.getItem('uid'))
-      .catch(console.error);
-
-    setUserName(userObj[0].username.toUpperCase());
-  };
+  const [userName, setUserName] = useState<null | string>(null);
 
   useEffect(() => {
-    getAndWriteUserName();
+    const name = localStorage.getItem('username');
+    if (!name) return;
+
+    setUserName(name.toUpperCase());
   }, []);
 
   return (

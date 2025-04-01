@@ -24,12 +24,12 @@ export const Login = () => {
 
       localStorage.setItem('accessToken', resData.access);
       localStorage.setItem('refreshToken', resData.refresh);
+      localStorage.setItem('uid', String(resData.userId));
+      localStorage.setItem('username', resData.username);
 
       if (resData.is_staff) {
-        localStorage.setItem('uid', String(resData.userId));
         nav('/admin/products');
       } else if (!resData.is_staff) {
-        localStorage.setItem('uid', String(resData.userId));
         nav('/user/shop');
       }
     } catch (error) {

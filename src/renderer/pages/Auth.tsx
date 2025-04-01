@@ -10,9 +10,7 @@ export const Auth = () => {
   const [tabVal, setTabVal] = useState('login');
 
   useEffect(() => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('uid');
+    localStorage.clear();
   }, []);
 
   return (
