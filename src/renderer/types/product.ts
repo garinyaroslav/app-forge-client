@@ -9,10 +9,6 @@ export interface IProduct {
   genre: number;
   rel_date: string;
   image: string;
-  // reviews: undefined;
-  // libraries: undefined;
-  // cartItems: undefined;
-  // gameGeneres: undefined;
 }
 
 export interface ILibProduct {
@@ -31,6 +27,6 @@ export interface ILibProduct {
 }
 
 export enum ProductSort {
-  byPopularity = 'copiesSold',
-  byNovelty = 'relDate',
+  byPopularity = 'copies_sold',
+  byNovelty = 'rel_date',
 }

@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { toaster, Toaster } from './ui/toaster';
 import { IProduct } from '../types/product';
 import a from '../axios';
+import { base64ToBlob } from '@/utils/base64ToBlob';
 
 interface ProductCardProps {
   productObj: IProduct & { genre_name: string };
@@ -30,19 +31,16 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
   const [gameInLib, setGameInLib] = useState(false);
 
   const makeImg = async () => {
-    const blob = await new Blob([productObj.image], {
-      type: 'image/png',
-    });
+    const blob = await base64ToBlob(productObj.image, 'image/png');
+
     await setImageSrc(URL.createObjectURL(blob));
   };
 
   const makeChecks = async () => {
-    const uid = await localStorage.getItem('uid');
-
     try {
-      const res = await a.get<IProduct[]>(
-        `/software/user/cart/?product_id=${productObj.id}`,
-      );
+      const res = await a.get<IProduct[]>('/software/user/cart/', {
+        params: { product_id: productObj.id },
+      });
       let resData = res.data;
 
       if (resData.length > 0) {
@@ -53,9 +51,9 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
     }
 
     try {
-      const res = await a.get<IProduct[]>(
-        `/software/library_item/?product_id=${productObj.id}`,
-      );
+      const res = await a.get<IProduct[]>(`/software/library_item/`, {
+        params: { product_id: productObj.id },
+      });
       let resData = res.data;
 
       if (resData.length > 0) {
@@ -67,16 +65,17 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
   };
 
   const addToCart = async () => {
-    const uid = await Number(localStorage.getItem('uid'));
+    const res = await a.post<IProduct[]>('/software/user/cart/', {
+      product_id: Number(productObj.id),
+    });
 
-    const addRes = await window.api.addGameInUserCart(uid, productObj.id);
-    if (addRes) {
-      await makeChecks();
+    if (res.status === 201) {
       toaster.create({
-        description: `Игра: ${productObj.title} добавлена в корзину`,
+        description: `Продукт: ${productObj.title} добавлен в корзину`,
         type: 'success',
       });
     }
+    makeChecks();
   };
 
   useEffect(() => {
@@ -138,12 +137,12 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
             </Button>
             {gameInCart && (
               <Button disabled size={'xs'}>
-                Игра уже в корзине
+                Продукт уже в корзине
               </Button>
             )}
             {gameInLib && (
               <Button disabled size={'xs'}>
-                Игра уже куплена
+                Продукт уже куплен
               </Button>
             )}
             {!gameInCart && !gameInLib && (

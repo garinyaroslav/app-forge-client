@@ -13,10 +13,10 @@ import { Store } from './pages/Store';
 import { Shop } from './pages/Shop';
 import { Library } from './pages/Library';
 import { Profile } from './pages/Profile';
+import { ProductShopDitails } from './components/ProductShopDitails';
 
 import { mainTabValues as mt } from './types/mainTabValues';
 import { StoreTabValues as st } from './types/storeTabValues';
-import { GameShopDitails } from './components/GameShopDitails';
 
 export const App = () => {
   return (
@@ -34,7 +34,10 @@ export const App = () => {
         </Route>
         <Route path="/user" element={<Store />}>
           <Route path={st.shop} element={<Shop />} />
-          <Route path={`${st.shop}/:gameId`} element={<GameShopDitails />} />
+          <Route
+            path={`${st.shop}/:productId`}
+            element={<ProductShopDitails />}
+          />
           <Route path={st.library} element={<Library />} />
           <Route path={st.profile} element={<Profile />} />
         </Route>

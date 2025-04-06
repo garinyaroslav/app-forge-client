@@ -40,10 +40,19 @@ export const Shop = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const getProductsAndWriteToState = async () => {
-    //TODO: sort and search
+    const params =
+      searchValue.length > 0
+        ? {
+          sort,
+          search: searchValue,
+        }
+        : { sort };
+
     try {
-      const res =
-        await a.get<(IProduct & { genre_name: string })[]>('/software/list/');
+      const res = await a.get<(IProduct & { genre_name: string })[]>(
+        '/software/list/',
+        { params },
+      );
       setProducts(res.data);
     } catch (e) {
       console.error(e);

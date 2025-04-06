@@ -10,7 +10,6 @@ import {
   Separator,
 } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { IGame } from '../types/game';
 
 import ArrowSvg from '../assets/arrowLeft.svg';
 import { Rating } from './ui/rating';
@@ -20,63 +19,82 @@ import { Button } from './ui/button';
 import { Toaster, toaster } from './ui/toaster';
 import { IReviewObj } from '../types/review';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
-import { GameShopReview } from './GameShopReview';
+import { IProduct } from '../types/product';
+import { ProductShopReview } from './ProductShopReview';
+import { unixToUSATime } from '@/utils/unixToUSADate';
+import a from '../axios';
+import { base64ToBlob } from '@/utils/base64ToBlob';
 
-export const GameShopDitails = () => {
+export const ProductShopDitails = () => {
   const nav = useNavigate();
-  const { gameId } = useParams();
-  const [game, setGame] = useState<
-    null | (IGame & { gameGenres: { genreName: string } })
+  const { productId } = useParams();
+  const [product, setProduct] = useState<
+    null | (IProduct & { genre_name: string })
   >(null);
   const [reviews, setReviews] = useState<null | IReviewObj[]>(null);
   const [imageSrc, setImageSrc] = useState<null | string>(null);
-  const [gameInCart, setGameInCart] = useState(false);
-  const [gameInLib, setGameInLib] = useState(false);
+  const [productInCart, setProductInCart] = useState(false);
+  const [productInLib, setProductInLib] = useState(false);
 
-  const getGameAndWriteToState = async () => {
-    const g = await window.api.getGamesListElem(gameId).catch(console.error);
-    setGame(g[0]);
+  const getProductAndWriteToState = async () => {
+    const res = await a.get<IProduct & { genre_name: string }>(
+      '/software/list/',
+      { params: { id: productId } },
+    );
+    const resData = res.data;
+    setProduct(resData);
 
-    const blob = new Blob([g[0].image], {
-      type: 'image/png',
-    });
+    const blob = base64ToBlob(resData.image, 'image/png');
     setImageSrc(URL.createObjectURL(blob));
   };
 
   const getReviewsAndWriteToState = async () => {
-    const r = await window.api.getReviewsByGameId(gameId).catch(console.error);
-    if (r.length === 0) setReviews(null);
-    else setReviews(r);
+    const res = await a.get<IReviewObj[]>('/software/review/', {
+      params: { product_id: productId },
+    });
+    const resData = res.data;
+
+    if (resData.length === 0) setReviews(null);
+    else setReviews(resData);
   };
 
   const makeChecks = async () => {
-    const uid = await Number(localStorage.getItem('uid'));
+    try {
+      const res = await a.get<IProduct[]>('/software/user/cart/', {
+        params: { product_id: productId },
+      });
+      let resData = res.data;
 
-    const hasGameInCart = await window.api
-      .getGameFromUserCart(uid, gameId)
-      .catch(console.error);
-
-    if (hasGameInCart.length > 0) {
-      setGameInCart(true);
-      return;
+      if (resData.length > 0) {
+        setProductInCart(true);
+        return;
+      }
+    } catch (e) {
+      console.error(e);
     }
 
-    const hasGameInLib = await window.api
-      .getGameFromUserLib(uid, gameId)
-      .catch(console.error);
+    try {
+      const res = await a.get<IProduct[]>(`/software/library_item/`, {
+        params: { product_id: productId },
+      });
+      let resData = res.data;
 
-    if (hasGameInLib.length > 0) {
-      setGameInLib(true);
+      if (resData.length > 0) {
+        setProductInLib(true);
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
   const addToCart = async () => {
-    const uid = await Number(localStorage.getItem('uid'));
+    const res = await a.post<IProduct[]>('/software/user/cart/', {
+      product_id: Number(productId),
+    });
 
-    const addRes = await window.api.addGameInUserCart(uid, gameId);
-    if (addRes) {
+    if (res.status === 201) {
       toaster.create({
-        description: 'Игра добавлена в корзину',
+        description: 'Продукт добавлена в корзину',
         type: 'success',
       });
     }
@@ -84,10 +102,10 @@ export const GameShopDitails = () => {
   };
 
   useEffect(() => {
-    setGameInLib(false);
-    setGameInCart(false);
+    setProductInLib(false);
+    setProductInCart(false);
     makeChecks();
-    getGameAndWriteToState();
+    getProductAndWriteToState();
     getReviewsAndWriteToState();
     return () => {
       if (imageSrc) URL.revokeObjectURL(imageSrc);
@@ -96,11 +114,11 @@ export const GameShopDitails = () => {
 
   const renderReviews = (reviewsObj: IReviewObj[]) => {
     return reviewsObj.map((reviewObj) => (
-      <GameShopReview key={reviewObj.id} review={reviewObj} />
+      <ProductShopReview key={reviewObj.id} review={reviewObj} />
     ));
   };
 
-  if (game)
+  if (product)
     return (
       <Flex
         flexDirection={'column'}
@@ -149,40 +167,40 @@ export const GameShopDitails = () => {
             </Box>
             <Flex flexDirection={'column'} css={{ width: '48%' }}>
               <Text css={{ fontSize: 22, fontWeight: 600, mb: 3 }}>
-                {game.title}
+                {product.title}
               </Text>
               <Box css={{ mb: 4 }}>
                 <Badge css={{ background: '#808080' }}>
-                  {game.gameGenres.genreName}
+                  {product.genre_name}
                 </Badge>
               </Box>
               <Rating
                 readOnly
                 allowHalf
                 colorPalette="orange"
-                defaultValue={game.rating}
+                defaultValue={product.rating}
                 size="md"
                 css={{ mb: 6 }}
               />
               <Flex mb={5} justifyContent={'space-between'} alignItems={'end'}>
                 <Text css={{ fontSize: 26, fontWeight: 500 }}>
-                  {game.price} руб.
+                  {product.price} руб.
                 </Text>
                 <Text css={{ fontSize: 14, fontWeight: 400 }}>
-                  {`Уже купили ${game.copiesSold} раз`}
+                  {`Уже купили ${product.copies_sold} раз`}
                 </Text>
               </Flex>
-              {gameInCart && (
+              {productInCart && (
                 <Button disabled size={'xs'} css={{ mb: 8 }}>
                   Игра уже в корзине
                 </Button>
               )}
-              {gameInLib && (
+              {productInLib && (
                 <Button disabled size={'xs'} css={{ mb: 8 }}>
                   Игра уже куплена
                 </Button>
               )}
-              {!gameInCart && !gameInLib && (
+              {!productInCart && !productInLib && (
                 <Button onClick={() => addToCart()} size={'xs'} css={{ mb: 8 }}>
                   Добавить в корзину
                 </Button>
@@ -190,11 +208,11 @@ export const GameShopDitails = () => {
               <DataListRoot css={{ mb: 4 }}>
                 <DataListItem
                   label={'Разработчик'}
-                  value={game.developerName}
+                  value={product.developer_name}
                 />
                 <DataListItem
                   label={'Дата разработки'}
-                  value={new Date(game.relDate * 1000).toLocaleDateString()}
+                  value={unixToUSATime(product.rel_date)}
                 />
               </DataListRoot>
             </Flex>
@@ -203,7 +221,7 @@ export const GameShopDitails = () => {
             css={{ width: '100%', fontWeight: 500, fontSize: 18, mb: 8 }}
             showDash
           >
-            {game.description}
+            {product.description}
           </Blockquote>
           <Separator css={{ mb: 2 }} />
           <Heading css={{ mb: 2 }}>Отзывы</Heading>
