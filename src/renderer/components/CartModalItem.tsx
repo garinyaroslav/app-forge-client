@@ -1,26 +1,26 @@
 import { FC, useEffect, useState } from 'react';
 import { Box, Flex, Image, Skeleton, Text } from '@chakra-ui/react';
-import { IGame } from '../types/game';
+import { IProduct } from '../types/product';
+import a from '../axios';
 
 import CrossSvg from '../assets/cross.svg';
+import { base64ToBlob } from '@/utils/base64ToBlob';
 
-type TGameObj = IGame & { cartItemId: number };
+type TProductObj = IProduct & { cart_item_id: number };
 
 interface CartModalItemProps {
-  gameObj: TGameObj;
+  productObj: TProductObj;
   getItemsAndWriteToState: () => void;
 }
 
 export const CartModalItem: FC<CartModalItemProps> = ({
-  gameObj,
+  productObj,
   getItemsAndWriteToState,
 }) => {
   const [imageSrc, setImageSrc] = useState<null | string>(null);
 
   useEffect(() => {
-    const blob = new Blob([gameObj.image], {
-      type: 'image/png',
-    });
+    const blob = base64ToBlob(productObj.image, 'image/png');
     setImageSrc(URL.createObjectURL(blob));
 
     return () => {
@@ -28,31 +28,37 @@ export const CartModalItem: FC<CartModalItemProps> = ({
     };
   }, []);
 
-  const deleteFromCart = async (cartItemId: number) => {
-    await window.api.deleteCartItem(cartItemId).catch(console.error);
+  const deleteFromCart = async (cart_item_id: number) => {
+    await a.delete('/cart_item/my/', { params: { id: cart_item_id } });
+
     getItemsAndWriteToState();
   };
 
   return (
     <Flex css={{ w: '100%', h: '90px', border: '1px solid #fff', mb: 4 }}>
       {imageSrc ? (
-        <Image objectFit="cover" src={imageSrc} alt={'gameImage'} />
+        <Image
+          css={{ h: '100%', w: '90px' }}
+          objectFit="cover"
+          src={imageSrc}
+          alt={'productImage'}
+        />
       ) : (
         <Skeleton css={{ h: '100%', w: '90px' }} />
       )}
       <Box css={{ h: '100%', w: '100%', p: 3 }}>
         <Flex justifyContent={'space-between'}>
           <Text css={{ fontSize: 16, fontWeight: 600, mb: 1 }}>
-            {gameObj.title}
+            {productObj.title}
           </Text>
           <Image
-            onClick={() => deleteFromCart(gameObj.cartItemId)}
+            onClick={() => deleteFromCart(productObj.cart_item_id)}
             css={{ w: '12px', cursor: 'pointer' }}
             src={CrossSvg}
             alt={'close'}
           />
         </Flex>
-        <Text css={{ fontSize: 14 }}>{`${gameObj.price} руб.`}</Text>
+        <Text css={{ fontSize: 14 }}>{`${productObj.price} руб.`}</Text>
       </Box>
     </Flex>
   );

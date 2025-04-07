@@ -14,71 +14,92 @@ import {
 } from '@chakra-ui/react';
 import { Button } from './ui/button';
 import { CloseButton } from './ui/close-button';
-import { IGame } from '../types/game';
+import { IProduct } from '../types/product';
 import { CartModalItem } from './CartModalItem';
 import { toaster, Toaster } from './ui/toaster';
+import a from '../axios';
+import { scrollBarStyles } from '../../utils/scrollBarStyles';
 
 interface CartModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-type TGameObj = IGame & { cartItemId: number };
+type TProductObj = IProduct & { cart_item_id: number };
 
 export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
   const uid = localStorage.getItem('uid');
-  const [cartItems, setCartItems] = useState<null | TGameObj[]>(null);
+  const [cartItems, setCartItems] = useState<null | TProductObj[]>(null);
 
   const getItemsAndWriteToState = async () => {
-    const g = await window.api.getCartGamesByUserId(uid).catch(console.error);
+    try {
+      const res = await a.get<TProductObj[]>('/software/cart/');
+      const resData = res.data;
 
-    if (g.length > 0) setCartItems(g);
-    else setCartItems(null);
+      if (resData.length > 0) setCartItems(resData);
+      else setCartItems(null);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {
     getItemsAndWriteToState();
   }, [open]);
 
-  const defineSum = (items: null | TGameObj[]) => {
+  const defineSum = (items: null | TProductObj[]) => {
     if (items)
       return items.reduce((a, item) => a + Number(item.price), 0).toFixed(2);
     return 0;
   };
 
   const buy = async () => {
-    if (cartItems) {
-      for (let i = 0; i < cartItems.length; i++) {
-        const newLibElem = {
-          gameId: cartItems[i].id,
-          consumerId: uid,
-          addedDate: Math.floor(Date.now() / 1000),
-        };
+    //TODO create one endpoint for this
+    if (!cartItems) return;
 
-        (async () => {
-          await window.api.addLibrary(newLibElem).catch(console.error);
-          await window.api
-            .incGameCopiesSoldById(cartItems[i].id)
-            .catch(console.error);
-        })();
-      }
+    for (let i = 0; i < cartItems.length; i++) {
+      // const newLibElem = {
+      //   productId: cartItems[i].id,
+      //   consumerId: uid,
+      //   addedDate: Math.floor(Date.now() / 1000),
+      // };
 
-      await window.api.deleteCartGamesByUserId(uid).catch(console.error);
+      (async () => {
+        try {
+          await a.post<TProductObj[]>('/library/my/', {
+            product_id: cartItems[i].id,
+          });
+        } catch (e) {
+          console.error(e);
+        }
+        // await window.api.addLibrary(newLibElem).catch(console.error);
 
-      await getItemsAndWriteToState();
-
-      toaster.create({
-        description: 'Игрa(ы) добавлены в вашу библиотеку',
-        type: 'success',
-      });
+        // await window.api
+        //   .incProductCopiesSoldById(cartItems[i].id)
+        //   .catch(console.error);
+      })();
     }
+
+    try {
+      await a.delete('/software/cart_items/');
+    } catch (e) {
+      console.error(e);
+    }
+    // await window.api.deleteCartProductsByUserId(uid).catch(console.error);
+
+    await getItemsAndWriteToState();
+
+    toaster.create({
+      description: 'Пирложение(ия) добавлены в вашу библиотеку',
+      type: 'success',
+    });
   };
 
-  const renderItems = (items: TGameObj[]) => {
+  const renderItems = (items: TProductObj[]) => {
     return items.map((item) => (
       <CartModalItem
         key={item.id}
-        gameObj={item}
+        productObj={item}
         getItemsAndWriteToState={getItemsAndWriteToState}
       />
     ));
@@ -111,6 +132,8 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
+                maxHeight: 550,
+                ...scrollBarStyles,
               }}
             >
               {cartItems ? (

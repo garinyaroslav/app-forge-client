@@ -23,6 +23,7 @@ import { InputGroup } from '../components/ui/input-group';
 import { CartModal } from '../components/CartModal';
 import { ProductCard } from '../components/ProductCard';
 import a from '../axios';
+import useDebounce from '@/utils/useDebounce';
 
 const options = createListCollection({
   items: [
@@ -37,15 +38,16 @@ export const Shop = () => {
   >([]);
   const [sort, setSort] = useState<ProductSort>(ProductSort.byNovelty);
   const [searchValue, setSearchValue] = useState('');
+  const deboucedSearchValue = useDebounce(searchValue, 750);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const getProductsAndWriteToState = async () => {
     const params =
-      searchValue.length > 0
+      deboucedSearchValue.length > 0
         ? {
-          sort,
-          search: searchValue,
-        }
+            sort,
+            search: deboucedSearchValue,
+          }
         : { sort };
 
     try {
@@ -65,7 +67,7 @@ export const Shop = () => {
   };
   useEffect(() => {
     getProductsAndWriteToState();
-  }, [sort, searchValue]);
+  }, [sort, deboucedSearchValue]);
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;

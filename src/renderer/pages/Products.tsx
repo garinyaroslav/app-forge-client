@@ -41,7 +41,9 @@ export const Products = () => {
 
   const search = async (searchVal: string) => {
     try {
-      const res = await a.get<IProduct[]>(`/software/?search=${searchVal}`);
+      const res = await a.get<IProduct[]>(`/software/`, {
+        params: { search: searchVal },
+      });
       setProducts(res.data);
     } catch (e) {
       console.error(e);

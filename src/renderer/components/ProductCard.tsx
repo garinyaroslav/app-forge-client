@@ -27,8 +27,8 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
   const nav = useNavigate();
   const imageRef = useRef(null);
   const [imageSrc, setImageSrc] = useState<null | string>(null);
-  const [gameInCart, setGameInCart] = useState(false);
-  const [gameInLib, setGameInLib] = useState(false);
+  const [productInCart, setProductInCart] = useState(false);
+  const [productInLib, setProductInLib] = useState(false);
 
   const makeImg = async () => {
     const blob = await base64ToBlob(productObj.image, 'image/png');
@@ -44,7 +44,7 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
       let resData = res.data;
 
       if (resData.length > 0) {
-        setGameInCart(true);
+        setProductInCart(true);
       }
     } catch (e) {
       console.error(e);
@@ -57,7 +57,7 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
       let resData = res.data;
 
       if (resData.length > 0) {
-        setGameInCart(true);
+        setProductInLib(true);
       }
     } catch (e) {
       console.error(e);
@@ -79,8 +79,8 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
   };
 
   useEffect(() => {
-    setGameInLib(false);
-    setGameInCart(false);
+    setProductInLib(false);
+    setProductInCart(false);
     makeImg();
     makeChecks();
 
@@ -135,17 +135,17 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
             <Button onClick={() => nav(`./${productObj.id}`)} size={'xs'}>
               Подробнее
             </Button>
-            {gameInCart && (
+            {productInCart && (
               <Button disabled size={'xs'}>
                 Продукт уже в корзине
               </Button>
             )}
-            {gameInLib && (
+            {productInLib && (
               <Button disabled size={'xs'}>
                 Продукт уже куплен
               </Button>
             )}
-            {!gameInCart && !gameInLib && (
+            {!productInCart && !productInLib && (
               <Button onClick={() => addToCart()} size={'xs'}>
                 Добавить в корзину
               </Button>
