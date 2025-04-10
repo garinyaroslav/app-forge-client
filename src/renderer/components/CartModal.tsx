@@ -28,7 +28,6 @@ interface CartModalProps {
 type TProductObj = IProduct & { cart_item_id: number };
 
 export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
-  const uid = localStorage.getItem('uid');
   const [cartItems, setCartItems] = useState<null | TProductObj[]>(null);
 
   const getItemsAndWriteToState = async () => {
@@ -54,40 +53,14 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
   };
 
   const buy = async () => {
-    //TODO create one endpoint for this
     if (!cartItems) return;
 
-    for (let i = 0; i < cartItems.length; i++) {
-      // const newLibElem = {
-      //   productId: cartItems[i].id,
-      //   consumerId: uid,
-      //   addedDate: Math.floor(Date.now() / 1000),
-      // };
-
-      (async () => {
-        try {
-          await a.post<TProductObj[]>('/library/my/', {
-            product_id: cartItems[i].id,
-          });
-        } catch (e) {
-          console.error(e);
-        }
-        // await window.api.addLibrary(newLibElem).catch(console.error);
-
-        // await window.api
-        //   .incProductCopiesSoldById(cartItems[i].id)
-        //   .catch(console.error);
-      })();
-    }
-
     try {
-      await a.delete('/software/cart_items/');
+      await a.post('/software/buy/');
+      await getItemsAndWriteToState();
     } catch (e) {
       console.error(e);
     }
-    // await window.api.deleteCartProductsByUserId(uid).catch(console.error);
-
-    await getItemsAndWriteToState();
 
     toaster.create({
       description: 'Пирложение(ия) добавлены в вашу библиотеку',
