@@ -49,7 +49,7 @@ export const ProductShopDitails = () => {
   };
 
   const getReviewsAndWriteToState = async () => {
-    const res = await a.get<IReviewObj[]>('/software/review/', {
+    const res = await a.get<IReviewObj[]>('/software/reviews/', {
       params: { product_id: productId },
     });
     const resData = res.data;

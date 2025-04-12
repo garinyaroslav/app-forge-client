@@ -1,32 +1,38 @@
 import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { ILibGame } from '../types/game';
+import { ILibProduct } from '../types/product';
 import { EmptyState } from '../components/EmpatyState';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { ShopLibraryDitails } from '../components/ShopLibraryDitails';
+import a from '../axios';
 
 export const Library = () => {
-  const uid = localStorage.getItem('uid');
-  const [libGames, setLibGames] = useState<null | ILibGame[]>(null);
-  const [selectedGameId, setSelectedGameId] = useState<null | number>(null);
+  const [libProducts, setLibProducts] = useState<null | ILibProduct[]>(null);
+  const [selectedProductId, setSelectedProductId] = useState<null | number>(
+    null,
+  );
 
-  const getLibGames = async () => {
-    const res = await window.api.getGamesFromUserLib(uid).catch(console.error);
+  const getLibProducts = async () => {
+    try {
+      const res = await a.get<ILibProduct[]>('/software/library_items/');
 
-    setLibGames(res);
+      setLibProducts(res.data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {
-    getLibGames();
+    getLibProducts();
   }, []);
 
-  const renderGames = (gamesElems: ILibGame[]) =>
-    gamesElems.map((gameElem) => (
+  const renderProducts = (productsElems: ILibProduct[]) =>
+    productsElems.map((productElem) => (
       <Flex
         alignItems={'center'}
         justifyContent={'space-between'}
-        onClick={() => setSelectedGameId(gameElem.id)}
-        key={gameElem.id}
+        onClick={() => setSelectedProductId(productElem.id)}
+        key={productElem.id}
         css={{
           pl: 6,
           pr: 4.5,
@@ -38,16 +44,18 @@ export const Library = () => {
           cursor: 'pointer',
         }}
       >
-        <Text>{gameElem.title}</Text>
+        <Text>{productElem.title}</Text>
       </Flex>
     ));
 
   const renderEntrails = () => {
-    if (selectedGameId && libGames)
+    if (selectedProductId && libProducts)
       return (
         <ShopLibraryDitails
-          gameObj={
-            libGames.find((obj) => obj.id === selectedGameId) as ILibGame
+          productObj={
+            libProducts.find(
+              (obj) => obj.id === selectedProductId,
+            ) as ILibProduct
           }
         />
       );
@@ -84,7 +92,7 @@ export const Library = () => {
           </Flex>
         </Flex>
         <Box css={scrollBarStyles}>
-          {libGames ? renderGames(libGames) : null}
+          {libProducts ? renderProducts(libProducts) : null}
         </Box>
       </Flex>
       <Box css={{ flex: 1 }}>{renderEntrails()}</Box>

@@ -22,7 +22,7 @@ export interface ILibProduct {
   genre: number;
   rel_date: string;
   image: string;
-  added_date: number;
+  added_date: string;
   genre_name: string;
 }
 

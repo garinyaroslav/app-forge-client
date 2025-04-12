@@ -1,64 +1,75 @@
 import { Box, Flex, Heading, Text, Image, Textarea } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
 import { Skeleton } from './ui/skeleton';
-import { ILibGame } from '../types/game';
+import { ILibProduct } from '../types/product';
 import { DataListItem, DataListRoot } from './ui/data-list';
 import { Rating } from './ui/rating';
 import { IReview } from '../types/review';
 import { Button } from './ui/button';
 import { toaster, Toaster } from './ui/toaster';
+import a from '../axios';
+import { base64ToBlob } from '../../utils/base64ToBlob';
+import { unixToUSATime } from '../../utils/unixToUSADate';
 
 interface ShopLibraryDitailsProps {
-  gameObj: ILibGame;
+  productObj: ILibProduct;
 }
 
 export const ShopLibraryDitails: FC<ShopLibraryDitailsProps> = ({
-  gameObj,
+  productObj,
 }) => {
-  const uid = localStorage.getItem('uid');
   const [imageSrc, setImageSrc] = useState<null | string>(null);
   const [rating, setRating] = useState(0);
   const [textOfReview, setTextOfReview] = useState('');
   const [review, setReview] = useState<null | IReview>(null);
 
   const getCurReviewAndWrite = async () => {
-    const res = (await window.api
-      .getReviewByGameAndUserId(uid, gameObj.id)
-      .catch(console.error)) as IReview[];
+    try {
+      const res = await a.get<IReview[]>('/software/review/', {
+        params: { product_id: productObj.id },
+      });
+      const resData = res.data;
+      console.log(resData);
 
-    if (res.length === 0) {
-      setReview(null);
-      setRating(0);
-      setTextOfReview('');
-    } else {
-      setReview(res[0]);
-      setRating(res[0].rating);
-      setTextOfReview(res[0].textComment);
+      if (resData.length === 0) {
+        setReview(null);
+        setRating(0);
+        setTextOfReview('');
+      } else {
+        setReview(resData[0]);
+        setRating(resData[0].rating);
+        setTextOfReview(resData[0].text_comment);
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
   const addReview = async () => {
     if (textOfReview.length > 0 && rating > 0) {
-      const res = await window.api.addReview({
-        rating,
-        textComment: textOfReview,
-        gameId: Number(gameObj.id),
-        consumerId: Number(uid),
-      });
+      try {
+        const res = await a.post('/software/review/', {
+          rating,
+          text_comment: textOfReview,
+          product: Number(productObj.id),
+        });
 
-      if (res) {
-        toaster.create({
-          description: 'Отзыв успешно добавлен',
-          type: 'success',
-        });
-      } else {
-        toaster.create({
-          description: 'Отзыв не добавлен',
-          type: 'error',
-        });
+        if (res.status === 201) {
+          toaster.create({
+            description: 'Отзыв успешно добавлен',
+            type: 'success',
+          });
+        } else {
+          toaster.create({
+            description: 'Отзыв не добавлен',
+            type: 'error',
+          });
+        }
+
+        await getCurReviewAndWrite();
+      } catch (e) {
+        console.log(e);
       }
-
-      await getCurReviewAndWrite();
     } else {
       toaster.create({
         description: 'Отзыв не добавлен: Заполните все поля',
@@ -70,14 +81,12 @@ export const ShopLibraryDitails: FC<ShopLibraryDitailsProps> = ({
   useEffect(() => {
     getCurReviewAndWrite();
 
-    const blob = new Blob([gameObj.image], {
-      type: 'image/png',
-    });
+    const blob = base64ToBlob(productObj.image, 'image/png');
     setImageSrc(URL.createObjectURL(blob));
     return () => {
       if (imageSrc) URL.revokeObjectURL(imageSrc);
     };
-  }, [gameObj]);
+  }, [productObj]);
 
   return (
     <Flex
@@ -89,12 +98,12 @@ export const ShopLibraryDitails: FC<ShopLibraryDitailsProps> = ({
     >
       <Toaster />
       <Flex width={500} direction={'column'} gap={5}>
-        <Heading css={{ mb: 5 }}>{gameObj.title}</Heading>
+        <Heading css={{ mb: 5 }}>{productObj.title}</Heading>
         <Text css={{ fontSize: 18, fontWeight: 600 }}>Об игре</Text>
         <DataListRoot css={{ mb: 4 }} orientation={'horizontal'}>
           <DataListItem
             label={'Дата покупки'}
-            value={new Date(gameObj.addedDate * 1000).toLocaleDateString()}
+            value={unixToUSATime(productObj.added_date)}
           />
           {review && (
             <>
@@ -123,7 +132,7 @@ export const ShopLibraryDitails: FC<ShopLibraryDitailsProps> = ({
             <Text css={{ fontSize: 18, fontWeight: 600 }}>Оставить отзыв</Text>
             <Flex css={{ alignItems: 'center', mb: 3 }}>
               <Text css={{ fontWeight: 500, mr: 6 }}>
-                На сколько оцените игру?
+                На сколько оцените приложение?
               </Text>
               <Rating
                 readOnly={false}
@@ -146,7 +155,7 @@ export const ShopLibraryDitails: FC<ShopLibraryDitailsProps> = ({
         )}
       </Flex>
       <Box>
-        <Heading css={{ mb: 5 }}>Изображение игры</Heading>
+        <Heading css={{ mb: 5 }}>Изображение приложения</Heading>
         {imageSrc ? (
           <Image
             css={{ height: 400, width: 400, borderRadius: 4 }}
