@@ -24,8 +24,6 @@ export const AddLibraryForm: FC<AddLibraryFormProps> = ({
   const onSubmit: SubmitHandler<ILibrary> = async (data) => {
     let resData: null | ILibrary = null;
 
-    console.log(data);
-
     if (
       Number.isNaN(Number(data.product)) &&
       Number.isNaN(Number(data.consumer))

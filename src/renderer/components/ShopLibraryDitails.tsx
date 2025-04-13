@@ -29,7 +29,6 @@ export const ShopLibraryDitails: FC<ShopLibraryDitailsProps> = ({
         params: { product_id: productObj.id },
       });
       const resData = res.data;
-      console.log(resData);
 
       if (resData.length === 0) {
         setReview(null);

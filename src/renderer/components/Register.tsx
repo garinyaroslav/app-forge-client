@@ -29,7 +29,6 @@ export const Register = () => {
         last_name: data.last_name,
       });
 
-      console.log(res);
       resData = res.data;
     } catch (e) {
       console.error('Registration error:', e);

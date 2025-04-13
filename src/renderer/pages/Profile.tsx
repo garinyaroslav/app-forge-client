@@ -14,9 +14,10 @@ import AvatarSvg from '../assets/avatar.svg';
 import { IProfile } from '../types/consumer';
 import { validateEmail } from '../../utils/validateEmail';
 import { toaster, Toaster } from '../components/ui/toaster';
+import a from '../axios';
+import { unixToUSATime } from '@/utils/unixToUSADate';
 
 export const Profile = () => {
-  const uid = localStorage.getItem('uid');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -24,14 +25,17 @@ export const Profile = () => {
   const [isEdit, setIsEdit] = useState(false);
 
   const getProfile = async () => {
-    const res = (await window.api
-      .getProfile(uid)
-      .catch(console.error)) as IProfile[];
+    try {
+      const res = await a.get<IProfile>('/profile/');
+      const resData = res.data;
 
-    setFirstName(res[0].firstName);
-    setLastName(res[0].lastName);
-    setEmail(res[0].email);
-    setRegDate(new Date(res[0].regDate * 1000).toLocaleDateString());
+      setFirstName(resData.first_name);
+      setLastName(resData.last_name);
+      setEmail(resData.email);
+      setRegDate(unixToUSATime(resData.date_joined));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {
@@ -40,20 +44,26 @@ export const Profile = () => {
 
   const updateProfile = async () => {
     if (firstName.length > 0 && lastName.length > 0 && validateEmail(email)) {
-      const res = await window.api
-        .updateProfile({ id: uid, firstName, lastName, email })
-        .catch(console.error);
+      try {
+        const res = await a.post('/profile/', {
+          first_name: firstName,
+          last_name: lastName,
+          email,
+        });
 
-      if (res) {
-        toaster.create({
-          description: 'Профиль успешно обновлён',
-          type: 'success',
-        });
-      } else {
-        toaster.create({
-          description: 'Профиль не обновлён',
-          type: 'error',
-        });
+        if (res.status === 200) {
+          toaster.create({
+            description: 'Профиль успешно обновлён',
+            type: 'success',
+          });
+        } else {
+          toaster.create({
+            description: 'Профиль не обновлён',
+            type: 'error',
+          });
+        }
+      } catch (e) {
+        console.error(e);
       }
     } else {
       toaster.create({
