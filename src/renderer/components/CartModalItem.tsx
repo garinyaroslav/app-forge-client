@@ -35,7 +35,7 @@ export const CartModalItem: FC<CartModalItemProps> = ({
   };
 
   return (
-    <Flex css={{ w: '100%', h: '90px', border: '1px solid #fff', mb: 4 }}>
+    <Flex css={{ w: '100%', h: '90px', border: '1px solid #000', mb: 4 }}>
       {imageSrc ? (
         <Image
           css={{ h: '100%', w: '90px' }}
@@ -48,7 +48,9 @@ export const CartModalItem: FC<CartModalItemProps> = ({
       )}
       <Box css={{ h: '100%', w: '100%', p: 3 }}>
         <Flex justifyContent={'space-between'}>
-          <Text css={{ fontSize: 16, fontWeight: 600, mb: 1 }}>
+          <Text
+            css={{ fontSize: 16, fontWeight: 600, mb: 1, color: '#111827' }}
+          >
             {productObj.title}
           </Text>
           <Image
@@ -58,7 +60,9 @@ export const CartModalItem: FC<CartModalItemProps> = ({
             alt={'close'}
           />
         </Flex>
-        <Text css={{ fontSize: 14 }}>{`${productObj.price} руб.`}</Text>
+        <Text
+          css={{ fontSize: 14, color: '#111827' }}
+        >{`${productObj.price} руб.`}</Text>
       </Box>
     </Flex>
   );

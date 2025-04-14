@@ -97,9 +97,17 @@ export const ShopLibraryDitails: FC<ShopLibraryDitailsProps> = ({
     >
       <Toaster />
       <Flex width={500} direction={'column'} gap={5}>
-        <Heading css={{ mb: 5 }}>{productObj.title}</Heading>
-        <Text css={{ fontSize: 18, fontWeight: 600 }}>Об игре</Text>
-        <DataListRoot css={{ mb: 4 }} orientation={'horizontal'}>
+        <Heading css={{ mb: 5, color: '#111827', fontSize: 22 }}>
+          {productObj.title}
+        </Heading>
+        <Text css={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
+          Об игре
+        </Text>
+        <DataListRoot
+          css={{ mb: 4 }}
+          color="#111827"
+          orientation={'horizontal'}
+        >
           <DataListItem
             label={'Дата покупки'}
             value={unixToUSATime(productObj.added_date)}
@@ -128,9 +136,11 @@ export const ShopLibraryDitails: FC<ShopLibraryDitailsProps> = ({
         </DataListRoot>
         {!review && (
           <>
-            <Text css={{ fontSize: 18, fontWeight: 600 }}>Оставить отзыв</Text>
+            <Text css={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
+              Оставить отзыв
+            </Text>
             <Flex css={{ alignItems: 'center', mb: 3 }}>
-              <Text css={{ fontWeight: 500, mr: 6 }}>
+              <Text css={{ fontWeight: 500, mr: 6, color: '#111827' }}>
                 На сколько оцените приложение?
               </Text>
               <Rating
@@ -146,15 +156,27 @@ export const ShopLibraryDitails: FC<ShopLibraryDitailsProps> = ({
               value={textOfReview}
               onChange={(e) => setTextOfReview(e.target.value)}
               variant={'subtle'}
+              bg="#e5e7eb"
+              color="#111827"
+              colorPalette="green"
               placeholder={'Текст отзыва'}
               css={{ h: 200 }}
             />
-            <Button onClick={() => addReview()}>Оставить отзыв</Button>
+            <Button
+              bg="#e5e7eb"
+              color="#111827"
+              _hover={{ bg: '#d1d1d1' }}
+              onClick={() => addReview()}
+            >
+              Оставить отзыв
+            </Button>
           </>
         )}
       </Flex>
       <Box>
-        <Heading css={{ mb: 5 }}>Изображение приложения</Heading>
+        <Heading css={{ mb: 5, color: '#111827' }}>
+          Изображение приложения
+        </Heading>
         {imageSrc ? (
           <Image
             css={{ height: 400, width: 400, borderRadius: 4 }}

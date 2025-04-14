@@ -7,7 +7,7 @@ export const RootLayout = () => {
       css={{
         width: '100vw',
         height: '100vh',
-        background: '#262524',
+        background: '	#f1f5f9',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -17,7 +17,7 @@ export const RootLayout = () => {
         css={{
           width: 1600,
           height: 900,
-          background: '#222e35',
+          background: '#f8fafc',
           boxShadow: '0px 0px 7px 0px rgba(0, 0, 0, 0.2)',
         }}
       >

@@ -38,8 +38,10 @@ export const Library = () => {
           pr: 4.5,
           borderBottom: '1px solid #2f3b43',
           minHeight: 50,
+          color: '#fff',
           '&:hover': {
-            background: '#222e35',
+            background: '#fff',
+            color: '#111827',
           },
           cursor: 'pointer',
         }}
@@ -68,7 +70,7 @@ export const Library = () => {
         css={{
           width: 470,
           height: '100%',
-          background: '#111b21',
+          background: '#10b981',
           borderRight: '1px solid #2f3b43',
         }}
         direction={'column'}
@@ -88,7 +90,7 @@ export const Library = () => {
             alignItems={'center'}
             mb={8}
           >
-            <Heading>Моя библиотека</Heading>
+            <Heading css={{ color: '#fff' }}>Моя библиотека</Heading>
           </Flex>
         </Flex>
         <Box css={scrollBarStyles}>

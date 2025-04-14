@@ -11,6 +11,7 @@ import {
   Portal,
   DialogPositioner,
   Text,
+  Box,
 } from '@chakra-ui/react';
 import { Button } from './ui/button';
 import { CloseButton } from './ui/close-button';
@@ -90,13 +91,13 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
       <Portal>
         <DialogBackdrop />
         <DialogPositioner>
-          <DialogContent>
+          <DialogContent {...{ bg: '#f8fafc' }}>
             <DialogHeader
               display={'flex'}
               justifyContent={'space-between'}
               alignItems={'center'}
             >
-              <DialogTitle>Моя корзина</DialogTitle>
+              <DialogTitle {...{ color: '#111827' }}>Моя корзина</DialogTitle>
               <CloseButton onClick={() => onClose()} />
             </DialogHeader>
             <DialogBody
@@ -112,7 +113,7 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
               {cartItems ? (
                 renderItems(cartItems)
               ) : (
-                <Text>Тут пока ничего нет...</Text>
+                <Text color="#111827">Тут пока ничего нет...</Text>
               )}
             </DialogBody>
             <DialogFooter
@@ -120,13 +121,18 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
               justifyContent={'space-between'}
               alignItems={'center'}
             >
-              <Text css={{ fontSize: 18, fontWeight: 600 }}>
+              <Text css={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
                 {cartItems
                   ? `Всего к оплате: ${defineSum(cartItems)} руб.`
                   : ''}
               </Text>
               {cartItems && (
-                <Button onClick={() => buy()} colorPalette={'green'}>
+                <Button
+                  bg="#10b981"
+                  color="#fff"
+                  _hover={{ bg: '#10d981' }}
+                  onClick={() => buy()}
+                >
                   Купить
                 </Button>
               )}

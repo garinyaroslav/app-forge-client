@@ -29,8 +29,8 @@ export const Store = () => {
       <Flex
         css={{
           height: '50px',
-          background: '#111b21',
-          borderBottom: '1px solid #000',
+          background: '#10b981',
+          borderBottom: '1px solid #2f3b43',
           px: 10,
           boxShadow: '0px 0px 7px 0px rgba(0, 0, 0, 0.2)',
         }}
@@ -44,11 +44,16 @@ export const Store = () => {
           }}
         >
           <img src={ArrowSvg} style={{ height: '18px' }} alt="arrow" />
-          <Text css={{ fontWeight: 600, fontSize: 14 }}>Выйти</Text>
+          <Text css={{ fontWeight: 600, fontSize: 14, color: '#fff' }}>
+            Выйти
+          </Text>
         </Flex>
         <Box css={{ flex: 1 }}>
           <TabsRoot
-            css={{ border: 'none', mr: '78px' }}
+            css={{
+              border: 'none',
+              mr: '78px',
+            }}
             justify={'center'}
             value={tabVal}
             onValueChange={(e: any) => {
@@ -57,13 +62,28 @@ export const Store = () => {
             }}
           >
             <TabsList {...{ borderBottom: 'none' }}>
-              <TabsTrigger {...{ value: StoreTabValues.shop }}>
+              <TabsTrigger
+                {...{
+                  value: StoreTabValues.shop,
+                  css: { color: '#fff' },
+                }}
+              >
                 МАГАЗИН
               </TabsTrigger>
-              <TabsTrigger {...{ value: StoreTabValues.library }}>
+              <TabsTrigger
+                {...{
+                  value: StoreTabValues.library,
+                  css: { color: '#fff' },
+                }}
+              >
                 БИБЛИОТЕКА
               </TabsTrigger>
-              <TabsTrigger {...{ value: StoreTabValues.profile }}>
+              <TabsTrigger
+                {...{
+                  value: StoreTabValues.profile,
+                  css: { color: '#fff' },
+                }}
+              >
                 {userName ?? 'ПРОФИЛЬ'}
               </TabsTrigger>
             </TabsList>

@@ -25,11 +25,16 @@ export const Auth = () => {
           css={{ border: 'none' }}
           justify={'center'}
           value={tabVal}
+          colorPalette="green"
           onValueChange={(e: any) => setTabVal(e.value)}
         >
           <TabsList {...{ borderBottom: 'none', css: { mb: '40px' } }}>
-            <TabsTrigger {...{ value: 'login' }}>Войти</TabsTrigger>
-            <TabsTrigger {...{ value: 'register' }}>Регистрация</TabsTrigger>
+            <TabsTrigger {...{ value: 'login', color: '#111827' }}>
+              Войти
+            </TabsTrigger>
+            <TabsTrigger {...{ value: 'register', color: '#111827' }}>
+              Регистрация
+            </TabsTrigger>
           </TabsList>
         </TabsRoot>
         {tabVal === 'login' && <Login />}

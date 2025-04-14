@@ -1,10 +1,12 @@
-import { Button, Input } from '@chakra-ui/react';
+import { Box, Button, Input } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { PasswordInput } from './ui/password-input';
 import { ILoginForm, ILoginRes } from '../types/auth';
 import { Field } from './ui/field';
+import EyeSvg from '../assets/eye.svg';
+import EyeClosedSvg from '../assets/eyeClosed.svg';
 import a from '../axios';
 
 export const Login = () => {
@@ -58,6 +60,9 @@ export const Login = () => {
           w={300}
           className="peer"
           placeholder="Имя пользователя"
+          bg="#e5e7eb"
+          color="#111827"
+          colorPalette="green"
         />
       </Field>
       <Field
@@ -70,10 +75,24 @@ export const Login = () => {
           variant={'subtle'}
           w={300}
           className="peer"
+          colorPalette="green"
+          bg="#e5e7eb"
+          color="#111827"
           placeholder="Пароль"
+          visibilityIcon={{
+            off: <img style={{ width: '18px' }} src={EyeSvg} />,
+            on: <img style={{ width: '18px' }} src={EyeClosedSvg} />,
+          }}
         />
       </Field>
-      <Button type="submit">Войти</Button>
+      <Button
+        bg="#e5e7eb"
+        color="#111827"
+        _hover={{ bg: '#d1d1d1' }}
+        type="submit"
+      >
+        Войти
+      </Button>
     </form>
   );
 };

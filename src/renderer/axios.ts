@@ -44,23 +44,45 @@ function clearAuthTokensAndRedirect() {
   window.location.href = '/';
 }
 
-const NO_AUTH_ENDPOINTS = ['/token/', '/token/refresh/', '/register/'];
+const NO_AUTH_ENDPOINTS = ['/token/', '/register/'];
+const NO_RETRY_ENDPOINTS = ['/token/', '/token/refresh/', '/register/'];
 
+// instance.interceptors.request.use(
+//   (config) => {
+//     const isNoAuthEndpoint = NO_AUTH_ENDPOINTS.some((endpoint) =>
+//       config.url?.includes(endpoint),
+//     );
+//
+//     if (!isNoAuthEndpoint) {
+//       if (!config.headers?.['Authorization']) {
+//         const accessToken = localStorage.getItem('accessToken');
+//         if (accessToken) {
+//           config.headers['Authorization'] = `Bearer ${accessToken}`;
+//         } else {
+//           window.location.href = '/';
+//           console.error('Access token is missing. Redirecting to login...');
+//         }
+//       }
+//     }
+//
+//     return config;
+//   },
+//   (error: AxiosError) => {
+//     return Promise.reject(error);
+//   },
+// );
 instance.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     const isNoAuthEndpoint = NO_AUTH_ENDPOINTS.some((endpoint) =>
       config.url?.includes(endpoint),
     );
 
     if (!isNoAuthEndpoint) {
-      if (!config.headers?.['Authorization']) {
-        const accessToken = localStorage.getItem('accessToken');
-        if (accessToken) {
-          config.headers['Authorization'] = `Bearer ${accessToken}`;
-        } else {
-          window.location.href = '/';
-          console.error('Access token is missing. Redirecting to login...');
-        }
+      const accessToken = localStorage.getItem('accessToken');
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      } else {
+        console.error('Access token is missing');
       }
     }
 
@@ -81,7 +103,8 @@ instance.interceptors.request.use(
 //     if (
 //       error.response?.status === 401 &&
 //       originalRequest &&
-//       !originalRequest._retry
+//       !originalRequest._retry &&
+//       !originalRequest.url?.includes('/token/refresh/')
 //     ) {
 //       if (isRefreshing) {
 //         return new Promise<string>((resolve, reject) => {
@@ -99,11 +122,15 @@ instance.interceptors.request.use(
 //       originalRequest._retry = true;
 //       isRefreshing = true;
 //
+//       const refreshToken = localStorage.getItem('refreshToken');
+//       if (!refreshToken) {
+//         clearAuthTokensAndRedirect();
+//         return Promise.reject(new Error('Refresh token is missing'));
+//       }
+//
 //       return new Promise((resolve, reject) => {
 //         instance
-//           .post('/token/refresh/', {
-//             refresh: localStorage.getItem('refreshToken'),
-//           })
+//           .post('/token/refresh/', { refresh: refreshToken })
 //           .then(
 //             ({
 //               data,
@@ -125,6 +152,7 @@ instance.interceptors.request.use(
 //           )
 //           .catch((err: AxiosError) => {
 //             processQueue(err, null);
+//             clearAuthTokensAndRedirect();
 //             reject(err);
 //           })
 //           .finally(() => {
@@ -133,87 +161,85 @@ instance.interceptors.request.use(
 //       });
 //     }
 //
+//     if (
+//       error.response?.status === 401 &&
+//       originalRequest?.url?.includes('/token/refresh/')
+//     ) {
+//       clearAuthTokensAndRedirect();
+//       return Promise.reject(new Error('Session expired. Please login again.'));
+//     }
+//
 //     return Promise.reject(error);
 //   },
 // );
-
 instance.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
-    const originalRequest:
+    const originalRequest = error.config as
       | (InternalAxiosRequestConfig & { _retry?: boolean })
-      | undefined = error.config;
+      | undefined;
 
     if (
-      error.response?.status === 401 &&
-      originalRequest &&
-      !originalRequest._retry &&
-      !originalRequest.url?.includes('/token/refresh/')
+      originalRequest?.url?.includes('/token/') &&
+      error.response?.status === 401
     ) {
-      if (isRefreshing) {
-        return new Promise<string>((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
+      return Promise.reject(error);
+    }
+
+    if (
+      error.response?.status !== 401 ||
+      !originalRequest ||
+      originalRequest._retry ||
+      NO_RETRY_ENDPOINTS.some((endpoint) =>
+        originalRequest.url?.includes(endpoint),
+      )
+    ) {
+      return Promise.reject(error);
+    }
+
+    if (isRefreshing) {
+      return new Promise<string>((resolve, reject) => {
+        failedQueue.push({ resolve, reject });
+      })
+        .then((token: string) => {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return instance(originalRequest);
         })
-          .then((token: string) => {
-            originalRequest.headers['Authorization'] = `Bearer ${token}`;
-            return instance(originalRequest);
-          })
-          .catch((err) => {
-            return Promise.reject(err);
-          });
-      }
-
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (!refreshToken) {
-        clearAuthTokensAndRedirect();
-        return Promise.reject(new Error('Refresh token is missing'));
-      }
-
-      return new Promise((resolve, reject) => {
-        instance
-          .post('/token/refresh/', { refresh: refreshToken })
-          .then(
-            ({
-              data,
-            }: AxiosResponse<{
-              access: string;
-              refresh: string;
-            }>) => {
-              localStorage.setItem('accessToken', data.access);
-              localStorage.setItem('refreshToken', data.refresh);
-
-              instance.defaults.headers.common['Authorization'] =
-                `Bearer ${data.access}`;
-              originalRequest.headers['Authorization'] =
-                `Bearer ${data.access}`;
-
-              processQueue(null, data.access);
-              resolve(instance(originalRequest));
-            },
-          )
-          .catch((err: AxiosError) => {
-            processQueue(err, null);
-            clearAuthTokensAndRedirect();
-            reject(err);
-          })
-          .finally(() => {
-            isRefreshing = false;
-          });
-      });
+        .catch((err) => {
+          return Promise.reject(err);
+        });
     }
 
-    if (
-      error.response?.status === 401 &&
-      originalRequest?.url?.includes('/token/refresh/')
-    ) {
+    originalRequest._retry = true;
+    isRefreshing = true;
+
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
       clearAuthTokensAndRedirect();
-      return Promise.reject(new Error('Session expired. Please login again.'));
+      return Promise.reject(new Error('Refresh token is missing'));
     }
 
-    return Promise.reject(error);
+    try {
+      const { data } = await instance.post<{ access: string; refresh: string }>(
+        '/token/refresh/',
+        { refresh: refreshToken },
+      );
+
+      localStorage.setItem('accessToken', data.access);
+      localStorage.setItem('refreshToken', data.refresh);
+
+      instance.defaults.headers.common.Authorization = `Bearer ${data.access}`;
+      originalRequest.headers.Authorization = `Bearer ${data.access}`;
+
+      processQueue(null, data.access);
+      return instance(originalRequest);
+    } catch (refreshError) {
+      processQueue(refreshError as AxiosError, null);
+      clearAuthTokensAndRedirect();
+      return Promise.reject(refreshError);
+    } finally {
+      isRefreshing = false;
+    }
   },
 );
 

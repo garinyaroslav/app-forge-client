@@ -92,7 +92,7 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
   return (
     <>
       <Toaster />
-      <CardRoot flexDirection="row" mb={6}>
+      <CardRoot flexDirection="row" bg="#f8fafc" border="unset" mb={6}>
         {imageSrc ? (
           <Image
             ref={imageRef}
@@ -102,7 +102,7 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
             src={imageSrc ?? 'unset'}
             alt="Caffe Latte"
             css={{
-              borderRadius: 4,
+              borderRadius: '12px 0 0 12px',
             }}
           />
         ) : (
@@ -117,14 +117,16 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
                 alignItems: 'center',
               }}
             >
-              <CardTitle css={{ fontSize: 20, fontWeight: 600 }}>
+              <CardTitle
+                css={{ fontSize: 20, fontWeight: 600, color: '#111827' }}
+              >
                 {productObj.title}
               </CardTitle>
-              <CardTitle css={{ fontSize: 20, fontWeight: 500 }}>
+              <CardTitle css={{ fontSize: 20, fontWeight: 500, color: '#000' }}>
                 {productObj.price} руб.
               </CardTitle>
             </Flex>
-            <CardDescription>{`${productObj.description} Купили: ${productObj.copies_sold} раз`}</CardDescription>
+            <CardDescription color="#374151">{`${productObj.description} Купили: ${productObj.copies_sold} раз`}</CardDescription>
             <HStack my="4">
               <Badge css={{ background: '#808080' }}>
                 {productObj.genre_name}
@@ -132,21 +134,33 @@ export const ProductCard: FC<ProductCardProps> = ({ productObj }) => {
             </HStack>
           </CardBody>
           <CardFooter>
-            <Button onClick={() => nav(`./${productObj.id}`)} size={'xs'}>
+            <Button
+              onClick={() => nav(`./${productObj.id}`)}
+              _hover={{ bg: '#d1d1d1' }}
+              bg="#e5e7eb"
+              color="#111827"
+              size={'xs'}
+            >
               Подробнее
             </Button>
             {productInCart && (
-              <Button disabled size={'xs'}>
+              <Button disabled bg="#e5e7eb" color="#111827" size={'xs'}>
                 Продукт уже в корзине
               </Button>
             )}
             {productInLib && (
-              <Button disabled size={'xs'}>
+              <Button disabled bg="#e5e7eb" color="#111827" size={'xs'}>
                 Продукт уже куплен
               </Button>
             )}
             {!productInCart && !productInLib && (
-              <Button onClick={() => addToCart()} size={'xs'}>
+              <Button
+                onClick={() => addToCart()}
+                bg="#e5e7eb"
+                color="#111827"
+                _hover={{ bg: '#d1d1d1' }}
+                size={'xs'}
+              >
                 Добавить в корзину
               </Button>
             )}

@@ -3,10 +3,10 @@ export const scrollBarStyles = {
   '&::-webkit-scrollbar': { width: 0.5 },
   '&::-webkit-scrollbar-track': {
     width: 0.5,
-    background: '#222e35',
+    background: '#fff',
   },
   '&::-webkit-scrollbar-thumb': {
     width: 0.5,
-    backgroundColor: '#fff',
+    backgroundColor: '#10b981',
   },
 };

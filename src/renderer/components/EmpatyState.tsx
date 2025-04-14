@@ -12,6 +12,7 @@ export const EmptyState = () => {
           icon: <Icon />,
           title: 'Ничего не выбрано',
           description: 'Выберите элемент из списка',
+          color: '#374151',
         }}
       />
     </Center>

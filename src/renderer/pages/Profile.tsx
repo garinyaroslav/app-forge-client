@@ -15,7 +15,7 @@ import { IProfile } from '../types/consumer';
 import { validateEmail } from '../../utils/validateEmail';
 import { toaster, Toaster } from '../components/ui/toaster';
 import a from '../axios';
-import { unixToUSATime } from '@/utils/unixToUSADate';
+import { unixToUSATime } from '../../utils/unixToUSADate';
 
 export const Profile = () => {
   const [firstName, setFirstName] = useState('');
@@ -80,18 +80,25 @@ export const Profile = () => {
     <Flex>
       <Toaster />
       <Flex
+        bg="#f8fafc"
         css={{
           width: 800,
           m: '20px auto',
-          background: '#111b21',
           borderRadius: 4,
           p: 5,
         }}
       >
         <Image css={{ h: 60 }} src={AvatarSvg} alt="avatar" />
         <Flex flexDirection={'column'} alignItems={'center'} flex="1">
-          <Heading css={{ mb: 8 }}>Профиль</Heading>
-          <DataListRoot orientation={'horizontal'}>
+          <Heading
+            css={{
+              mb: 8,
+              color: '#111827',
+            }}
+          >
+            Профиль
+          </Heading>
+          <DataListRoot color="#111827" orientation={'horizontal'}>
             <DataListItem
               css={{ mb: 3, h: '40px' }}
               label={'Имя'}
@@ -101,6 +108,9 @@ export const Profile = () => {
                     variant={'subtle'}
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
+                    colorPalette="green"
+                    bg="#e5e7eb"
+                    color="#111827"
                   />
                 ) : (
                   <Text css={{ w: '185px' }}>{firstName}</Text>
@@ -116,6 +126,9 @@ export const Profile = () => {
                     variant={'subtle'}
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
+                    colorPalette="green"
+                    bg="#e5e7eb"
+                    color="#111827"
                   />
                 ) : (
                   <Text css={{ w: '185px' }}>{lastName}</Text>
@@ -131,6 +144,9 @@ export const Profile = () => {
                     variant={'subtle'}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    colorPalette="green"
+                    bg="#e5e7eb"
+                    color="#111827"
                   />
                 ) : (
                   <Text css={{ w: '185px' }}>{email}</Text>
@@ -145,6 +161,9 @@ export const Profile = () => {
           </DataListRoot>
           <Box css={{ w: '100%', mt: 8, mb: 8 }}>
             <Button
+              bg="#e5e7eb"
+              color="#111827"
+              _hover={{ bg: '#d1d1d1' }}
               onClick={isEdit ? () => updateProfile() : () => setIsEdit(true)}
               css={{ ml: '120px' }}
             >

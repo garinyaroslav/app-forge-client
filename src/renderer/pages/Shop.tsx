@@ -90,7 +90,9 @@ export const Shop = () => {
           }}
         >
           <Flex justifyContent={'space-between'} mb={4}>
-            <Text css={{ fontSize: 24, fontWeight: 600 }}>Приложения</Text>
+            <Text css={{ fontSize: 24, fontWeight: 600, color: '#374151' }}>
+              Приложения
+            </Text>
             <InputGroup
               width={400}
               height={'36px'}
@@ -100,7 +102,13 @@ export const Shop = () => {
             >
               <Input
                 {...{
-                  css: { height: '36px' },
+                  colorPalette: 'green',
+                  bg: '#e5e7eb',
+                  css: {
+                    height: '36px',
+                    color: '#000',
+                    '&::placeholder': { color: '#000' },
+                  },
                   value: searchValue,
                   onChange: onChangeSearchValue,
                   variant: 'subtle',
@@ -109,28 +117,35 @@ export const Shop = () => {
               />
             </InputGroup>
             <Flex alignItems={'center'}>
-              <Text css={{ mr: 3, fontWeight: 600 }}>Сортировка:</Text>
+              <Text css={{ mr: 3, fontWeight: 600, color: '#111827' }}>
+                Сортировка:
+              </Text>
               <SelectRoot
                 value={[sort]}
                 onValueChange={(e: { value: ProductSort[] }) => {
                   setSort(e.value[0] as ProductSort);
                 }}
                 variant={'subtle'}
+                colorPalette="green"
                 collection={options}
                 size="sm"
                 width="170px"
                 mr="10px"
               >
-                <SelectTrigger>
-                  <SelectValueText {...{ placeholder: '' }} />
+                <SelectTrigger {...{ bg: '#e5e7eb' }}>
+                  <SelectValueText {...{ placeholder: '', color: '#000' }} />
                 </SelectTrigger>
                 <Portal>
                   <SelectPositioner>
-                    <SelectContent>
-                      <SelectItem {...{ item: options.items[1] }}>
+                    <SelectContent {...{ bg: '#e5e7eb' }}>
+                      <SelectItem
+                        {...{ item: options.items[1], color: '#000' }}
+                      >
                         По новизне
                       </SelectItem>
-                      <SelectItem {...{ item: options.items[0] }}>
+                      <SelectItem
+                        {...{ item: options.items[0], color: '#000' }}
+                      >
                         По популярности
                       </SelectItem>
                     </SelectContent>
