@@ -183,6 +183,9 @@ export const ProductDitails: FC<ProductDitaildProps> = ({
             disabled: !isEdited,
             variant: 'subtle',
             css: { width: 250, height: 300, ...scrollBarStyles },
+            colorPalette: 'green',
+            bg: '#e5e7eb',
+            color: '#111827',
           }}
         />
       );
@@ -195,6 +198,9 @@ export const ProductDitails: FC<ProductDitaildProps> = ({
             variant: 'subtle',
             disabled: !isEdited,
             css: { width: 250 },
+            colorPalette: 'green',
+            bg: '#e5e7eb',
+            color: '#111827',
           }}
         />
       );
@@ -224,6 +230,9 @@ export const ProductDitails: FC<ProductDitaildProps> = ({
           variant: 'subtle',
           disabled: !isEdited || field === 'id',
           css: { width: 250 },
+          colorPalette: 'green',
+          bg: '#e5e7eb',
+          color: '#111827',
         }}
       />
     );
@@ -252,7 +261,7 @@ export const ProductDitails: FC<ProductDitaildProps> = ({
               justifyContent={'space-between'}
               css={{ width: 500 }}
             >
-              <Text>{field.lab}</Text>
+              <Text color="#111827">{field.lab}</Text>
               {renderFieldEntrail(field.val)}
             </Flex>
           ))}

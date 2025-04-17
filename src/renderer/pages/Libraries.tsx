@@ -107,7 +107,7 @@ export const Libraries = () => {
             onClick: () => setDeletedLibraryId(libraryElem.id),
           }}
         >
-          <img style={{ height: 16 }} src={RemoveSvg} alt={'remove'} />
+          <img style={{ height: 20 }} src={SearchSvg} alt={'search'} />
         </IconButton>
       </Flex>
     ));
