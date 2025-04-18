@@ -211,7 +211,8 @@ export const ProductDitails: FC<ProductDitaildProps> = ({
           disabled={!isEdited}
           style={{
             width: 250,
-            background: '#18181b',
+            background: '#e5e7eb',
+            color: '#111827',
             borderRadius: '4px',
             padding: 6,
           }}
@@ -295,10 +296,22 @@ export const ProductDitails: FC<ProductDitaildProps> = ({
           </Box>
           {isEdited ? (
             <Flex w={'100%'} justifyContent={'space-between'}>
-              <Button onClick={onCancel} css={{ width: 150 }}>
+              <Button
+                onClick={onCancel}
+                bg="#e5e7eb"
+                color="#111827"
+                _hover={{ bg: '#d1d1d1' }}
+                css={{ width: 150 }}
+              >
                 Отмена
               </Button>
-              <Button type="submit" css={{ width: 150 }}>
+              <Button
+                type="submit"
+                bg="#e5e7eb"
+                color="#111827"
+                _hover={{ bg: '#d1d1d1' }}
+                css={{ width: 150 }}
+              >
                 Готово
               </Button>
             </Flex>
@@ -307,6 +320,9 @@ export const ProductDitails: FC<ProductDitaildProps> = ({
               <Button
                 type="button"
                 onClick={() => setIsEdited(true)}
+                bg="#e5e7eb"
+                color="#111827"
+                _hover={{ bg: '#d1d1d1' }}
                 css={{ width: 200 }}
               >
                 Изменить

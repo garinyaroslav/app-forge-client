@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import ArrowSvg from '../assets/arrowLeft.svg';
+import ArrowSvg from '../assets/arrowLeftBlack.svg';
 import { Rating } from './ui/rating';
 import { Blockquote } from './ui/blockquote';
 import { DataListItem, DataListRoot } from './ui/data-list';
@@ -137,14 +137,16 @@ export const ProductShopDitails = () => {
           }}
         >
           <Image src={ArrowSvg} css={{ height: '18px' }} alt="arrow" />
-          <Text css={{ fontWeight: 600, fontSize: 14 }}>В магазин</Text>
+          <Text css={{ fontWeight: 600, fontSize: 14, color: '#111827' }}>
+            В магазин
+          </Text>
         </Flex>
         <Box
           css={{
             width: 1000,
             flex: 1,
             m: '20px auto',
-            background: '#111b21',
+            background: '#f1f5f9',
             borderRadius: 4,
             p: 5,
           }}
@@ -166,7 +168,9 @@ export const ProductShopDitails = () => {
               )}
             </Box>
             <Flex flexDirection={'column'} css={{ width: '48%' }}>
-              <Text css={{ fontSize: 22, fontWeight: 600, mb: 3 }}>
+              <Text
+                css={{ fontSize: 22, fontWeight: 600, mb: 3, color: '#111827' }}
+              >
                 {product.title}
               </Text>
               <Box css={{ mb: 4 }}>
@@ -183,50 +187,93 @@ export const ProductShopDitails = () => {
                 css={{ mb: 6 }}
               />
               <Flex mb={5} justifyContent={'space-between'} alignItems={'end'}>
-                <Text css={{ fontSize: 26, fontWeight: 500 }}>
+                <Text css={{ fontSize: 26, fontWeight: 500, color: '#111827' }}>
                   {product.price} руб.
                 </Text>
-                <Text css={{ fontSize: 14, fontWeight: 400 }}>
+                <Text css={{ fontSize: 14, fontWeight: 400, color: '#111827' }}>
                   {`Уже купили ${product.copies_sold} раз`}
                 </Text>
               </Flex>
               {productInCart && (
-                <Button disabled size={'xs'} css={{ mb: 8 }}>
+                <Button
+                  disabled
+                  size={'xs'}
+                  bg="#e5e7eb"
+                  color="#111827"
+                  _hover={{ bg: '#d1d1d1' }}
+                  css={{ mb: 8 }}
+                >
                   Игра уже в корзине
                 </Button>
               )}
               {productInLib && (
-                <Button disabled size={'xs'} css={{ mb: 8 }}>
+                <Button
+                  disabled
+                  size={'xs'}
+                  bg="#e5e7eb"
+                  color="#111827"
+                  _hover={{ bg: '#d1d1d1' }}
+                  css={{ mb: 8 }}
+                >
                   Игра уже куплена
                 </Button>
               )}
               {!productInCart && !productInLib && (
-                <Button onClick={() => addToCart()} size={'xs'} css={{ mb: 8 }}>
+                <Button
+                  onClick={() => addToCart()}
+                  size={'xs'}
+                  bg="#e5e7eb"
+                  color="#111827"
+                  _hover={{ bg: '#d1d1d1' }}
+                  css={{ mb: 8 }}
+                >
                   Добавить в корзину
                 </Button>
               )}
               <DataListRoot css={{ mb: 4 }}>
                 <DataListItem
                   label={'Разработчик'}
+                  color="#111827"
                   value={product.developer_name}
                 />
                 <DataListItem
                   label={'Дата разработки'}
+                  color="#111827"
                   value={unixToUSATime(product.rel_date)}
                 />
               </DataListRoot>
             </Flex>
           </Flex>
           <Blockquote
-            css={{ width: '100%', fontWeight: 500, fontSize: 18, mb: 8 }}
+            css={{
+              width: '100%',
+              fontWeight: 500,
+              fontSize: 18,
+              mb: 8,
+              color: '#111827',
+            }}
+            colorPalette="green"
             showDash
           >
             {product.description}
           </Blockquote>
-          <Separator css={{ mb: 2 }} />
-          <Heading css={{ mb: 2 }}>Отзывы</Heading>
+          <Box
+            css={{
+              width: '100%',
+              borderBottom: '3px solid #10b981',
+              mb: '8px',
+            }}
+          ></Box>
+          <Heading css={{ mb: 2, color: '#111827' }}>Отзывы</Heading>
           {reviews === null ? (
-            <Text css={{ fontSize: 14, fontWeight: 400, opacity: 0.5 }}>
+            <Text
+              css={{
+                fontSize: 14,
+                fontWeight: 400,
+                opacity: 0.5,
+                color: '#111827',
+              }}
+            >
               Отзывов пока нет...
             </Text>
           ) : (

@@ -139,6 +139,9 @@ export const AddProductForm: FC<AddProductFormProps> = ({
           {...{
             variant: 'subtle',
             css: { width: 250, height: 250, ...scrollBarStyles },
+            colorPalette: 'green',
+            bg: '#e5e7eb',
+            color: '#111827',
           }}
         />
       );
@@ -161,6 +164,9 @@ export const AddProductForm: FC<AddProductFormProps> = ({
           {...{
             variant: 'subtle',
             css: { width: 250 },
+            colorPalette: 'green',
+            bg: '#e5e7eb',
+            color: '#111827',
           }}
         />
       );
@@ -171,9 +177,10 @@ export const AddProductForm: FC<AddProductFormProps> = ({
           {...register(field as TProductForm, { required: true })}
           style={{
             width: 250,
-            background: '#18181b',
             borderRadius: '4px',
             padding: 6,
+            background: '#e5e7eb',
+            color: '#111827',
           }}
         >
           {genreOptions.map((opt) => (
@@ -189,6 +196,9 @@ export const AddProductForm: FC<AddProductFormProps> = ({
         {...{
           variant: 'subtle',
           css: { width: 250 },
+          colorPalette: 'green',
+          bg: '#e5e7eb',
+          color: '#111827',
         }}
       />
     );
@@ -202,7 +212,7 @@ export const AddProductForm: FC<AddProductFormProps> = ({
         justifyContent={'space-between'}
         css={{ width: 500 }}
       >
-        <Text>{field.lab}</Text>
+        <Text color="#111827">{field.lab}</Text>
         {renderFieldEntrail(field.val)}
       </Flex>
     ));
@@ -242,7 +252,13 @@ export const AddProductForm: FC<AddProductFormProps> = ({
               />
             )}
           </Box>
-          <Button type="submit" css={{ width: 200 }}>
+          <Button
+            type="submit"
+            bg="#e5e7eb"
+            color="#111827"
+            _hover={{ bg: '#d1d1d1' }}
+            css={{ width: 200 }}
+          >
             Добавить
           </Button>
         </Flex>
