@@ -35,15 +35,26 @@ export const DeleteConditionModal: FC<DeleteConditionModalProps> = ({
       <Portal>
         <DialogBackdrop />
         <DialogPositioner>
-          <DialogContent>
+          <DialogContent {...{ bg: '#f8fafc' }}>
             <DialogHeader>
-              <DialogTitle>Удалить элемент</DialogTitle>
+              <DialogTitle {...{ color: '#111827' }}>
+                Удалить элемент
+              </DialogTitle>
             </DialogHeader>
-            <DialogBody>
+            <DialogBody {...{ color: '#111827' }}>
               <p>Вы уверены что хотите удалить этот элемент?</p>
             </DialogBody>
             <DialogFooter>
-              <Button onClick={onClose} variant="outline">
+              <Button
+                onClick={onClose}
+                bg="#e5e7eb"
+                color="#111827"
+                _hover={{ bg: '#d1d1d1' }}
+                variant="outline"
+                css={{
+                  border: 'none',
+                }}
+              >
                 Отмена
               </Button>
               <Button onClick={onSubmit} colorPalette={'red'}>

@@ -10,16 +10,16 @@ import {
 } from '@chakra-ui/react';
 import { Toaster, toaster } from '../components/ui/toaster';
 import { EmptyState } from '../components/EmpatyState';
-
-import PlusSvg from '../assets/plus.svg';
-import SearchSvg from '../assets/search.svg';
-import RemoveSvg from '../assets/remove.svg';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
 import { IConsumer } from '../types/consumer';
 import { ConsumerDitails } from '../components/ConsumerDitails';
 import { AddConsumerForm } from '../components/AddConsumerForm';
 import a from '../../renderer/axios';
+
+import PlusSvg from '../assets/plus.svg';
+import RemoveSvg from '../assets/remove.svg';
+import SearchSvg from '../assets/searchWhite.svg';
 
 export const Consumers = () => {
   const [consumers, setConsumers] = useState<IConsumer[]>([]);
@@ -98,7 +98,8 @@ export const Consumers = () => {
           borderBottom: '1px solid #2f3b43',
           minHeight: 68,
           '&:hover': {
-            background: '#222e35',
+            background: '#fff',
+            color: '#111827',
           },
           cursor: 'pointer',
         }}
@@ -110,7 +111,7 @@ export const Consumers = () => {
             onClick: () => setDeletedConsumerId(consumerElem.id),
           }}
         >
-          <img style={{ height: 20 }} src={SearchSvg} alt={'search'} />
+          <img style={{ height: 20 }} src={RemoveSvg} alt={'search'} />
         </IconButton>
       </Flex>
     ));
@@ -147,7 +148,7 @@ export const Consumers = () => {
           css={{
             width: 470,
             height: '100%',
-            background: '#111b21',
+            background: '#10b981',
             borderRight: '1px solid #2f3b43',
           }}
           direction={'column'}
@@ -190,12 +191,18 @@ export const Consumers = () => {
                   onKeyDown: (e) => {
                     if (e.key === 'Enter') search(searchValue);
                   },
+                  colorPalette: 'green',
+                  bg: '#e5e7eb',
+                  color: '#111827',
+                  css: {
+                    border: 'none',
+                  },
                 }}
               />
               <IconButton
                 {...{ onClick: () => search(searchValue), variant: 'surface' }}
               >
-                <img style={{ height: 15 }} src={SearchSvg} alt={'search'} />
+                <img style={{ height: 20 }} src={SearchSvg} alt={'search'} />
               </IconButton>
             </Group>
           </Flex>

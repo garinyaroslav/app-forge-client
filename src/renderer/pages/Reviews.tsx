@@ -11,15 +11,15 @@ import {
 import { Toaster, toaster } from '../components/ui/toaster';
 import { EmptyState } from '../components/EmpatyState';
 import { IReview } from '../types/review';
-
-import PlusSvg from '../assets/plus.svg';
-import SearchSvg from '../assets/search.svg';
-import RemoveSvg from '../assets/remove.svg';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
 import { ReviewDitails } from '../components/ReviewsDitails';
 import { AddReviewForm } from '../components/AddReviewForm';
 import a from '../../renderer/axios';
+
+import PlusSvg from '../assets/plus.svg';
+import SearchSvg from '../assets/searchWhite.svg';
+import RemoveSvg from '../assets/remove.svg';
 
 export const Reviews = () => {
   const [reviews, setReviews] = useState<IReview[]>([]);
@@ -93,7 +93,8 @@ export const Reviews = () => {
           borderBottom: '1px solid #2f3b43',
           minHeight: 68,
           '&:hover': {
-            background: '#222e35',
+            background: '#fff',
+            color: '#111827',
           },
           cursor: 'pointer',
         }}
@@ -114,7 +115,7 @@ export const Reviews = () => {
             onClick: () => setDeletedReviewId(reviewElem.id),
           }}
         >
-          <img style={{ height: 20 }} src={SearchSvg} alt={'search'} />
+          <img style={{ height: 20 }} src={RemoveSvg} alt={'search'} />
         </IconButton>
       </Flex>
     ));
@@ -149,7 +150,7 @@ export const Reviews = () => {
           css={{
             width: 470,
             height: '100%',
-            background: '#111b21',
+            background: '#10b981',
             borderRight: '1px solid #2f3b43',
           }}
           direction={'column'}
@@ -189,15 +190,21 @@ export const Reviews = () => {
                   onChange: onChangeSearchValue,
                   variant: 'outline',
                   placeholder: 'Поиск отзывов',
+                  colorPalette: 'green',
+                  bg: '#e5e7eb',
+                  color: '#111827',
                   onKeyDown: (e) => {
                     if (e.key === 'Enter') search(searchValue);
+                  },
+                  css: {
+                    border: 'none',
                   },
                 }}
               />
               <IconButton
                 {...{ onClick: () => search(searchValue), variant: 'surface' }}
               >
-                <img style={{ height: 15 }} src={SearchSvg} alt={'search'} />
+                <img style={{ height: 20 }} src={SearchSvg} alt={'search'} />
               </IconButton>
             </Group>
           </Flex>

@@ -44,6 +44,9 @@ export const CartItemDitails: FC<CartItemDitailsProps> = ({ cartItemId }) => {
           variant: 'subtle',
           disabled: true,
           css: { width: 250 },
+          colorPalette: 'green',
+          bg: '#e5e7eb',
+          color: '#111827',
         }}
       />
     );
@@ -60,7 +63,7 @@ export const CartItemDitails: FC<CartItemDitailsProps> = ({ cartItemId }) => {
         style={{ padding: '20px', display: 'flex', gap: '80px' }}
       >
         <Flex direction={'column'} gap={5}>
-          <Heading css={{ mb: 5 }}>Свойства</Heading>
+          <Heading css={{ mb: 5, color: '#111827' }}>Свойства</Heading>
           {fields.map((field) => (
             <Flex
               key={field.val}
@@ -68,11 +71,10 @@ export const CartItemDitails: FC<CartItemDitailsProps> = ({ cartItemId }) => {
               justifyContent={'space-between'}
               css={{ width: 500 }}
             >
-              <Text>{field.lab}</Text>
+              <Text color="#111827">{field.lab}</Text>
               {renderFieldEntrail(field.val)}
             </Flex>
           ))}
-
           <Button hidden type="submit">
             1
           </Button>

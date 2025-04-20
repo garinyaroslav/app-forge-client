@@ -254,7 +254,7 @@ export const ProductDitails: FC<ProductDitaildProps> = ({
         style={{ padding: '20px', display: 'flex', gap: '70px' }}
       >
         <Flex direction={'column'} gap={5}>
-          <Heading css={{ mb: 5 }}>Свойства</Heading>
+          <Heading css={{ mb: 5, color: '#111827' }}>Свойства</Heading>
           {fields.map((field) => (
             <Flex
               key={field.val}
@@ -273,7 +273,9 @@ export const ProductDitails: FC<ProductDitaildProps> = ({
           justifyContent={'space-between'}
         >
           <Box>
-            <Heading css={{ mb: 5 }}>Изображение приложения</Heading>
+            <Heading css={{ mb: 5, color: '#111827' }}>
+              Изображение приложения
+            </Heading>
             {imageSrc ? (
               <>
                 <Image

@@ -13,7 +13,7 @@ import { EmptyState } from '../components/EmpatyState';
 import { IGenre } from '../types/genre';
 
 import PlusSvg from '../assets/plus.svg';
-import SearchSvg from '../assets/search.svg';
+import SearchSvg from '../assets/searchWhite.svg';
 import RemoveSvg from '../assets/remove.svg';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
@@ -93,7 +93,8 @@ export const Genres = () => {
           borderBottom: '1px solid #2f3b43',
           minHeight: 68,
           '&:hover': {
-            background: '#222e35',
+            background: '#fff',
+            color: '#111827',
           },
           cursor: 'pointer',
         }}
@@ -105,7 +106,7 @@ export const Genres = () => {
             onClick: () => setDeletedGenreId(genreElem.id),
           }}
         >
-          <img style={{ height: 20 }} src={SearchSvg} alt={'search'} />
+          <img style={{ height: 20 }} src={RemoveSvg} alt={'search'} />
         </IconButton>
       </Flex>
     ));
@@ -140,7 +141,7 @@ export const Genres = () => {
           css={{
             width: 470,
             height: '100%',
-            background: '#111b21',
+            background: '#10b981',
             borderRight: '1px solid #2f3b43',
           }}
           direction={'column'}
@@ -183,12 +184,18 @@ export const Genres = () => {
                   onKeyDown: (e) => {
                     if (e.key === 'Enter') search(searchValue);
                   },
+                  colorPalette: 'green',
+                  bg: '#e5e7eb',
+                  color: '#111827',
+                  css: {
+                    border: 'none',
+                  },
                 }}
               />
               <IconButton
                 {...{ onClick: () => search(searchValue), variant: 'surface' }}
               >
-                <img style={{ height: 15 }} src={SearchSvg} alt={'search'} />
+                <img style={{ height: 20 }} src={SearchSvg} alt={'search'} />
               </IconButton>
             </Group>
           </Flex>

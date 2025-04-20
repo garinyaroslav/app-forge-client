@@ -147,6 +147,7 @@ export const Products = () => {
             width: 470,
             height: '100%',
             background: '#10b981',
+            borderRight: '1px solid #2f3b43',
           }}
           direction={'column'}
         >

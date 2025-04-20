@@ -64,7 +64,18 @@ export const AddConsumerForm: FC<AddConsumerFormProps> = ({
     if (field === 'is_staff') {
       return (
         <Flex css={{ width: 250 }}>
-          <input type="checkbox" {...register(field as TConsumer)} />
+          <input
+            type="checkbox"
+            {...{
+              style: {
+                background: '#e5e7eb',
+                color: '#111827',
+                borderRadius: '4px',
+                padding: 6,
+              },
+            }}
+            {...register(field as TConsumer)}
+          />
         </Flex>
       );
     }
@@ -76,6 +87,9 @@ export const AddConsumerForm: FC<AddConsumerFormProps> = ({
             type: 'date',
             variant: 'subtle',
             css: { width: 250 },
+            colorPalette: 'green',
+            bg: '#e5e7eb',
+            color: '#111827',
           }}
         />
       );
@@ -85,6 +99,9 @@ export const AddConsumerForm: FC<AddConsumerFormProps> = ({
         {...{
           variant: 'subtle',
           css: { width: 250 },
+          colorPalette: 'green',
+          bg: '#e5e7eb',
+          color: '#111827',
         }}
       />
     );
@@ -98,7 +115,7 @@ export const AddConsumerForm: FC<AddConsumerFormProps> = ({
         justifyContent={'space-between'}
         css={{ width: 500 }}
       >
-        <Text>{field.lab}</Text>
+        <Text color="#111827">{field.lab}</Text>
         {renderFieldEntrail(field.val)}
       </Flex>
     ));
@@ -109,9 +126,15 @@ export const AddConsumerForm: FC<AddConsumerFormProps> = ({
       <Toaster />
       <form onSubmit={handleSubmit(onSubmit)} style={{ padding: '20px' }}>
         <Flex direction={'column'} gap={5}>
-          <Heading css={{ mb: 5 }}>Свойства</Heading>
+          <Heading css={{ mb: 5, color: '#111827' }}>Свойства</Heading>
           {renderFields()}
-          <Button type="submit" css={{ width: 200, ml: '250px', mt: 5 }}>
+          <Button
+            type="submit"
+            bg="#e5e7eb"
+            color="#111827"
+            _hover={{ bg: '#d1d1d1' }}
+            css={{ width: 200, ml: '250px', mt: 5 }}
+          >
             Добавить
           </Button>
         </Flex>

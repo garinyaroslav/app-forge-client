@@ -226,7 +226,7 @@ export const AddProductForm: FC<AddProductFormProps> = ({
         style={{ padding: '20px', display: 'flex', gap: '70px' }}
       >
         <Flex direction={'column'} gap={5}>
-          <Heading css={{ mb: 5 }}>Свойства</Heading>
+          <Heading css={{ mb: 5, color: '#111827' }}>Свойства</Heading>
           {renderFields()}
         </Flex>
         <Flex
@@ -235,7 +235,9 @@ export const AddProductForm: FC<AddProductFormProps> = ({
           justifyContent={'space-between'}
         >
           <Box>
-            <Heading css={{ mb: 5 }}>Изображение продукта</Heading>
+            <Heading css={{ mb: 5, color: '#111827' }}>
+              Изображение продукта
+            </Heading>
             {imageSrc ? (
               <Image
                 css={{ height: 300, width: 350 }}

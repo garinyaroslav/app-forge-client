@@ -79,6 +79,9 @@ export const GenreDitails: FC<GenreDitailsProps> = ({
           variant: 'subtle',
           disabled: !isEdited || field === 'id',
           css: { width: 250 },
+          colorPalette: 'green',
+          bg: '#e5e7eb',
+          color: '#111827',
         }}
       />
     );
@@ -95,7 +98,7 @@ export const GenreDitails: FC<GenreDitailsProps> = ({
         style={{ padding: '20px', display: 'flex', gap: '80px' }}
       >
         <Flex direction={'column'} gap={5}>
-          <Heading css={{ mb: 5 }}>Свойства</Heading>
+          <Heading css={{ mb: 5, color: '#111827' }}>Свойства</Heading>
           {fields.map((field) => (
             <Flex
               key={field.val}
@@ -103,7 +106,7 @@ export const GenreDitails: FC<GenreDitailsProps> = ({
               justifyContent={'space-between'}
               css={{ width: 500 }}
             >
-              <Text>{field.lab}</Text>
+              <Text color="#111827">{field.lab}</Text>
               {renderFieldEntrail(field.val)}
             </Flex>
           ))}
@@ -115,10 +118,22 @@ export const GenreDitails: FC<GenreDitailsProps> = ({
           >
             {isEdited ? (
               <Flex w={'100%'} justifyContent={'space-between'}>
-                <Button onClick={onCancel} css={{ width: 200 }}>
+                <Button
+                  onClick={onCancel}
+                  bg="#e5e7eb"
+                  color="#111827"
+                  _hover={{ bg: '#d1d1d1' }}
+                  css={{ width: 200 }}
+                >
                   Отмена
                 </Button>
-                <Button type="submit" css={{ width: 200 }}>
+                <Button
+                  type="submit"
+                  bg="#e5e7eb"
+                  color="#111827"
+                  _hover={{ bg: '#d1d1d1' }}
+                  css={{ width: 200 }}
+                >
                   Готово
                 </Button>
               </Flex>
@@ -128,6 +143,9 @@ export const GenreDitails: FC<GenreDitailsProps> = ({
                   type="button"
                   onClick={() => setIsEdited(true)}
                   css={{ width: 200 }}
+                  bg="#e5e7eb"
+                  color="#111827"
+                  _hover={{ bg: '#d1d1d1' }}
                 >
                   Изменить
                 </Button>

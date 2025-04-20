@@ -12,7 +12,7 @@ import { Toaster, toaster } from '../components/ui/toaster';
 import { EmptyState } from '../components/EmpatyState';
 
 import PlusSvg from '../assets/plus.svg';
-import SearchSvg from '../assets/search.svg';
+import SearchSvg from '../assets/searchWhite.svg';
 import RemoveSvg from '../assets/remove.svg';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
@@ -109,7 +109,7 @@ export const CartItems = () => {
             onClick: () => setDeletedCartItemId(cartItemElem.id),
           }}
         >
-          <img style={{ height: 20 }} src={SearchSvg} alt={'search'} />
+          <img style={{ height: 20 }} src={RemoveSvg} alt={'search'} />
         </IconButton>
       </Flex>
     ));
@@ -141,7 +141,7 @@ export const CartItems = () => {
           css={{
             width: 470,
             height: '100%',
-            background: '#111b21',
+            background: '#10b981',
             borderRight: '1px solid #2f3b43',
           }}
           direction={'column'}
@@ -184,12 +184,18 @@ export const CartItems = () => {
                   onKeyDown: (e) => {
                     if (e.key === 'Enter') search(searchValue);
                   },
+                  colorPalette: 'green',
+                  bg: '#e5e7eb',
+                  color: '#111827',
+                  css: {
+                    border: 'none',
+                  },
                 }}
               />
               <IconButton
                 {...{ onClick: () => search(searchValue), variant: 'surface' }}
               >
-                <img style={{ height: 15 }} src={SearchSvg} alt={'search'} />
+                <img style={{ height: 20 }} src={SearchSvg} alt={'search'} />
               </IconButton>
             </Group>
           </Flex>

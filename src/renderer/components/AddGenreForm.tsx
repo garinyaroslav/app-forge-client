@@ -52,6 +52,9 @@ export const AddGenreForm: FC<AddGenreFormProps> = ({
         {...{
           variant: 'subtle',
           css: { width: 250 },
+          colorPalette: 'green',
+          bg: '#e5e7eb',
+          color: '#111827',
         }}
       />
     );
@@ -65,7 +68,7 @@ export const AddGenreForm: FC<AddGenreFormProps> = ({
         justifyContent={'space-between'}
         css={{ width: 500 }}
       >
-        <Text>{field.lab}</Text>
+        <Text color="#111827">{field.lab}</Text>
         {renderFieldEntrail(field.val)}
       </Flex>
     ));
@@ -76,9 +79,15 @@ export const AddGenreForm: FC<AddGenreFormProps> = ({
       <Toaster />
       <form onSubmit={handleSubmit(onSubmit)} style={{ padding: '20px' }}>
         <Flex direction={'column'} gap={5}>
-          <Heading css={{ mb: 5 }}>Свойства</Heading>
+          <Heading css={{ mb: 5, color: '#111827' }}>Свойства</Heading>
           {renderFields()}
-          <Button type="submit" css={{ width: 200, ml: '250px', mt: 5 }}>
+          <Button
+            type="submit"
+            bg="#e5e7eb"
+            color="#111827"
+            _hover={{ bg: '#d1d1d1' }}
+            css={{ width: 200, ml: '250px', mt: 5 }}
+          >
             Добавить
           </Button>
         </Flex>
