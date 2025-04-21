@@ -10,6 +10,7 @@ import { toaster, Toaster } from './ui/toaster';
 import a from '../axios';
 import { base64ToBlob } from '../../utils/base64ToBlob';
 import { unixToUSATime } from '../../utils/unixToUSADate';
+import { handleDownload } from '@/utils/handleDownload';
 
 interface ShopLibraryDitailsProps {
   productObj: ILibProduct;
@@ -97,9 +98,18 @@ export const ShopLibraryDitails: FC<ShopLibraryDitailsProps> = ({
     >
       <Toaster />
       <Flex width={500} direction={'column'} gap={5}>
-        <Heading css={{ mb: 5, color: '#111827', fontSize: 22 }}>
+        <Heading css={{ mb: 2, color: '#111827', fontSize: 22 }}>
           {productObj.title}
         </Heading>
+        <Button
+          bg="#e5e7eb"
+          color="#111827"
+          _hover={{ bg: '#d1d1d1' }}
+          onClick={() => handleDownload(productObj.title, 'приложение')}
+          css={{ mb: 2, width: 200 }}
+        >
+          Скачать
+        </Button>
         <Text css={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
           Об игре
         </Text>

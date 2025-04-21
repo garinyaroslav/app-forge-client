@@ -14,12 +14,14 @@ import { IProduct } from '../types/product';
 
 import PlusSvg from '../assets/plus.svg';
 import SearchSvg from '../assets/searchWhite.svg';
+import ExportSvg from '../assets/export.svg';
 import RemoveSvg from '../assets/remove.svg';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
 import { DeleteConditionModal } from '../components/DeleteConditionModal';
 import a from '../../renderer/axios';
 import { ProductDitails } from '../components/ProductDitails';
 import { AddProductForm } from '../components/AddProductForm';
+import { handleDownload } from '@/utils/handleDownload';
 
 export const Products = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -59,6 +61,22 @@ export const Products = () => {
   useEffect(() => {
     getProductsAndWriteToState();
   }, [deletedProductId]);
+
+  const onClickExport = async () => {
+    try {
+      const res = await a.get<Blob>(`/software/export/`, {
+        responseType: 'blob',
+      });
+      await handleDownload(
+        'software_export.xlsx',
+        res.data,
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      );
+      console.log(res.data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const deleteProduct = async () => {
     let resData: IProduct | null = null;
@@ -167,17 +185,27 @@ export const Products = () => {
               mb={8}
             >
               <Heading>Список продуктов</Heading>
-              <IconButton
-                {...{
-                  onClick: () => {
-                    setSelectedProductId(null);
-                    setProductIsAdded(true);
-                  },
-                  variant: 'surface',
-                }}
-              >
-                <img style={{ height: 12 }} src={PlusSvg} alt={'plus'} />
-              </IconButton>
+              <Flex css={{ gap: 4 }}>
+                <IconButton
+                  {...{
+                    onClick: () => onClickExport(),
+                    variant: 'surface',
+                  }}
+                >
+                  <img style={{ height: 20 }} src={ExportSvg} alt={'export'} />
+                </IconButton>
+                <IconButton
+                  {...{
+                    onClick: () => {
+                      setSelectedProductId(null);
+                      setProductIsAdded(true);
+                    },
+                    variant: 'surface',
+                  }}
+                >
+                  <img style={{ height: 12 }} src={PlusSvg} alt={'plus'} />
+                </IconButton>
+              </Flex>
             </Flex>
             <Group {...{ attached: true, flex: 1 }}>
               <Input
