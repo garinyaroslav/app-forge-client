@@ -161,7 +161,7 @@ export const Genres = () => {
               alignItems={'center'}
               mb={8}
             >
-              <Heading>Список жанров игр</Heading>
+              <Heading>Список жанров приложений</Heading>
               <IconButton
                 {...{
                   onClick: () => {

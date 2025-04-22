@@ -111,7 +111,7 @@ export const ShopLibraryDitails: FC<ShopLibraryDitailsProps> = ({
           Скачать
         </Button>
         <Text css={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
-          Об игре
+          Описание
         </Text>
         <DataListRoot
           css={{ mb: 4 }}

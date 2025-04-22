@@ -108,7 +108,7 @@ export const Reviews = () => {
               textOverflow: 'ellipsis',
             },
           }}
-        >{`${reviewElem.id}. Отзыв пользователя: ${reviewElem.consumer} на игру: ${reviewElem.product}`}</Text>
+        >{`${reviewElem.id}. Отзыв пользователя: ${reviewElem.consumer} на продукт: ${reviewElem.product}`}</Text>
         <IconButton
           {...{
             variant: 'ghost',

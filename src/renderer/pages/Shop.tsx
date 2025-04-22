@@ -4,6 +4,7 @@ import {
   Button,
   createListCollection,
   Flex,
+  Grid,
   Input,
   Portal,
   SelectContent,
@@ -14,16 +15,16 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { scrollBarStyles } from '../../utils/scrollBarStyles';
-import { ProductSort, IProduct } from '../types/product';
+import { ProductSort, IProduct, TTopGenres } from '../types/product';
 import { SelectRoot } from '../components/ui/select';
 
-import CartSvg from '../assets/cart.svg';
-import SearchSvg from '../assets/search.svg';
 import { InputGroup } from '../components/ui/input-group';
 import { CartModal } from '../components/CartModal';
 import { ProductCard } from '../components/ProductCard';
+import useDebounce from '../../utils/useDebounce';
 import a from '../axios';
-import useDebounce from '@/utils/useDebounce';
+import CartSvg from '../assets/cart.svg';
+import SearchSvg from '../assets/search.svg';
 
 const options = createListCollection({
   items: [
@@ -40,6 +41,7 @@ export const Shop = () => {
   const [searchValue, setSearchValue] = useState('');
   const deboucedSearchValue = useDebounce(searchValue, 750);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [genreData, setGenreData] = useState<TTopGenres | null>(null);
 
   const getProductsAndWriteToState = async () => {
     const params =
@@ -61,6 +63,15 @@ export const Shop = () => {
     }
   };
 
+  const getTopGenres = async () => {
+    try {
+      const res = await a.get<TTopGenres>('/software/top_genres/');
+      setGenreData(res.data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const closeCartModal = async () => {
     await setIsCartOpen(false);
     await getProductsAndWriteToState();
@@ -68,6 +79,9 @@ export const Shop = () => {
   useEffect(() => {
     getProductsAndWriteToState();
   }, [sort, deboucedSearchValue]);
+  useEffect(() => {
+    getTopGenres();
+  });
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -78,19 +92,61 @@ export const Shop = () => {
     return items.map((item) => <ProductCard key={item.id} productObj={item} />);
   };
 
+  const renderTopGenres = () => {
+    return (
+      <Box css={{ maxHeight: 600, ...scrollBarStyles, pr: 1 }}>
+        <Grid
+          templateColumns="1fr 1fr"
+          gap={4}
+          py={2}
+          mb={2}
+          fontWeight="bold"
+          borderBottom="2px solid"
+          borderColor="gray.200"
+        >
+          <Text color="#111827">Жанр</Text>
+          <Text color="#111827">Продано копий</Text>
+        </Grid>
+
+        {genreData
+          ? genreData.map((item, index) => (
+              <Grid
+                key={index}
+                templateColumns="1fr 1fr"
+                gap={4}
+                py={2}
+                borderBottom="1px solid #111827"
+                borderColor="gray.100"
+                _last={{ borderBottom: 'none' }}
+              >
+                <Text color="#111827">{item.genre}</Text>
+                <Text textAlign="right" color="#111827">
+                  {item.total_sales.toLocaleString()}
+                </Text>
+              </Grid>
+            ))
+          : null}
+      </Box>
+    );
+  };
+
   return (
     <>
       {isCartOpen && <CartModal open={isCartOpen} onClose={closeCartModal} />}
-      <Flex css={{ height: 'calc(100% - 100px)' }}>
+      <Flex
+        css={{
+          height: 'calc(100% - 100px)',
+          p: 10,
+          justifyContent: 'space-evenly',
+        }}
+      >
         <Box
           css={{
-            width: 1000,
-            height: 'calc(100% - 15px)',
-            m: '30px auto',
+            minWidth: 1000,
           }}
         >
           <Flex justifyContent={'space-between'} mb={4}>
-            <Text css={{ fontSize: 24, fontWeight: 600, color: '#374151' }}>
+            <Text css={{ fontSize: 24, fontWeight: 600, color: '#111827' }}>
               Приложения
             </Text>
             <InputGroup
@@ -164,6 +220,14 @@ export const Shop = () => {
           <Box css={{ height: '94%', ...scrollBarStyles }}>
             {renderProductCarts(products)}
           </Box>
+        </Box>
+        <Box css={{ py: 30, maxWidth: 300 }}>
+          <Text
+            css={{ color: '#111827', fontSize: 20, fontWeight: 600, mb: 4 }}
+          >
+            Топ продаж по жанрам
+          </Text>
+          {renderTopGenres()}
         </Box>
       </Flex>
     </>

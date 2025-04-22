@@ -30,3 +30,8 @@ export enum ProductSort {
   byPopularity = 'copies_sold',
   byNovelty = 'rel_date',
 }
+
+export type TTopGenres = {
+  genre: string;
+  total_sales: number;
+}[];

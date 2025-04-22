@@ -102,7 +102,7 @@ export const AdminLayout = () => {
               '&:hover': { bg: '#10b981' },
             }}
           >
-            Жанры игр
+            Жанры приложений
           </TabsTrigger>
         </TabsList>
       </TabsRoot>
