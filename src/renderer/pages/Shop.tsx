@@ -47,9 +47,9 @@ export const Shop = () => {
     const params =
       deboucedSearchValue.length > 0
         ? {
-            sort,
-            search: deboucedSearchValue,
-          }
+          sort,
+          search: deboucedSearchValue,
+        }
         : { sort };
 
     try {
@@ -81,7 +81,7 @@ export const Shop = () => {
   }, [sort, deboucedSearchValue]);
   useEffect(() => {
     getTopGenres();
-  });
+  }, []);
 
   const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -110,21 +110,21 @@ export const Shop = () => {
 
         {genreData
           ? genreData.map((item, index) => (
-              <Grid
-                key={index}
-                templateColumns="1fr 1fr"
-                gap={4}
-                py={2}
-                borderBottom="1px solid #111827"
-                borderColor="gray.100"
-                _last={{ borderBottom: 'none' }}
-              >
-                <Text color="#111827">{item.genre}</Text>
-                <Text textAlign="right" color="#111827">
-                  {item.total_sales.toLocaleString()}
-                </Text>
-              </Grid>
-            ))
+            <Grid
+              key={index}
+              templateColumns="1fr 1fr"
+              gap={4}
+              py={2}
+              borderBottom="1px solid #111827"
+              borderColor="gray.100"
+              _last={{ borderBottom: 'none' }}
+            >
+              <Text color="#111827">{item.genre}</Text>
+              <Text textAlign="right" color="#111827">
+                {item.total_sales.toLocaleString()}
+              </Text>
+            </Grid>
+          ))
           : null}
       </Box>
     );
