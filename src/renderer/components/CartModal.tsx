@@ -11,7 +11,7 @@ import {
   Portal,
   DialogPositioner,
   Text,
-  Box,
+  Progress,
 } from '@chakra-ui/react';
 import { Button } from './ui/button';
 import { CloseButton } from './ui/close-button';
@@ -30,6 +30,7 @@ type TProductObj = IProduct & { cart_item_id: number };
 
 export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
   const [cartItems, setCartItems] = useState<null | TProductObj[]>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getItemsAndWriteToState = async () => {
     try {
@@ -57,16 +58,19 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
     if (!cartItems) return;
 
     try {
+      setIsLoading(true);
       await a.post('/software/buy/');
       await getItemsAndWriteToState();
     } catch (e) {
       console.error(e);
+      setIsLoading(false);
     }
 
     toaster.create({
       description: 'Пирложение(ия) добавлены в вашу библиотеку',
       type: 'success',
     });
+    setIsLoading(false);
   };
 
   const renderItems = (items: TProductObj[]) => {
@@ -98,6 +102,7 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
               alignItems={'center'}
             >
               <DialogTitle {...{ color: '#111827' }}>Моя корзина</DialogTitle>
+
               <CloseButton onClick={() => onClose()} />
             </DialogHeader>
             <DialogBody
@@ -110,33 +115,41 @@ export const CartModal: FC<CartModalProps> = ({ open, onClose }) => {
                 ...scrollBarStyles,
               }}
             >
-              {cartItems ? (
+              {isLoading ? (
+                <Progress.Root width="100%" colorPalette="green" value={null}>
+                  <Progress.Track {...{ bg: '#f8fafc' }}>
+                    <Progress.Range />
+                  </Progress.Track>
+                </Progress.Root>
+              ) : cartItems ? (
                 renderItems(cartItems)
               ) : (
                 <Text color="#111827">Тут пока ничего нет...</Text>
               )}
             </DialogBody>
-            <DialogFooter
-              display={'flex'}
-              justifyContent={'space-between'}
-              alignItems={'center'}
-            >
-              <Text css={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
-                {cartItems
-                  ? `Всего к оплате: ${defineSum(cartItems)} руб.`
-                  : ''}
-              </Text>
-              {cartItems && (
-                <Button
-                  bg="#10b981"
-                  color="#fff"
-                  _hover={{ bg: '#10d981' }}
-                  onClick={() => buy()}
-                >
-                  Купить
-                </Button>
-              )}
-            </DialogFooter>
+            {!isLoading && (
+              <DialogFooter
+                display={'flex'}
+                justifyContent={'space-between'}
+                alignItems={'center'}
+              >
+                <Text css={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
+                  {cartItems
+                    ? `Всего к оплате: ${defineSum(cartItems)} руб.`
+                    : ''}
+                </Text>
+                {cartItems && (
+                  <Button
+                    bg="#10b981"
+                    color="#fff"
+                    _hover={{ bg: '#10d981' }}
+                    onClick={() => buy()}
+                  >
+                    Купить
+                  </Button>
+                )}
+              </DialogFooter>
+            )}
             <DialogCloseTrigger />
           </DialogContent>
         </DialogPositioner>
