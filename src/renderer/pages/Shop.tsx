@@ -135,14 +135,16 @@ export const Shop = () => {
       {isCartOpen && <CartModal open={isCartOpen} onClose={closeCartModal} />}
       <Flex
         css={{
-          height: 'calc(100% - 100px)',
+          height: 'calc(100% - 40px)',
           p: 10,
           justifyContent: 'space-evenly',
+          gap: 5,
         }}
       >
         <Box
           css={{
             minWidth: 1000,
+            maxWidth: 1100,
           }}
         >
           <Flex justifyContent={'space-between'} mb={4}>
