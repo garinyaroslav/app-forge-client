@@ -24,6 +24,11 @@ export const Store = () => {
     setUserName(name.toUpperCase());
   }, []);
 
+  const onClickExit = () => {
+    localStorage.clear();
+    nav('/');
+  };
+
   return (
     <Box css={{ height: '100%' }}>
       <Flex
@@ -36,7 +41,7 @@ export const Store = () => {
         }}
       >
         <Flex
-          onClick={() => nav('/')}
+          onClick={() => onClickExit()}
           css={{
             gap: 3,
             alignItems: 'center',

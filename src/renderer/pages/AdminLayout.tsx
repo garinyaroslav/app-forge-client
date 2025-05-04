@@ -15,6 +15,11 @@ export const AdminLayout = () => {
   const nav = useNavigate();
   const [tabVal, setTabVal] = useState<v>(v.products);
 
+  const onClickExit = () => {
+    localStorage.clear();
+    nav('/');
+  };
+
   return (
     <Flex css={{ h: '100%', w: '100%' }}>
       <TabsRoot
@@ -29,7 +34,7 @@ export const AdminLayout = () => {
         <TabsList>
           <Flex css={{ mb: 6, mt: 2, justifyContent: 'center' }}>
             <Button
-              onClick={() => nav('/')}
+              onClick={() => onClickExit()}
               css={{ width: '120px', mt: 1 }}
               border="none"
               bg="#e5e7eb"
