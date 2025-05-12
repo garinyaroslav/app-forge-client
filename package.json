@@ -1,5 +1,5 @@
 {
-  "name": "electron-react-boilerplate",
+  "name": "AppForge",
   "description": "A foundation for scalable desktop apps",
   "keywords": [
     "electron",
@@ -184,7 +184,7 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "ElectronReact",
+    "productName": "AppForge",
     "appId": "org.erb.ElectronReact",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
