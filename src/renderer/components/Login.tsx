@@ -7,7 +7,7 @@ import { ILoginForm, ILoginRes } from '../types/auth';
 import { Field } from './ui/field';
 import EyeSvg from '../assets/eye.svg';
 import EyeClosedSvg from '../assets/eyeClosed.svg';
-import a from '../axios';
+import a from '../axiosWithoutInterceptors';
 
 export const Login = () => {
   const nav = useNavigate();
